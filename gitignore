@@ -1,0 +1,16 @@
+# Credenciales — NUNCA subir a Git público
+public/config.js
+
+# Node
+node_modules/
+.env
+.env.local
+
+# Editor
+.vscode/settings.json
+.DS_Store
+Thumbs.db
+
+# Build
+dist/
+.netlify/

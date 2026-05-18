@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0F0F0D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>RehabitaCo — Gestión de Obras</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+/* ═══════════════════════════════════════════════════════════
+   VARIABLES Y RESET
+═══════════════════════════════════════════════════════════ */
+:root{
+  --ink:#0F0F0D;--ink2:#1A1A17;--ink3:#2E2E28;
+  --warm:#F7F4EE;--paper:#FDFCF8;--line:#E4DDD0;--muted:#9A8F80;
+  --gold:#D4A847;--gold2:#E8C46A;--gold-bg:rgba(212,168,71,.08);
+  --rust:#C25C3A;--sage:#4E7C5A;--sage2:#6B9E78;
+  --sky:#3A6EA8;--lav:#7A6EA8;--dis:#C25C8A;
+  --red:#DC4F4F;--green:#3D9E5A;
+  --legal-c:#3A6EA8;--obra-c:#C25C3A;--elect-c:#D4A847;
+  --font-c:#4E7C5A;--arq-c:#7A6EA8;--dis-c:#C25C8A;
+  --shadow:rgba(15,15,13,.06);--shadow2:rgba(15,15,13,.13);--shadow3:rgba(15,15,13,.22);
+  --sidebar-w:256px;
+  --topbar-h:60px;
+  --radius:14px;--radius-sm:9px;--radius-xs:6px;
+  --trans:.18s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;-webkit-tap-highlight-color:transparent;scroll-behavior:smooth}
+body{font-family:'Instrument Sans',sans-serif;background:var(--warm);color:var(--ink);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+button,input,select,textarea{font-family:inherit}
+
+/* ═══════════════════════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════════════════════ */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ═══════════════════════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════════════════════ */
+#app{display:flex;min-height:100vh}
+.sidebar{
+  width:var(--sidebar-w);background:var(--ink);
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;height:100vh;
+  z-index:300;transition:transform .26s cubic-bezier(.4,0,.2,1);
+  overflow:hidden;
+}
+.sidebar-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
+  z-index:299;backdrop-filter:blur(2px);
+}
+.main{margin-left:var(--sidebar-w);display:flex;flex-direction:column;min-height:100vh;width:calc(100% - var(--sidebar-w))}
+
+/* ═══════════════════════════════════════════════════════════
+   SIDEBAR CONTENT
+═══════════════════════════════════════════════════════════ */
+.brand{
+  padding:22px 20px 16px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  flex-shrink:0;
+}
+.brand-name{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#fff;letter-spacing:-.5px;line-height:1}
+.brand-name span{color:var(--gold)}
+.brand-tag{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:4px}
+
+.nav{flex:1;padding:12px 8px;overflow-y:auto;overflow-x:hidden}
+.nav-sect{
+  font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(255,255,255,.2);padding:10px 10px 5px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 10px;border-radius:8px;cursor:pointer;
+  color:rgba(255,255,255,.4);font-size:12.5px;
+  transition:var(--trans);margin-bottom:1px;
+  user-select:none;position:relative;
+  white-space:nowrap;overflow:hidden;
+}
+.nav-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.8)}
+.nav-item.on{background:rgba(212,168,71,.1);color:var(--gold2);font-weight:500}
+.nav-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0;opacity:.8}
+.nav-label{flex:1;overflow:hidden;text-overflow:ellipsis}
+.nav-badge{
+  background:var(--red);color:#fff;font-size:9px;font-weight:800;
+  padding:1px 6px;border-radius:20px;display:none;flex-shrink:0;
+}
+
+.sidebar-foot{
+  padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);flex-shrink:0;
+}
+.user-block{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.user-avatar{
+  width:30px;height:30px;border-radius:50%;background:var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:800;color:var(--ink);flex-shrink:0;
+}
+.user-name{font-size:12px;font-weight:600;color:rgba(255,255,255,.8);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-rol{font-size:10px;color:var(--muted)}
+.status-row{display:flex;align-items:center;gap:6px;font-size:10px;color:rgba(255,255,255,.2)}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--sage2);flex-shrink:0;transition:.3s}
+.status-dot.loading{background:var(--gold);animation:blink .8s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ═══════════════════════════════════════════════════════════
+   TOPBAR
+═══════════════════════════════════════════════════════════ */
+.topbar{
+  background:var(--paper);border-bottom:1px solid var(--line);
+  padding:0 28px;height:var(--topbar-h);
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;flex-shrink:0;
+  gap:12px;
+}
+.topbar-left{display:flex;align-items:center;gap:10px;min-width:0}
+.menu-toggle{
+  display:none;background:none;border:none;cursor:pointer;
+  font-size:18px;color:var(--ink);padding:5px;border-radius:6px;
+  flex-shrink:0;line-height:1;
+}
+.menu-toggle:hover{background:var(--warm)}
+.topbar-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar-right{display:flex;gap:8px;align-items:center;flex-shrink:0}
+
+/* Search bar in topbar */
+.topbar-search{
+  display:flex;align-items:center;gap:8px;
+  background:var(--warm);border:1.5px solid var(--line);
+  border-radius:8px;padding:6px 12px;
+  min-width:200px;max-width:280px;
+  transition:var(--trans);
+}
+.topbar-search:focus-within{border-color:var(--gold);background:#fff}
+.topbar-search input{
+  background:none;border:none;outline:none;
+  font-size:12.5px;color:var(--ink);width:100%;
+}
+.topbar-search input::placeholder{color:var(--muted)}
+
+/* ═══════════════════════════════════════════════════════════
+   BOTONES
+═══════════════════════════════════════════════════════════ */
+.btn{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:8px 16px;border-radius:8px;
+  font-size:12px;font-weight:600;cursor:pointer;border:none;
+  transition:var(--trans);letter-spacing:.2px;white-space:nowrap;
+  line-height:1.2;
+}
+.btn-gold{background:var(--gold);color:var(--ink)}
+.btn-gold:hover{background:var(--gold2);transform:translateY(-1px);box-shadow:0 4px 12px rgba(212,168,71,.3)}
+.btn-outline{background:transparent;border:1.5px solid var(--line);color:var(--ink3)}
+.btn-outline:hover{border-color:var(--muted);background:var(--warm)}
+.btn-ghost{background:transparent;color:var(--muted)}
+.btn-ghost:hover{color:var(--ink);background:var(--warm)}
+.btn-red{background:var(--red);color:#fff}
+.btn-red:hover{background:#c03a3a}
+.btn-sage{background:var(--sage);color:#fff}
+.btn-sage:hover{background:var(--sage2)}
+.btn-sm{padding:6px 12px;font-size:11px}
+.btn-xs{padding:4px 8px;font-size:10px}
+.btn-icon{padding:7px;aspect-ratio:1;border-radius:7px}
+button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
+.ico-btn{background:none;border:none;cursor:pointer;font-size:12px;padding:4px 5px;border-radius:5px;transition:.15s;color:var(--muted);line-height:1}
+.ico-btn:hover{background:var(--line);color:var(--ink)}
+
+/* ═══════════════════════════════════════════════════════════
+   CONTENIDO Y VISTAS
+═══════════════════════════════════════════════════════════ */
+.content{padding:24px 28px;flex:1;min-width:0}
+.view{display:none;animation:fadein .2s ease}
+.view.on{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+.sec-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.sec-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700}
+.sec-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.sec-actions{display:flex;gap:8px;align-items:center;flex-shrink:0}
+
+/* ═══════════════════════════════════════════════════════════
+   STATS
+═══════════════════════════════════════════════════════════ */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stat-card{
+  background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px;
+  transition:var(--trans);cursor:default;
+}
+.stat-card:hover{box-shadow:0 4px 16px var(--shadow2);transform:translateY(-1px)}
+.stat-ico{
+  font-size:18px;margin-bottom:10px;
+  width:36px;height:36px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--warm);border-radius:8px;
+}
+.stat-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;line-height:1;margin-bottom:3px}
+.stat-lbl{font-size:9.5px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)}
+.stat-sub{font-size:11px;margin-top:4px;font-weight:500}
+
+/* ═══════════════════════════════════════════════════════════
+   PROYECTOS GRID
+═══════════════════════════════════════════════════════════ */
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.proj-card{
+  background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius);overflow:hidden;cursor:pointer;
+  transition:var(--trans);
+  display:flex;flex-direction:column;
+}
+.proj-card:hover{transform:translateY(-3px);box-shadow:0 12px 30px var(--shadow2);border-color:rgba(212,168,71,.3)}
+.proj-card:active{transform:translateY(-1px)}
+
+/* Photo thumb */
+.proj-thumb{
+  height:120px;position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.proj-thumb img{width:100%;height:100%;object-fit:cover;transition:.3s}
+.proj-card:hover .proj-thumb img{transform:scale(1.04)}
+.proj-thumb-emoji{font-size:36px}
+.thumb-gold{background:linear-gradient(135deg,#251A06,#4A3412)}
+.thumb-sage{background:linear-gradient(135deg,#0E2014,#1A3822)}
+.thumb-rust{background:linear-gradient(135deg,#2A100A,#4A1E14)}
+.thumb-sky{background:linear-gradient(135deg,#080F1E,#102038)}
+.thumb-lav{background:linear-gradient(135deg,#140E2A,#261840)}
+.proj-thumb-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,.5) 0%,transparent 60%);
+}
+.proj-photo-count{
+  position:absolute;bottom:8px;right:8px;
+  background:rgba(0,0,0,.6);color:#fff;
+  font-size:9px;font-weight:600;padding:3px 7px;border-radius:20px;
+  backdrop-filter:blur(4px);
+}
+
+.proj-body{padding:14px;flex:1;display:flex;flex-direction:column}
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:9.5px;font-weight:700;padding:3px 8px;
+  border-radius:20px;text-transform:uppercase;letter-spacing:.4px;
+  margin-bottom:7px;
+}
+.bs-neg{background:rgba(154,143,128,.12);color:var(--muted)}
+.bs-ref{background:rgba(212,168,71,.12);color:var(--gold)}
+.bs-act{background:rgba(78,124,90,.12);color:var(--sage)}
+.bs-fin{background:rgba(15,15,13,.06);color:var(--ink3)}
+.pulse{width:5px;height:5px;border-radius:50%;background:currentColor;animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.proj-name{font-family:'Syne',sans-serif;font-size:13.5px;font-weight:700;margin-bottom:2px;line-height:1.3}
+.proj-addr{font-size:11px;color:var(--muted);margin-bottom:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prog-bar{height:3.5px;background:var(--line);border-radius:4px;overflow:hidden;margin-bottom:10px}
+.prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .5s}
+.prog-fill.sage{background:linear-gradient(90deg,var(--sage),var(--sage2))}
+.proj-meta{display:grid;grid-template-columns:1fr 1fr;gap:6px;border-top:1px solid var(--line);padding-top:10px;margin-top:auto}
+.proj-meta-item label{font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);display:block}
+.proj-meta-item span{font-size:12px;font-weight:600}
+
+/* ═══════════════════════════════════════════════════════════
+   FILTROS Y BUSQUEDA DE PROYECTOS
+═══════════════════════════════════════════════════════════ */
+.filter-bar{
+  display:flex;align-items:center;gap:8px;margin-bottom:18px;
+  flex-wrap:wrap;
+}
+.filter-search{
+  flex:1;min-width:160px;max-width:260px;
+  display:flex;align-items:center;gap:7px;
+  background:var(--paper);border:1.5px solid var(--line);
+  border-radius:8px;padding:6px 11px;
+  transition:var(--trans);
+}
+.filter-search:focus-within{border-color:var(--gold);background:#fff}
+.filter-search input{background:none;border:none;outline:none;font-size:12.5px;color:var(--ink);width:100%}
+.filter-chip{
+  padding:5px 11px;border-radius:20px;font-size:11px;font-weight:600;
+  cursor:pointer;border:1.5px solid var(--line);color:var(--muted);
+  background:var(--paper);transition:var(--trans);user-select:none;
+}
+.filter-chip.on{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.sort-sel{
+  padding:5px 10px;border:1.5px solid var(--line);border-radius:8px;
+  font-size:11px;font-weight:500;color:var(--ink3);background:var(--paper);
+  outline:none;cursor:pointer;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════════════════════ */
+.overlay{
+  position:fixed;inset:0;
+  background:rgba(15,15,13,.6);backdrop-filter:blur(6px);
+  z-index:400;display:none;align-items:center;justify-content:center;
+  padding:16px;overscroll-behavior:contain;
+}
+.overlay.on{display:flex}
+.modal{
+  background:var(--paper);border-radius:18px;
+  width:640px;max-width:100%;max-height:92vh;
+  overflow-y:auto;animation:modalin .22s ease;
+  box-shadow:0 24px 60px rgba(0,0,0,.3);
+}
+.modal.xl{width:1060px}
+.modal.sm{width:440px}
+@keyframes modalin{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:scale(1)}}
+.modal-head{
+  padding:18px 22px 14px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;background:var(--paper);z-index:2;
+  gap:12px;
+}
+.modal-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700}
+.modal-close{
+  width:28px;height:28px;border-radius:7px;border:none;
+  background:var(--warm);cursor:pointer;font-size:14px;
+  display:flex;align-items:center;justify-content:center;transition:.15s;flex-shrink:0;
+}
+.modal-close:hover{background:var(--line)}
+.modal-body{padding:18px 22px}
+.modal-foot{
+  padding:12px 22px 18px;display:flex;justify-content:flex-end;
+  gap:8px;border-top:1px solid var(--line);
+}
+.tabs{
+  display:flex;border-bottom:1px solid var(--line);
+  background:var(--warm);padding:0 18px;gap:2px;
+  overflow-x:auto;flex-shrink:0;
+}
+.tab{
+  padding:10px 13px;font-size:12px;font-weight:600;color:var(--muted);
+  cursor:pointer;border-bottom:2.5px solid transparent;
+  transition:var(--trans);margin-bottom:-1px;white-space:nowrap;user-select:none;
+}
+.tab.on{color:var(--ink);border-color:var(--gold)}
+.tab-body{display:none;padding:18px 22px;animation:fadein .16s ease}
+.tab-body.on{display:block}
+
+/* ═══════════════════════════════════════════════════════════
+   FORMULARIOS
+═══════════════════════════════════════════════════════════ */
+.form-row{margin-bottom:12px}
+.form-lbl{
+  display:flex;align-items:center;gap:4px;
+  font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.8px;color:var(--muted);margin-bottom:5px;
+}
+.fi,.fs,.ft{
+  width:100%;padding:9px 11px;border:1.5px solid var(--line);
+  border-radius:8px;font-size:13px;background:#fff;
+  color:var(--ink);outline:none;transition:var(--trans);
+  appearance:none;
+}
+.fi:focus,.fs:focus,.ft:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,168,71,.1)}
+.ft{resize:vertical;min-height:60px;line-height:1.5}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+.fi::placeholder,.ft::placeholder{color:var(--muted)}
+
+/* ═══════════════════════════════════════════════════════════
+   FOTO UPLOAD ZONE
+═══════════════════════════════════════════════════════════ */
+.photo-upload-zone{
+  border:2px dashed var(--line);border-radius:10px;
+  padding:20px;text-align:center;cursor:pointer;
+  transition:var(--trans);background:var(--warm);
+  position:relative;
+}
+.photo-upload-zone:hover,.photo-upload-zone.drag-over{
+  border-color:var(--gold);background:var(--gold-bg);
+}
+.photo-upload-zone input[type=file]{
+  position:absolute;inset:0;opacity:0;cursor:pointer;
+}
+.puz-icon{font-size:28px;margin-bottom:7px;opacity:.5}
+.puz-text{font-size:12px;color:var(--muted);line-height:1.4}
+.puz-hint{font-size:10px;color:var(--muted);opacity:.7;margin-top:4px}
+
+.photo-preview-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));
+  gap:8px;margin-top:12px;
+}
+.photo-thumb-wrap{
+  position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;
+  border:1px solid var(--line);
+  cursor:pointer;
+}
+.photo-thumb-wrap img{width:100%;height:100%;object-fit:cover;transition:.2s}
+.photo-thumb-wrap:hover img{transform:scale(1.05)}
+.photo-del{
+  position:absolute;top:4px;right:4px;
+  width:20px;height:20px;border-radius:50%;
+  background:rgba(0,0,0,.65);color:#fff;
+  font-size:10px;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:.15s;
+}
+.photo-del:hover{background:var(--red)}
+.photo-thumb-wrap.main-photo::after{
+  content:'★';position:absolute;bottom:4px;left:4px;
+  background:var(--gold);color:var(--ink);
+  font-size:9px;font-weight:800;padding:1px 5px;
+  border-radius:4px;
+}
+.photo-uploading{
+  display:flex;align-items:center;justify-content:center;
+  aspect-ratio:1;border-radius:8px;border:1.5px dashed var(--gold);
+  background:var(--gold-bg);font-size:11px;color:var(--gold);font-weight:600;
+  gap:5px;flex-direction:column;
+}
+
+/* Galería lightbox */
+.lightbox{
+  position:fixed;inset:0;background:rgba(0,0,0,.93);
+  z-index:900;display:none;align-items:center;justify-content:center;
+  flex-direction:column;gap:12px;
+}
+.lightbox.on{display:flex}
+.lightbox img{max-width:90vw;max-height:80vh;object-fit:contain;border-radius:8px}
+.lightbox-nav{display:flex;gap:12px;align-items:center}
+.lb-btn{
+  background:rgba(255,255,255,.12);border:none;color:#fff;
+  font-size:18px;padding:10px 16px;border-radius:8px;cursor:pointer;
+  transition:.15s;
+}
+.lb-btn:hover{background:rgba(255,255,255,.22)}
+.lb-counter{color:rgba(255,255,255,.5);font-size:12px}
+.lb-close{
+  position:absolute;top:16px;right:16px;
+  background:rgba(255,255,255,.12);border:none;color:#fff;
+  font-size:18px;padding:8px 12px;border-radius:8px;cursor:pointer;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SECTOR TAGS
+═══════════════════════════════════════════════════════════ */
+.stag{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:2px 7px;border-radius:20px;font-size:9px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.4px;
+}
+.s-legal{background:rgba(58,110,168,.1);color:var(--sky)}
+.s-arq{background:rgba(122,110,168,.1);color:var(--lav)}
+.s-obra{background:rgba(194,92,58,.1);color:var(--rust)}
+.s-elect{background:rgba(212,168,71,.1);color:var(--gold)}
+.s-font{background:rgba(78,124,90,.1);color:var(--sage)}
+.s-dis{background:rgba(194,92,138,.1);color:var(--dis)}
+
+/* ═══════════════════════════════════════════════════════════
+   FASES
+═══════════════════════════════════════════════════════════ */
+.phase-item{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:10px 12px;border-radius:10px;border:1.5px solid transparent;
+  margin-bottom:4px;background:var(--paper);transition:var(--trans);
+}
+.phase-item:hover{border-color:var(--line);box-shadow:0 2px 8px var(--shadow)}
+.drag-handle{cursor:grab;color:var(--line);font-size:14px;flex-shrink:0;padding-top:2px;user-select:none}
+.phase-check{
+  width:22px;height:22px;border-radius:50%;border:2px solid var(--line);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.2s;background:#fff;margin-top:1px;
+}
+.phase-item.done .phase-check{background:var(--sage);border-color:var(--sage)}
+.phase-item.done .phase-check::after{content:'✓';color:#fff;font-size:10px;font-weight:700}
+.phase-item.done .phase-name{text-decoration:line-through;color:var(--muted)}
+.phase-name{font-size:13px;font-weight:600;margin-bottom:2px}
+.phase-desc{font-size:11px;color:var(--muted);line-height:1.4}
+.phase-actions{margin-left:auto;opacity:0;transition:.15s;flex-shrink:0;display:flex;gap:3px}
+.phase-item:hover .phase-actions{opacity:1}
+.sfilters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.sf{
+  padding:5px 11px;border-radius:20px;font-size:11px;font-weight:600;
+  cursor:pointer;border:1.5px solid var(--line);color:var(--muted);
+  background:var(--paper);transition:var(--trans);user-select:none;
+}
+.sf.on{border-color:currentColor}
+.sf[data-s="all"].on{border-color:var(--ink);color:var(--ink)}
+.sf[data-s="legal"].on{color:var(--sky)}.sf[data-s="obra"].on{color:var(--rust)}
+.sf[data-s="elect"].on{color:var(--gold)}.sf[data-s="font"].on{color:var(--sage)}
+.sf[data-s="arq"].on{color:var(--lav)}.sf[data-s="dis"].on{color:var(--dis)}
+
+/* ═══════════════════════════════════════════════════════════
+   GASTOS
+═══════════════════════════════════════════════════════════ */
+.gtable{width:100%;border-collapse:collapse;font-size:12.5px}
+.gtable th{
+  text-align:left;padding:8px 10px;font-size:9px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.8px;color:var(--muted);
+  border-bottom:1px solid var(--line);background:var(--warm);white-space:nowrap;
+}
+.gtable td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}
+.gtable tr:last-child td{border-bottom:none}
+.gtable tr:hover td{background:var(--warm)}
+.gtable .tot td{font-weight:700;background:var(--warm);font-family:'Syne',sans-serif}
+.gasto-add-form{
+  background:var(--warm);border:1.5px solid var(--gold);
+  border-radius:10px;padding:14px;margin-bottom:14px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NOTAS RÁPIDAS
+═══════════════════════════════════════════════════════════ */
+.notas-shell{
+  display:grid;grid-template-columns:300px 1fr;
+  height:calc(100vh - var(--topbar-h) - 48px);
+  margin:-24px -28px;overflow:hidden;
+}
+.notas-in{
+  background:var(--ink2);display:flex;flex-direction:column;
+  padding:16px;gap:9px;
+  border-right:1px solid rgba(255,255,255,.06);
+  overflow-y:auto;
+}
+.notas-feed-col{
+  background:var(--warm);display:flex;flex-direction:column;overflow:hidden;
+}
+.nota-ta{
+  flex:1;min-height:100px;
+  background:rgba(255,255,255,.05);
+  border:1.5px solid rgba(255,255,255,.1);
+  border-radius:10px;padding:11px;
+  font-size:14px;color:#fff;resize:none;outline:none;
+  line-height:1.55;transition:var(--trans);
+}
+.nota-ta:focus{border-color:var(--gold);background:rgba(255,255,255,.07)}
+.nota-ta::placeholder{color:rgba(255,255,255,.2);font-size:13px}
+.chips-row{display:flex;gap:5px;flex-wrap:wrap}
+.chip{
+  padding:4px 9px;border-radius:20px;font-size:10px;font-weight:600;
+  border:1.5px solid rgba(255,255,255,.1);
+  background:transparent;color:rgba(255,255,255,.45);
+  cursor:pointer;transition:var(--trans);
+}
+.chip:hover{border-color:var(--gold);color:var(--gold)}
+.send-row{display:flex;gap:7px;align-items:stretch}
+.btn-send{
+  flex:1;padding:11px;border-radius:10px;
+  background:var(--gold);color:var(--ink);
+  font-size:14px;font-weight:700;font-family:'Syne',sans-serif;
+  border:none;cursor:pointer;transition:var(--trans);
+  display:flex;align-items:center;justify-content:center;gap:7px;
+}
+.btn-send:active{transform:scale(.98)}
+.btn-send.proc{background:rgba(255,255,255,.07);color:rgba(255,255,255,.25);pointer-events:none}
+.btn-urg{
+  padding:11px 12px;border-radius:10px;
+  background:rgba(220,79,79,.1);border:1.5px solid rgba(220,79,79,.2);
+  color:var(--red);font-size:16px;cursor:pointer;transition:var(--trans);flex-shrink:0;
+}
+.btn-urg.on{background:var(--red);border-color:var(--red);color:#fff}
+.pbar{height:2px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;opacity:0;transition:.2s}
+.pbar.on{opacity:1}
+.pbar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .8s ease}
+.nstats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.nstat{background:rgba(255,255,255,.05);border-radius:8px;padding:8px;text-align:center}
+.nstat-v{font-family:'Syne',sans-serif;font-size:15px;font-weight:800}
+.nstat-l{font-size:9px;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.proj-sel-dark{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  border-radius:8px;padding:7px 10px;font-size:13px;
+  color:#fff;outline:none;cursor:pointer;width:100%;
+}
+.proj-sel-dark option{background:var(--ink2)}
+.feed-head{
+  padding:11px 14px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:6px;flex-shrink:0;
+  background:var(--paper);flex-wrap:wrap;
+}
+.feed-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700}
+.fpill{
+  padding:4px 10px;border-radius:20px;font-size:10px;font-weight:600;
+  cursor:pointer;border:1.5px solid var(--line);color:var(--muted);
+  background:var(--paper);transition:var(--trans);user-select:none;
+}
+.fpill.on{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+
+/* ═══════════════════════════════════════════════════════════
+   LOGIN SCREEN
+═══════════════════════════════════════════════════════════ */
+#login-screen{
+  position:fixed;inset:0;
+  background:var(--ink);
+  display:flex;align-items:center;justify-content:center;
+  z-index:9999;padding:20px;
+}
+.login-wrap{
+  width:100%;max-width:380px;
+}
+.login-logo{
+  font-family:'Syne',sans-serif;font-size:28px;font-weight:800;
+  color:#fff;letter-spacing:-.5px;margin-bottom:4px;
+}
+.login-logo span{color:var(--gold)}
+.login-tag{
+  font-size:9px;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:36px;
+}
+.login-card{
+  background:var(--ink2);border:1px solid rgba(255,255,255,.07);
+  border-radius:18px;padding:32px 28px;
+}
+.login-title{
+  font-family:'Syne',sans-serif;font-size:17px;font-weight:700;
+  color:#fff;margin-bottom:6px;
+}
+.login-sub{font-size:12px;color:var(--muted);margin-bottom:26px}
+.login-field{margin-bottom:14px}
+.login-field label{
+  display:block;font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.8px;color:rgba(255,255,255,.35);margin-bottom:6px;
+}
+.login-field input{
+  width:100%;padding:12px 14px;
+  background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.09);
+  border-radius:10px;font-size:14px;color:#fff;outline:none;transition:var(--trans);
+}
+.login-field input:focus{border-color:var(--gold);background:rgba(255,255,255,.08)}
+.login-field input::placeholder{color:rgba(255,255,255,.18)}
+.login-btn{
+  width:100%;padding:13px;margin-top:8px;
+  background:var(--gold);color:var(--ink);
+  font-size:14px;font-weight:700;font-family:'Syne',sans-serif;
+  border:none;border-radius:10px;cursor:pointer;transition:var(--trans);
+}
+.login-btn:hover{background:var(--gold2);transform:translateY(-1px)}
+.login-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.login-err{
+  font-size:12px;color:#ff7070;margin-top:12px;
+  min-height:18px;text-align:center;line-height:1.4;
+}
+.login-hint{
+  font-size:10px;color:rgba(255,255,255,.12);
+  text-align:center;margin-top:18px;line-height:1.6;
+}
+.login-spinner{
+  display:inline-block;width:14px;height:14px;
+  border:2px solid rgba(15,15,13,.2);border-top-color:var(--ink);
+  border-radius:50%;animation:spin .6s linear infinite;
+  vertical-align:middle;margin-right:6px;
+}
+</style>
+</head>
+<body>
+  <!-- Añade esto justo después de <body> y antes de <div id="app"...> -->
+<div id="login-screen" style="display:flex;align-items:center;justify-content:center;min-height:100vh;position:fixed;inset:0;z-index:99999;background:var(--ink);">
+  <form id="login-form" class="login-card" style="min-width:320px;box-shadow:0 2px 12px #0002;">
+    <div class="login-logo">Rehabi<span>ta</span>Co</div>
+    <div class="login-title">Iniciar sesión</div>
+    <div class="login-field">
+      <label for="login-email">Correo</label>
+      <input id="login-email" type="email" placeholder="Correo" required autocomplete="username">
+    </div>
+    <div class="login-field">
+      <label for="login-pass">Contraseña</label>
+      <input id="login-pass" type="password" placeholder="Contraseña" required autocomplete="current-password">
+    </div>
+    <button type="submit" class="login-btn">Entrar</button>
+    <div id="login-error" class="login-err"></div>
+  </form>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none">
+  <!-- SIDEBAR OVERLAY (mobile) -->
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-name">Rehabi<span>ta</span>Co</div>
+      <div class="brand-tag">Gestión de Obras · v2.0</div>
+    </div>
+    <div class="nav">
+      <div class="nav-sect">Principal</div>
+      <div class="nav-item on" data-v="dashboard" onclick="go(this)">
+        <span class="nav-icon">🏠</span><span class="nav-label">Resumen</span>
+      </div>
+      <div class="nav-item" data-v="proyectos" onclick="go(this)">
+        <span class="nav-icon">🏗️</span><span class="nav-label">Proyectos</span>
+      </div>
+      <div class="nav-item" data-v="seguimiento" onclick="go(this)">
+        <span class="nav-icon">📊</span><span class="nav-label">Seguimiento</span>
+      </div>
+
+      <div class="nav-sect">Gestión</div>
+      <div class="nav-item" data-v="notas" onclick="go(this)">
+        <span class="nav-icon">⚡</span><span class="nav-label">Notas Rápidas</span>
+        <span class="nav-badge" id="nbadge">0</span>
+      </div>
+      <div class="nav-item" data-v="gastos" onclick="go(this)">
+        <span class="nav-icon">💶</span><span class="nav-label">Gastos</span>
+      </div>
+      <div class="nav-item" data-v="contactos" onclick="go(this)">
+        <span class="nav-icon">👥</span><span class="nav-label">Contactos</span>
+      </div>
+
+      <div class="nav-sect">Configuración</div>
+      <div class="nav-item" data-v="fases" onclick="go(this)">
+        <span class="nav-icon">📋</span><span class="nav-label">Plantilla Fases</span>
+      </div>
+      <div class="nav-item admin-only" data-v="usuarios" onclick="go(this)">
+        <span class="nav-icon">🔑</span><span class="nav-label">Usuarios</span>
+      </div>
+    </div>
+    <div class="sidebar-foot">
+      <div class="user-block">
+        <div class="user-avatar" id="uav">R</div>
+        <div style="min-width:0">
+          <div class="user-name" id="uname">Cargando…</div>
+          <div class="user-rol" id="urol">—</div>
+        </div>
+      </div>
+      <div class="status-row">
+        <div class="status-dot" id="sdot"></div>
+        <span id="slbl">Conectado</span>
+        <button class="btn btn-ghost btn-xs" style="margin-left:auto;color:rgba(255,255,255,.25)" onclick="doLogout()">↩ Salir</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" onclick="openSidebar()" aria-label="Menú">
+          <svg width="18" height="14" viewBox="0 0 18 14" fill="none"><rect width="18" height="2" rx="1" fill="currentColor"/><rect y="6" width="18" height="2" rx="1" fill="currentColor"/><rect y="12" width="12" height="2" rx="1" fill="currentColor"/></svg>
+        </button>
+        <div class="topbar-title" id="toph">Resumen</div>
+      </div>
+      <div class="topbar-search">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.5" opacity=".4"/><path d="M9 9l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".4"/></svg>
+        <input placeholder="Buscar proyectos…" id="globalSearch" oninput="handleGlobalSearch(this.value)">
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-gold" id="mcta" onclick="mainCta()">+ Nuevo Proyecto</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div id="v-dashboard" class="view on">
+        <div class="stats-row" id="dstats"><div class="loader" style="grid-column:1/-1"></div></div>
+        <div style="display:grid;grid-template-columns:3fr 2fr;gap:18px" id="dash-grid">
+          <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden">
+            <div style="padding:14px 18px 12px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">
+              <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700">Proyectos Activos</div>
+              <button class="btn btn-ghost btn-sm" onclick="go(document.querySelector('[data-v=proyectos]'))">Ver todos →</button>
+            </div>
+            <div id="dproj" style="padding:12px"></div>
+          </div>
+          <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden">
+            <div style="padding:14px 18px 12px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">
+              <div>
+                <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700">Notas Urgentes</div>
+                <div style="font-size:11px;color:var(--muted)">Requieren atención</div>
+              </div>
+              <button class="btn btn-ghost btn-sm" onclick="go(document.querySelector('[data-v=notas]'))">Ver →</button>
+            </div>
+            <div id="durg" style="padding:12px;max-height:280px;overflow-y:auto"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROYECTOS -->
+      <div id="v-proyectos" class="view">
+        <div class="sec-head">
+          <div>
+            <div class="sec-title">Proyectos</div>
+            <div class="sec-sub" id="proj-count-sub">Portfolio completo</div>
+          </div>
+          <div class="sec-actions">
+            <button class="btn btn-outline btn-sm" onclick="exportarProyectosCSV()">↓ CSV</button>
+            <button class="btn btn-gold" onclick="openM('m-proj')">+ Nuevo</button>
+          </div>
+        </div>
+        <div class="filter-bar">
+          <div class="filter-search">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.5" opacity=".4"/><path d="M9 9l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".4"/></svg>
+            <input placeholder="Buscar proyecto…" id="projSearch" oninput="renderProyectos()">
+          </div>
+          <div class="filter-chip on" data-estado="all" onclick="setEstadoFiltro('all',this)">Todos</div>
+          <div class="filter-chip" data-estado="neg" onclick="setEstadoFiltro('neg',this)">Negociación</div>
+          <div class="filter-chip" data-estado="ref" onclick="setEstadoFiltro('ref',this)">Reforma</div>
+          <div class="filter-chip" data-estado="act" onclick="setEstadoFiltro('act',this)">En Venta</div>
+          <div class="filter-chip" data-estado="fin" onclick="setEstadoFiltro('fin',this)">Finalizado</div>
+          <select class="sort-sel" id="projSort" onchange="renderProyectos()">
+            <option value="newest">Más recientes</option>
+            <option value="oldest">Más antiguos</option>
+            <option value="name">Nombre A–Z</option>
+            <option value="price">Mayor inversión</option>
+          </select>
+        </div>
+        <div class="proj-grid" id="pgrid"><div class="loader"></div></div>
+      </div>
+
+      <!-- FASES -->
+      <div id="v-fases" class="view">
+        <div class="sec-head">
+          <div>
+            <div class="sec-title">Plantilla de Fases</div>
+            <div class="sec-sub">Arrástralas para reordenar · Se sincronizan para todos</div>
+          </div>
+          <button class="btn btn-gold" onclick="openAddFase()">+ Añadir Fase</button>
+        </div>
+        <div class="sfilters" id="tplf"></div>
+        <div id="tpll"></div>
+        <div id="addFaseBox" style="display:none;background:var(--paper);border:1.5px solid var(--gold);border-radius:12px;padding:18px;margin-top:14px">
+          <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:12px">Nueva Fase</div>
+          <div class="g2">
+            <div class="form-row"><label class="form-lbl">Nombre *</label><input class="fi" id="nfn" placeholder="Ej: Instalación eléctrica"></div>
+            <div class="form-row"><label class="form-lbl">Sector *</label>
+              <select class="fs" id="nfs">
+                <option value="legal">⚖️ Legal</option><option value="arq">📐 Arquitecto</option>
+                <option value="obra">🔨 Obra</option><option value="elect">⚡ Electricista</option>
+                <option value="font">🔧 Fontanero</option><option value="dis">🎨 Diseño</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row"><label class="form-lbl">Descripción</label><textarea class="ft" id="nfd" style="min-height:50px"></textarea></div>
+          <div style="display:flex;gap:8px;justify-content:flex-end">
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('addFaseBox').style.display='none'">Cancelar</button>
+            <button class="btn btn-gold btn-sm" onclick="guardarFase()">Guardar Fase</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEGUIMIENTO -->
+      <div id="v-seguimiento" class="view">
+        <div class="sec-head">
+          <div><div class="sec-title">Seguimiento de Obras</div><div class="sec-sub">Estado detallado por proyecto</div></div>
+          <div class="sec-actions">
+            <select class="sort-sel" id="segSort" onchange="renderSeguimiento()">
+              <option value="all">Todos los estados</option>
+              <option value="ref">En Reforma</option>
+              <option value="act">En Venta</option>
+              <option value="neg">Negociación</option>
+              <option value="fin">Finalizados</option>
+            </select>
+          </div>
+        </div>
+        <div id="segl"><div class="loader"></div></div>
+      </div>
+
+      <!-- NOTAS -->
+      <div id="v-notas" class="view">
+        <div class="notas-shell">
+          <div class="notas-in">
+            <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#fff">⚡ Nota Rápida</div>
+            <div style="font-size:10px;color:rgba(255,255,255,.2)">Ctrl+Enter · Clasificación automática</div>
+            <div class="pbar" id="gpbar"><div class="pbar-fill" id="gpfill"></div></div>
+            <select class="proj-sel-dark" id="gpsel" onchange="gProjId=this.value||null"></select>
+            <textarea class="nota-ta" id="gta"
+              placeholder="Escribe lo que necesitas…&#10;Ej: Traer 15 sacos cemento mañana&#10;Ej: Pagar contenedor 280€&#10;Ej: Llamar notario urgente"
+              onkeydown="gKey(event)"></textarea>
+            <div class="chips-row">
+              <button class="chip" onclick="gChip('🧱 Cemento')">🧱 Cemento</button>
+              <button class="chip" onclick="gChip('⚡ Electricista')">⚡ Elec.</button>
+              <button class="chip" onclick="gChip('🔧 Fontanero')">🔧 Font.</button>
+              <button class="chip" onclick="gChip('📞 Llamar')">📞 Llamar</button>
+              <button class="chip" onclick="gChip('💶 Pagar')">💶 Pagar</button>
+              <button class="chip" onclick="gChip('📋 Licencia')">📋 Lic.</button>
+              <button class="chip" onclick="gChip('👷 Peones')">👷 Peones</button>
+              <button class="chip" onclick="gChip('🎨 Pintura')">🎨 Pintura</button>
+            </div>
+            <div class="send-row">
+              <button class="btn-urg" id="gurg" onclick="gTogUrg()" title="Marcar urgente">🚨</button>
+              <button class="btn-send" id="gsend" onclick="gSubmit()">
+                <div class="spinn" id="gspin"></div>
+                <span id="glbl">Guardar</span><span id="gico">⚡</span>
+              </button>
+            </div>
+            <div class="nstats" id="gnstats"></div>
+          </div>
+          <div class="notas-feed-col">
+            <div class="urg-banner" id="gurb">
+              <div style="font-size:9px;font-weight:700;color:#DC2020;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">🚨 Atención inmediata</div>
+              <div class="urg-chips" id="gurbc"></div>
+            </div>
+            <div class="feed-head">
+              <div class="feed-title">Registro</div>
+              <button class="fpill on" onclick="gFilt('all',this)">Todas</button>
+              <button class="fpill" onclick="gFilt('urgente',this)">🔴 Urgente</button>
+              <button class="fpill" onclick="gFilt('pendiente',this)">Pendientes</button>
+              <input class="feed-search" id="gsrch" placeholder="Buscar…" oninput="gRender()">
+              <button class="btn btn-ghost btn-xs" onclick="gClearDone()">Limpiar ✓</button>
+            </div>
+            <div class="nota-feed" id="gfeed"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GASTOS -->
+      <div id="v-gastos" class="view">
+        <div class="sec-head">
+          <div><div class="sec-title">Control de Gastos</div><div class="sec-sub">Vista global por proyecto</div></div>
+          <div class="sec-actions">
+            <button class="btn btn-outline btn-sm" onclick="exportarGastosCSV()">↓ CSV</button>
+          </div>
+        </div>
+        <div id="gastosG"><div class="loader"></div></div>
+      </div>
+
+      <!-- CONTACTOS -->
+      <div id="v-contactos" class="view">
+        <div class="sec-head">
+          <div><div class="sec-title">Contactos</div><div class="sec-sub">Proveedores y profesionales</div></div>
+          <button class="btn btn-gold" onclick="openM('m-contacto')">+ Contacto</button>
+        </div>
+        <div class="filter-bar" style="margin-bottom:14px">
+          <div class="filter-search">
+            <input placeholder="Buscar contacto…" id="ctSearch" oninput="renderContactos()">
+          </div>
+          <div class="filter-chip on" data-sector="all" onclick="setCtFiltro('all',this)">Todos</div>
+          <div class="filter-chip" data-sector="obra" onclick="setCtFiltro('obra',this)">🔨 Obra</div>
+          <div class="filter-chip" data-sector="elect" onclick="setCtFiltro('elect',this)">⚡ Elec.</div>
+          <div class="filter-chip" data-sector="font" onclick="setCtFiltro('font',this)">🔧 Font.</div>
+          <div class="filter-chip" data-sector="legal" onclick="setCtFiltro('legal',this)">⚖️ Legal</div>
+          <div class="filter-chip" data-sector="arq" onclick="setCtFiltro('arq',this)">📐 Arq.</div>
+        </div>
+        <div id="ctlist"><div class="loader"></div></div>
+      </div>
+
+      <!-- USUARIOS -->
+      <div id="v-usuarios" class="view admin-only">
+        <div class="sec-head">
+          <div><div class="sec-title">Usuarios</div><div class="sec-sub">Gestión de accesos</div></div>
+          <button class="btn btn-gold" onclick="openM('m-usuario')">+ Usuario</button>
+        </div>
+        <div id="uslist" style="background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden"><div class="loader"></div></div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ════════════ MODAL NUEVO PROYECTO ════════════ -->
+<div class="overlay" id="m-proj">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="m-proj-title">Nuevo Proyecto</div>
+      <button class="modal-close" onclick="closeM('m-proj')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="g2">
+        <div class="form-row"><label class="form-lbl">Nombre *</label><input class="fi" id="fp-n" placeholder="Piso Gran Vía 42"></div>
+        <div class="form-row"><label class="form-lbl">Tipo</label>
+          <select class="fs" id="fp-t">
+            <option value="reforma">Compra + Reforma</option>
+            <option value="nueva">Nueva Obra</option>
+            <option value="rehab">Rehabilitación</option>
+            <option value="alquiler">Alquiler</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row"><label class="form-lbl">Dirección *</label><input class="fi" id="fp-a" placeholder="Calle, número, ciudad"></div>
+      <div class="g3">
+        <div class="form-row"><label class="form-lbl">Precio Compra (€)</label><input type="number" class="fi" id="fp-p" placeholder="0"></div>
+        <div class="form-row"><label class="form-lbl">Presupuesto Reforma (€)</label><input type="number" class="fi" id="fp-r" placeholder="0"></div>
+        <div class="form-row"><label class="form-lbl">m²</label><input type="number" class="fi" id="fp-m" placeholder="0"></div>
+      </div>
+      <div class="g2">
+        <div class="form-row"><label class="form-lbl">Inicio</label><input type="date" class="fi" id="fp-i"></div>
+        <div class="form-row"><label class="form-lbl">Fin Estimado</label><input type="date" class="fi" id="fp-f"></div>
+      </div>
+      <div class="form-row"><label class="form-lbl">Estado</label>
+        <select class="fs" id="fp-e">
+          <option value="neg">En Negociación</option>
+          <option value="ref">En Reforma</option>
+          <option value="act">En Venta</option>
+          <option value="fin">Finalizado</option>
+        </select>
+      </div>
+      <div class="form-row"><label class="form-lbl">Notas</label><textarea class="ft" id="fp-no"></textarea></div>
+
+      <!-- FOTO UPLOAD -->
+      <div class="form-row">
+        <label class="form-lbl">📷 Fotos del Proyecto</label>
+        <div class="photo-upload-zone" id="proj-upload-zone" ondragover="e=>{e.preventDefault();this.classList.add('drag-over')}" ondragleave="e=>this.classList.remove('drag-over')" ondrop="handlePhotoDrop(event,'proj')">
+          <input type="file" id="proj-file-input" accept="image/*" multiple onchange="handlePhotoSelect(event,'proj')">
+          <div class="puz-icon">📷</div>
+          <div class="puz-text">Arrastra fotos o haz clic para seleccionar</div>
+          <div class="puz-hint">JPG, PNG, WEBP · Máx 5 MB por foto</div>
+        </div>
+        <div class="photo-preview-grid" id="proj-photo-preview"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline btn-sm" onclick="closeM('m-proj')">Cancelar</button>
+      <button class="btn btn-gold btn-sm" id="btn-guardar-proj" onclick="guardarProyecto()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ MODAL DETALLE PROYECTO ════════════ -->
+<div class="overlay" id="m-detail">
+  <div class="modal xl">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="md-tit">—</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px" id="md-adr">—</div>
+      </div>
+      <div style="display:flex;gap:7px;align-items:center">
+        <button class="btn btn-outline btn-sm" onclick="editarProyectoAbierto()">✏️ Editar</button>
+        <button class="btn btn-red btn-sm" id="md-del">🗑 Eliminar</button>
+        <button class="modal-close" onclick="closeM('m-detail')">✕</button>
+      </div>
+    </div>
+    <div class="tabs" id="mdtabs">
+      <div class="tab on" data-tab="resumen" onclick="mdTab(this)">Resumen</div>
+      <div class="tab" data-tab="fotos" onclick="mdTab(this)">📷 Fotos</div>
+      <div class="tab" data-tab="fases" onclick="mdTab(this)">Fases</div>
+      <div class="tab" data-tab="gastos" onclick="mdTab(this)">Gastos</div>
+      <div class="tab" data-tab="notas" onclick="mdTab(this)">⚡ Notas</div>
+      <div class="tab" data-tab="texto" onclick="mdTab(this)">Notas libres</div>
+    </div>
+    <div id="mdbody"></div>
+  </div>
+</div>
+
+<!-- ════════════ MODAL CONTACTO ════════════ -->
+<div class="overlay" id="m-contacto">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">Nuevo Contacto</div><button class="modal-close" onclick="closeM('m-contacto')">✕</button></div>
+    <div class="modal-body">
+      <div class="g2">
+        <div class="form-row"><label class="form-lbl">Nombre *</label><input class="fi" id="fc-n" placeholder="Nombre completo"></div>
+        <div class="form-row"><label class="form-lbl">Empresa</label><input class="fi" id="fc-e"></div>
+      </div>
+      <div class="g2">
+        <div class="form-row"><label class="form-lbl">Sector</label>
+          <select class="fs" id="fc-s">
+            <option value="legal">⚖️ Legal</option><option value="arq">📐 Arquitecto</option>
+            <option value="obra">🔨 Obra</option><option value="elect">⚡ Electricista</option>
+            <option value="font">🔧 Fontanero</option><option value="dis">🎨 Diseño</option>
+            <option value="otro">📌 Otro</option>
+          </select>
+        </div>
+        <div class="form-row"><label class="form-lbl">Teléfono</label><input class="fi" id="fc-t" placeholder="+34 600 000 000" type="tel"></div>
+      </div>
+      <div class="form-row"><label class="form-lbl">Email</label><input class="fi" id="fc-m" type="email"></div>
+      <div class="form-row"><label class="form-lbl">Notas</label><textarea class="ft" id="fc-no" style="min-height:50px"></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline btn-sm" onclick="closeM('m-contacto')">Cancelar</button>
+      <button class="btn btn-gold btn-sm" onclick="guardarContacto()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ MODAL USUARIO ════════════ -->
+<div class="overlay" id="m-usuario">
+  <div class="modal sm">
+    <div class="modal-head"><div class="modal-title">Nuevo Usuario</div><button class="modal-close" onclick="closeM('m-usuario')">✕</button></div>
+    <div class="modal-body">
+      <div class="g2">
+        <div class="form-row"><label class="form-lbl">Nombre *</label><input class="fi" id="fu-n" placeholder="Nombre y apellido"></div>
+        <div class="form-row"><label class="form-lbl">Rol</label>
+          <select class="fs" id="fu-r">
+            <option value="operario">Operario</option>
+            <option value="encargado">Encargado</option>
+            <option value="admin">Administrador</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row"><label class="form-lbl">Email *</label><input type="email" class="fi" id="fu-e"></div>
+      <div class="form-row"><label class="form-lbl">Contraseña *</label><input type="password" class="fi" id="fu-p" placeholder="Mínimo 8 caracteres"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline btn-sm" onclick="closeM('m-usuario')">Cancelar</button>
+      <button class="btn btn-gold btn-sm" onclick="guardarUsuario()">Crear Usuario</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ LIGHTBOX ════════════ -->
+<div class="lightbox" id="lightbox" onclick="e=>{if(e.target===this)closeLightbox()}">
+  <button class="lb-close" onclick="closeLightbox()">✕</button>
+  <img id="lb-img" src="" alt="">
+  <div class="lightbox-nav">
+    <button class="lb-btn" onclick="lbPrev()">‹</button>
+    <span class="lb-counter" id="lb-counter"></span>
+    <button class="lb-btn" onclick="lbNext()">›</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- ══════════════════════════════════════════════════════════
+   JAVASCRIPT PRINCIPAL
+══════════════════════════════════════════════════════════ -->
+<script>
+/* ═══ CONFIGURACIÓN SUPABASE ═══ */
+const SUPA_URL = 'https://srifacedtbzqmzsuiqhq.supabase.co'
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyaWZhY2VkdGJ6cW16c3VpcWhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MDYwOTYsImV4cCI6MjA5MzE4MjA5Nn0.3pJBNq0VWBmqEplPLae8WuqJq-cykjZCHpKY4HdrabU'
+
+const { createClient } = supabase
+const sb = createClient(SUPA_URL, SUPA_KEY)
+
+/* ═══ ESTADO GLOBAL ═══ */
+let ME = null, PERFIL = null
+let PROYECTOS = [], FASES = [], NOTAS = [], CONTACTOS = []
+let curProj = null, curTab = 'resumen'
+let tplSec = 'all', projSec = 'all'
+let gIsUrg = false, gFiltMode = 'all', gProjId = null
+let dragIdx = null
+let gastoEditando = null
+let filtroTipoGasto = 'all'
+let filtroEstadoProj = 'all'
+let filtroSectorCt = 'all'
+let projPendingPhotos = []  // fotos pendientes de subir
+let projEditId = null        // id del proyecto en edición
+
+// Lightbox
+let lbPhotos = [], lbIdx = 0
+
+const EMOJIS = ['🏢','🏠','🏗️','🏡','🏬','🏚️','🏛️','🏘️']
+const THUMBS = ['thumb-gold','thumb-sage','thumb-rust','thumb-sky','thumb-lav']
+const SMAP = {
+  legal:{l:'Legal',c:'s-legal',i:'⚖️'},
+  arq:{l:'Arquitecto',c:'s-arq',i:'📐'},
+  obra:{l:'Obra',c:'s-obra',i:'🔨'},
+  elect:{l:'Electricista',c:'s-elect',i:'⚡'},
+  font:{l:'Fontanero',c:'s-font',i:'🔧'},
+  dis:{l:'Diseño',c:'s-dis',i:'🎨'}
+}
+const STATUS = {
+  neg:{l:'En Negociación',c:'bs-neg'},
+  ref:{l:'En Reforma',c:'bs-ref'},
+  act:{l:'En Venta',c:'bs-act'},
+  fin:{l:'Finalizado',c:'bs-fin'}
+}
+const CATM = {
+  material:{l:'Material',i:'🧱',nc:'nt-material',col:'var(--rust)'},
+  manoobra:{l:'Mano obra',i:'👷',nc:'nt-manoobra',col:'var(--sage)'},
+  legal:{l:'Legal',i:'⚖️',nc:'nt-legal',col:'var(--sky)'},
+  licencias:{l:'Licencias',i:'📋',nc:'nt-licencias',col:'var(--lav)'},
+  gasto:{l:'Gasto',i:'💶',nc:'nt-gasto',col:'var(--red)'},
+  proveedor:{l:'Proveedor',i:'🚛',nc:'nt-proveedor',col:'var(--gold)'},
+  admin:{l:'Admin',i:'📁',nc:'nt-admin',col:'var(--muted)'},
+  urgente:{l:'Urgente',i:'🚨',nc:'nt-urgente',col:'#DC2020'},
+  otros:{l:'Otros',i:'📌',nc:'nt-otros',col:'#7A7A70'}
+}
+
+/* ═══ HELPERS UI ═══ */
+function toast(m, d=2600){
+  const t = document.getElementById('toast')
+  t.textContent = m; t.classList.add('show')
+  clearTimeout(t._); t._ = setTimeout(() => t.classList.remove('show'), d)
+}
+function openM(id){ document.getElementById(id).classList.add('on') }
+function closeM(id){ document.getElementById(id).classList.remove('on') }
+function fE(n){ return (n||0).toLocaleString('es-ES', {minimumFractionDigits:0, maximumFractionDigits:0}) + ' €' }
+function fD(d){ if(!d)return'—'; try{ return new Date(d).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'}) }catch{return d} }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+function stag(s){ const m=SMAP[s]||{l:s,c:'',i:'?'}; return `<span class="stag ${m.c}">${m.i} ${m.l}</span>` }
+function pProg(p){
+  const f = FASES.length
+  if(!f) return 0
+  const done = (p.phases_done||[]).length
+  return Math.round((done/f)*100)
+}
+function ring(pct){
+  const r=40, c=2*Math.PI*r, d=(pct/100)*c
+  return `<div class="ring-wrap" style="width:96px;height:96px"><svg width="96" height="96" viewBox="0 0 96 96"><circle cx="48" cy="48" r="${r}" fill="none" stroke="var(--line)" stroke-width="7"/><circle cx="48" cy="48" r="${r}" fill="none" stroke="var(--gold)" stroke-width="7" stroke-linecap="round" stroke-dasharray="${d} ${c}"/></svg><span class="ring-val" style="color:var(--gold);font-size:17px;font-weight:800">${pct}%</span></div>`
+}
+function setLoad(v){
+  document.getElementById('sdot').classList.toggle('loading',v)
+  document.getElementById('slbl').textContent = v ? 'Cargando…' : 'Conectado'
+}
+function updBadge(){
+  const c = NOTAS.filter(n=>n.urgente&&!n.done).length
+  const b = document.getElementById('nbadge')
+  b.style.display = c ? 'inline' : 'none'
+  b.textContent = c > 9 ? '9+' : String(c)
+}
+function fillProjSel(id, empty=true){
+  const s = document.getElementById(id); if(!s) return
+  const v = s.value
+  s.innerHTML = (empty ? '<option value="">— Sin proyecto —</option>' : '') +
+    PROYECTOS.map(p => `<option value="${p.id}">${esc(p.nombre)}</option>`).join('')
+  if(v) s.value = v
+}
+function ms(l,v){
+  return `<div style="background:var(--warm);padding:11px;border-radius:9px"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:3px">${l}</div><div style="font-size:13px;font-weight:700;font-family:'Syne',sans-serif">${v}</div></div>`
+}
+function sc(ico, val, lbl, sub, col='var(--gold)'){
+  return `<div class="stat-card"><div class="stat-ico">${ico}</div><div class="stat-val" style="color:${col}">${val}</div><div class="stat-lbl">${lbl}</div>${sub?`<div class="stat-sub">${sub}</div>`:''}</div>`
+}
+
+/* ═══ SIDEBAR MOBILE ═══ */
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('mob-open')
+  document.getElementById('sidebar-overlay').classList.add('mob-open')
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('mob-open')
+  document.getElementById('sidebar-overlay').classList.remove('mob-open')
+}
+
+/* ═══ OVERLAY CLICK CLOSE ═══ */
+document.querySelectorAll('.overlay').forEach(o => {
+  o.addEventListener('click', e => { if(e.target===o) o.classList.remove('on') })
+})
+
+/* ======= LOGIN / AUTH CONSOLIDADO ======= */
+// Usar el cliente global `sb` (ya creado en el archivo con SUPA_URL / SUPA_KEY)
+async function checkAuthAndInit(){
+  try{
+    const { data: { session } } = await sb.auth.getSession();
+    if(session){
+      document.getElementById('login-screen') && (document.getElementById('login-screen').style.display = 'none');
+      document.getElementById('app') && (document.getElementById('app').style.display = 'flex');
+      // Inicializa la app una sola vez
+      if(typeof initApp === 'function') await initApp();
+    } else {
+      document.getElementById('login-screen') && (document.getElementById('login-screen').style.display = 'flex');
+      document.getElementById('app') && (document.getElementById('app').style.display = 'none');
+    }
+  }catch(err){ console.error('checkAuth error', err) }
+}
+
+// Llamada inicial
+checkAuthAndInit();
+
+// Un único listener del formulario de login
+const loginForm = document.getElementById('login-form');
+if(loginForm){
+  loginForm.addEventListener('submit', async function(e){
+    e.preventDefault();
+    const email = document.getElementById('login-email')?.value?.trim();
+    const password = document.getElementById('login-pass')?.value;
+    if(!email || !password){
+      const el = document.getElementById('login-error'); if(el) el.textContent = 'Completa ambos campos';
+      return;
+    }
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if(error){
+      const el = document.getElementById('login-error'); if(el) el.textContent = error.message || 'Error autenticando';
+      console.error('login error', error);
+      return;
+    }
+    // Login correcto — comprobar sesión e inicializar
+    await checkAuthAndInit();
+  });
+}
+
+// Logout global (usa el botón que ya llama a doLogout())
+window.doLogout = async function(){
+  try{ await sb.auth.signOut(); }catch(e){console.error(e)}
+  checkAuthAndInit();
+}
+</script>
+
+<!-- ...existing code... -->
+
+
