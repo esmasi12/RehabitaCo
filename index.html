@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0F0F0D">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>RehabitaCo — Gestión de Obras</title>
@@ -583,6 +584,195 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
   background:var(--paper);transition:var(--trans);user-select:none;
 }
 .fpill.on{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.feed-search{
+  flex:1;min-width:80px;background:var(--warm);border:1px solid var(--line);
+  border-radius:7px;padding:5px 9px;font-size:12px;color:var(--ink);outline:none;
+}
+.nota-feed{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:7px}
+.nota-card{
+  background:var(--paper);border:1px solid var(--line);border-radius:10px;
+  padding:11px 13px;animation:sli .18s ease;position:relative;overflow:hidden;
+  transition:var(--trans);
+}
+.nota-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  border-radius:3px 0 0 3px;background:var(--nc,var(--muted));
+}
+.nota-card:hover{background:#fff;box-shadow:0 3px 12px var(--shadow)}
+.nota-card.done-c{opacity:.4}
+.nota-card.done-c .ntxt{text-decoration:line-through;color:var(--muted)}
+@keyframes sli{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.ntop{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
+.ndone-btn{
+  width:19px;height:19px;border-radius:50%;border:1.5px solid var(--line);
+  background:#fff;cursor:pointer;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;color:transparent;transition:.18s;margin-top:2px;
+}
+.ndone-btn:hover{border-color:var(--sage);color:var(--sage)}
+.nota-card.done-c .ndone-btn{background:var(--sage);border-color:var(--sage);color:#fff}
+.ntxt{flex:1;font-size:13px;line-height:1.5}
+.ndel{background:none;border:none;cursor:pointer;font-size:11px;color:var(--muted);padding:2px 4px;border-radius:4px;opacity:.35;transition:.15s}
+.ndel:hover{color:var(--red);opacity:1}
+.ntags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:5px}
+.ntag{
+  display:inline-flex;align-items:center;gap:3px;padding:2px 7px;
+  border-radius:20px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;
+}
+.nt-urgente{background:rgba(220,32,32,.1);color:#DC2020}
+.nt-material{background:rgba(194,92,58,.1);color:var(--rust)}
+.nt-manoobra{background:rgba(78,124,90,.1);color:var(--sage)}
+.nt-legal{background:rgba(58,110,168,.1);color:var(--sky)}
+.nt-licencias{background:rgba(122,110,168,.1);color:var(--lav)}
+.nt-gasto{background:rgba(220,79,79,.1);color:var(--red)}
+.nt-proveedor{background:rgba(212,168,71,.1);color:var(--gold)}
+.nt-admin{background:rgba(154,143,128,.1);color:var(--muted)}
+.nt-otros{background:rgba(90,90,80,.08);color:#7A7A70}
+.nmeta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:10px;color:var(--muted)}
+.nfase{
+  background:rgba(212,168,71,.07);border:1px solid rgba(212,168,71,.18);
+  color:var(--gold);font-size:9px;font-weight:600;padding:2px 7px;
+  border-radius:4px;margin-top:4px;display:inline-block;
+}
+.urg-banner{background:rgba(220,32,32,.05);border-bottom:1px solid rgba(220,32,32,.1);padding:7px 12px;display:none;flex-shrink:0}
+.urg-banner.has{display:block}
+.urg-chips{display:flex;gap:5px;overflow-x:auto;padding-bottom:1px}
+.urg-chip{
+  flex-shrink:0;background:rgba(220,32,32,.07);
+  border:1px solid rgba(220,32,32,.12);border-radius:20px;
+  padding:3px 9px;font-size:10px;color:#DC3030;white-space:nowrap;
+}
+.spinn{
+  width:14px;height:14px;border:2px solid rgba(15,15,13,.15);
+  border-top-color:var(--ink);border-radius:50%;
+  animation:spin .6s linear infinite;display:none;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ═══════════════════════════════════════════════════════════
+   RING / EMPTY / LOADER / TOAST
+═══════════════════════════════════════════════════════════ */
+.ring-wrap{position:relative;display:inline-flex;align-items:center;justify-content:center}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-val{position:absolute;font-family:'Syne',sans-serif;font-size:17px;font-weight:800}
+.empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty-ico{font-size:34px;margin-bottom:10px;opacity:.7}
+.empty h3{font-family:'Syne',sans-serif;font-size:14px;margin-bottom:4px;color:var(--ink3)}
+.empty p{font-size:12px;line-height:1.5}
+.loader{
+  display:flex;align-items:center;justify-content:center;
+  padding:40px;color:var(--muted);font-size:12.5px;gap:8px;
+}
+.loader::before{
+  content:'';width:16px;height:16px;
+  border:2px solid var(--line);border-top-color:var(--gold);
+  border-radius:50%;animation:spin .7s linear infinite;
+}
+#toast{
+  position:fixed;bottom:20px;right:20px;
+  background:var(--ink);color:#fff;padding:10px 16px;
+  border-radius:10px;font-size:12px;font-weight:500;
+  z-index:9999;opacity:0;transform:translateY(8px);transition:.24s;
+  pointer-events:none;box-shadow:0 6px 22px rgba(0,0,0,.28);
+  max-width:280px;line-height:1.4;
+}
+#toast.show{opacity:1;transform:translateY(0)}
+
+/* ═══════════════════════════════════════════════════════════
+   NOTA DE TEXTO
+═══════════════════════════════════════════════════════════ */
+.note-item{
+  padding:12px 14px;background:var(--warm);border-radius:9px;
+  margin-bottom:8px;border-left:3px solid var(--gold);
+  position:relative;
+}
+.note-date{font-size:10px;color:var(--muted);margin-bottom:3px}
+.note-text{font-size:13px;line-height:1.5}
+.note-del{position:absolute;top:8px;right:8px;opacity:0;transition:.15s}
+.note-item:hover .note-del{opacity:1}
+
+/* ═══════════════════════════════════════════════════════════
+   SEGUIMIENTO KANBAN
+═══════════════════════════════════════════════════════════ */
+.seg-card{
+  background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px;margin-bottom:14px;
+  transition:var(--trans);
+}
+.seg-card:hover{box-shadow:0 4px 16px var(--shadow2)}
+
+/* ═══════════════════════════════════════════════════════════
+   CONTACTOS
+═══════════════════════════════════════════════════════════ */
+.ct-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.ct-card{
+  background:var(--paper);border:1px solid var(--line);
+  border-radius:12px;padding:14px;
+  transition:var(--trans);position:relative;
+}
+.ct-card:hover{box-shadow:0 4px 14px var(--shadow);border-color:rgba(212,168,71,.2)}
+.ct-actions{position:absolute;top:10px;right:10px;opacity:0;display:flex;gap:4px;transition:.15s}
+.ct-card:hover .ct-actions{opacity:1}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE — Tablet
+═══════════════════════════════════════════════════════════ */
+@media(max-width:1200px){
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:1024px){
+  :root{--sidebar-w:220px}
+  .content{padding:20px 22px}
+  .notas-shell{grid-template-columns:260px 1fr}
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE — Mobile
+═══════════════════════════════════════════════════════════ */
+@media(max-width:860px){
+  .notas-shell{
+    grid-template-columns:1fr;
+    height:auto;
+    margin:-20px -18px;
+  }
+  .notas-in{min-height:260px}
+  .notas-feed-col{min-height:50vh}
+  .topbar-search{display:none}
+}
+@media(max-width:720px){
+  :root{--sidebar-w:0px}
+  .sidebar{width:260px;transform:translateX(-100%)}
+  .sidebar.mob-open{transform:translateX(0);box-shadow:4px 0 20px rgba(0,0,0,.45)}
+  .sidebar-overlay.mob-open{display:block}
+  .main{margin-left:0;width:100%}
+  .menu-toggle{display:flex}
+  .content{padding:16px 14px}
+  .topbar{padding:0 14px}
+  .proj-grid{grid-template-columns:1fr}
+  .g3{grid-template-columns:1fr 1fr}
+  .modal.xl{width:100%;height:100%;max-height:100vh;border-radius:0}
+  .stats-row{grid-template-columns:repeat(2,1fr);gap:10px}
+  .sec-head{flex-direction:column;align-items:flex-start;gap:10px}
+  .filter-bar{gap:6px}
+  .g4{grid-template-columns:1fr 1fr}
+}
+@media(max-width:480px){
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .tabs{padding:0 10px}
+  .modal-body{padding:14px}
+  .modal-foot{padding:10px 14px 14px}
+}
+
+/* ═══════════════════════════════════════════════════════════
+   EXPORT / PRINT
+═══════════════════════════════════════════════════════════ */
+@media print{
+  .sidebar,.topbar,.modal,.overlay,.btn,#toast{display:none!important}
+  .main{margin:0;width:100%}
+  .content{padding:0}
+}
+</style>
 
 /* ═══════════════════════════════════════════════════════════
    LOGIN SCREEN
@@ -593,80 +783,50 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
   display:flex;align-items:center;justify-content:center;
   z-index:9999;padding:20px;
 }
-.login-wrap{
-  width:100%;max-width:380px;
-}
-.login-logo{
-  font-family:'Syne',sans-serif;font-size:28px;font-weight:800;
-  color:#fff;letter-spacing:-.5px;margin-bottom:4px;
-}
+.login-wrap{width:100%;max-width:380px}
+.login-logo{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#fff;letter-spacing:-.5px;margin-bottom:4px}
 .login-logo span{color:var(--gold)}
-.login-tag{
-  font-size:9px;letter-spacing:2.5px;text-transform:uppercase;
-  color:var(--muted);margin-bottom:36px;
-}
-.login-card{
-  background:var(--ink2);border:1px solid rgba(255,255,255,.07);
-  border-radius:18px;padding:32px 28px;
-}
-.login-title{
-  font-family:'Syne',sans-serif;font-size:17px;font-weight:700;
-  color:#fff;margin-bottom:6px;
-}
+.login-tag{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:36px}
+.login-card{background:var(--ink2);border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:32px 28px}
+.login-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:6px}
 .login-sub{font-size:12px;color:var(--muted);margin-bottom:26px}
 .login-field{margin-bottom:14px}
-.login-field label{
-  display:block;font-size:10px;font-weight:700;text-transform:uppercase;
-  letter-spacing:.8px;color:rgba(255,255,255,.35);margin-bottom:6px;
-}
-.login-field input{
-  width:100%;padding:12px 14px;
-  background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.09);
-  border-radius:10px;font-size:14px;color:#fff;outline:none;transition:var(--trans);
-}
+.login-field label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.35);margin-bottom:6px}
+.login-field input{width:100%;padding:12px 14px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.09);border-radius:10px;font-size:14px;color:#fff;outline:none;transition:var(--trans)}
 .login-field input:focus{border-color:var(--gold);background:rgba(255,255,255,.08)}
 .login-field input::placeholder{color:rgba(255,255,255,.18)}
-.login-btn{
-  width:100%;padding:13px;margin-top:8px;
-  background:var(--gold);color:var(--ink);
-  font-size:14px;font-weight:700;font-family:'Syne',sans-serif;
-  border:none;border-radius:10px;cursor:pointer;transition:var(--trans);
-}
+.login-btn{width:100%;padding:13px;margin-top:8px;background:var(--gold);color:var(--ink);font-size:14px;font-weight:700;font-family:'Syne',sans-serif;border:none;border-radius:10px;cursor:pointer;transition:var(--trans)}
 .login-btn:hover{background:var(--gold2);transform:translateY(-1px)}
 .login-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.login-err{
-  font-size:12px;color:#ff7070;margin-top:12px;
-  min-height:18px;text-align:center;line-height:1.4;
-}
-.login-hint{
-  font-size:10px;color:rgba(255,255,255,.12);
-  text-align:center;margin-top:18px;line-height:1.6;
-}
-.login-spinner{
-  display:inline-block;width:14px;height:14px;
-  border:2px solid rgba(15,15,13,.2);border-top-color:var(--ink);
-  border-radius:50%;animation:spin .6s linear infinite;
-  vertical-align:middle;margin-right:6px;
-}
+.login-err{font-size:12px;color:#ff7070;margin-top:12px;min-height:18px;text-align:center;line-height:1.4}
+.login-hint{font-size:10px;color:rgba(255,255,255,.12);text-align:center;margin-top:18px;line-height:1.6}
 </style>
 </head>
 <body>
-  <!-- Añade esto justo después de <body> y antes de <div id="app"...> -->
-<div id="login-screen" style="display:flex;align-items:center;justify-content:center;min-height:100vh;position:fixed;inset:0;z-index:99999;background:var(--ink);">
-  <form id="login-form" class="login-card" style="min-width:320px;box-shadow:0 2px 12px #0002;">
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen" style="display:flex">
+  <div class="login-wrap">
     <div class="login-logo">Rehabi<span>ta</span>Co</div>
-    <div class="login-title">Iniciar sesión</div>
-    <div class="login-field">
-      <label for="login-email">Correo</label>
-      <input id="login-email" type="email" placeholder="Correo" required autocomplete="username">
+    <div class="login-tag">Gestión de Obras &amp; Proyectos</div>
+    <div class="login-card">
+      <div class="login-title">Bienvenido</div>
+      <div class="login-sub">Accede a tu panel de control</div>
+      <form id="login-form" onsubmit="return false">
+        <div class="login-field">
+          <label for="login-email">Correo electrónico</label>
+          <input id="login-email" type="email" placeholder="tu@email.com" required autocomplete="username">
+        </div>
+        <div class="login-field">
+          <label for="login-pass">Contraseña</label>
+          <input id="login-pass" type="password" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="login-btn" id="login-btn">Entrar →</button>
+        <div id="login-error" class="login-err"></div>
+      </form>
+      <div class="login-hint">RehabitaCo v2.0 · Acceso restringido</div>
     </div>
-    <div class="login-field">
-      <label for="login-pass">Contraseña</label>
-      <input id="login-pass" type="password" placeholder="Contraseña" required autocomplete="current-password">
-    </div>
-    <button type="submit" class="login-btn">Entrar</button>
-    <div id="login-error" class="login-err"></div>
-  </form>
+  </div>
 </div>
 
 <!-- APP -->
@@ -1099,11 +1259,14 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
 <!-- ══════════════════════════════════════════════════════════
    JAVASCRIPT PRINCIPAL
 ══════════════════════════════════════════════════════════ -->
+
+<!-- ══════════════════════════════════════════════════════════
+   JAVASCRIPT PRINCIPAL
+══════════════════════════════════════════════════════════ -->
 <script>
 /* ═══ CONFIGURACIÓN SUPABASE ═══ */
 const SUPA_URL = 'https://srifacedtbzqmzsuiqhq.supabase.co'
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyaWZhY2VkdGJ6cW16c3VpcWhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MDYwOTYsImV4cCI6MjA5MzE4MjA5Nn0.3pJBNq0VWBmqEplPLae8WuqJq-cykjZCHpKY4HdrabU'
-
 const { createClient } = supabase
 const sb = createClient(SUPA_URL, SUPA_KEY)
 
@@ -1118,10 +1281,8 @@ let gastoEditando = null
 let filtroTipoGasto = 'all'
 let filtroEstadoProj = 'all'
 let filtroSectorCt = 'all'
-let projPendingPhotos = []  // fotos pendientes de subir
-let projEditId = null        // id del proyecto en edición
-
-// Lightbox
+let projPendingPhotos = []
+let projEditId = null
 let lbPhotos = [], lbIdx = 0
 
 const EMOJIS = ['🏢','🏠','🏗️','🏡','🏬','🏚️','🏛️','🏘️']
@@ -1172,7 +1333,7 @@ function pProg(p){
 }
 function ring(pct){
   const r=40, c=2*Math.PI*r, d=(pct/100)*c
-  return `<div class="ring-wrap" style="width:96px;height:96px"><svg width="96" height="96" viewBox="0 0 96 96"><circle cx="48" cy="48" r="${r}" fill="none" stroke="var(--line)" stroke-width="7"/><circle cx="48" cy="48" r="${r}" fill="none" stroke="var(--gold)" stroke-width="7" stroke-linecap="round" stroke-dasharray="${d} ${c}"/></svg><span class="ring-val" style="color:var(--gold);font-size:17px;font-weight:800">${pct}%</span></div>`
+  return `<div class="ring-wrap" style="width:96px;height:96px"><svg width="96" height="96" viewBox="0 0 96 96"><circle cx="48" cy="48" r="${r}" fill="none" stroke="var(--line)" stroke-width="7"/><circle cx="48" cy="48" r="${r}" fill="none" stroke="var(--gold)" stroke-width="7" stroke-linecap="round" stroke-dasharray="${d} ${c}"/></svg><span class="ring-val" style="color:var(--gold);font-size:16px">${pct}%</span></div>`
 }
 function setLoad(v){
   document.getElementById('sdot').classList.toggle('loading',v)
@@ -1213,55 +1374,1260 @@ document.querySelectorAll('.overlay').forEach(o => {
   o.addEventListener('click', e => { if(e.target===o) o.classList.remove('on') })
 })
 
-/* ======= LOGIN / AUTH CONSOLIDADO ======= */
-// Usar el cliente global `sb` (ya creado en el archivo con SUPA_URL / SUPA_KEY)
+
+/* ═══════════════════════════════════════════════════════════
+   AUTH — LOGIN / LOGOUT
+═══════════════════════════════════════════════════════════ */
 async function checkAuthAndInit(){
   try{
-    const { data: { session } } = await sb.auth.getSession();
+    const { data:{ session } } = await sb.auth.getSession()
+    const ls = document.getElementById('login-screen')
+    const app = document.getElementById('app')
     if(session){
-      document.getElementById('login-screen') && (document.getElementById('login-screen').style.display = 'none');
-      document.getElementById('app') && (document.getElementById('app').style.display = 'flex');
-      // Inicializa la app una sola vez
-      if(typeof initApp === 'function') await initApp();
+      if(ls) ls.style.display = 'none'
+      if(app) app.style.display = 'flex'
+      await initApp()
     } else {
-      document.getElementById('login-screen') && (document.getElementById('login-screen').style.display = 'flex');
-      document.getElementById('app') && (document.getElementById('app').style.display = 'none');
+      if(ls) ls.style.display = 'flex'
+      if(app) app.style.display = 'none'
     }
   }catch(err){ console.error('checkAuth error', err) }
 }
 
-// Llamada inicial
-checkAuthAndInit();
-
-// Un único listener del formulario de login
-const loginForm = document.getElementById('login-form');
-if(loginForm){
-  loginForm.addEventListener('submit', async function(e){
-    e.preventDefault();
-    const email = document.getElementById('login-email')?.value?.trim();
-    const password = document.getElementById('login-pass')?.value;
-    if(!email || !password){
-      const el = document.getElementById('login-error'); if(el) el.textContent = 'Completa ambos campos';
-      return;
-    }
-    const { error } = await sb.auth.signInWithPassword({ email, password });
+// Login form handler
+const _loginForm = document.getElementById('login-form')
+if(_loginForm){
+  _loginForm.addEventListener('submit', async function(e){
+    e.preventDefault()
+    const btn = document.getElementById('login-btn')
+    const errEl = document.getElementById('login-error')
+    const email = document.getElementById('login-email')?.value?.trim()
+    const password = document.getElementById('login-pass')?.value
+    if(!email || !password){ if(errEl) errEl.textContent = 'Completa ambos campos'; return }
+    if(btn){ btn.disabled = true; btn.textContent = 'Entrando…' }
+    if(errEl) errEl.textContent = ''
+    const { error } = await sb.auth.signInWithPassword({ email, password })
     if(error){
-      const el = document.getElementById('login-error'); if(el) el.textContent = error.message || 'Error autenticando';
-      console.error('login error', error);
-      return;
+      if(errEl) errEl.textContent = error.message === 'Email logins are disabled'
+        ? 'Activa el proveedor Email en Supabase → Authentication → Providers'
+        : (error.message || 'Error al iniciar sesión')
+      if(btn){ btn.disabled = false; btn.textContent = 'Entrar →' }
+      return
     }
-    // Login correcto — comprobar sesión e inicializar
-    await checkAuthAndInit();
-  });
+    await checkAuthAndInit()
+  })
 }
 
-// Logout global (usa el botón que ya llama a doLogout())
-window.doLogout = async function(){
-  try{ await sb.auth.signOut(); }catch(e){console.error(e)}
-  checkAuthAndInit();
+async function doLogout(){
+  try{ await sb.auth.signOut() }catch(e){ console.error(e) }
+  PROYECTOS = []; FASES = []; NOTAS = []; CONTACTOS = []; ME = null; PERFIL = null
+  const ls = document.getElementById('login-screen')
+  const app = document.getElementById('app')
+  if(ls) ls.style.display = 'flex'
+  if(app) app.style.display = 'none'
+  const btn = document.getElementById('login-btn')
+  if(btn){ btn.disabled = false; btn.textContent = 'Entrar →' }
+  const errEl = document.getElementById('login-error')
+  if(errEl) errEl.textContent = ''
 }
+
+/* ═══════════════════════════════════════════════════════════
+   INIT APP — carga datos y arranca la UI
+═══════════════════════════════════════════════════════════ */
+async function initApp(){
+  // Obtener usuario autenticado
+  const { data:{ user } } = await sb.auth.getUser()
+  ME = user
+
+  // Cargar perfil
+  const { data:perfil } = await sb.from('perfiles').select('*').eq('id', user.id).single()
+  PERFIL = perfil
+
+  if(perfil){
+    const n = perfil.nombre || user.email
+    const uname = document.getElementById('uname'); if(uname) uname.textContent = n
+    const urol  = document.getElementById('urol');  if(urol)  urol.textContent  = perfil.rol || '—'
+    const uav   = document.getElementById('uav');   if(uav)   uav.textContent   = n[0].toUpperCase()
+    // Mostrar/ocultar sección admin
+    document.querySelectorAll('.admin-only').forEach(el => {
+      el.style.display = perfil.rol === 'admin' ? '' : 'none'
+    })
+  }
+
+  await loadBase()
+  renderDash()
+
+  // Realtime: notas
+  sb.channel('notas-rt').on('postgres_changes',{event:'*',schema:'public',table:'notas_rapidas'}, async () => {
+    const {data} = await sb.from('notas_rapidas').select('*,proyectos(nombre)').eq('done',false).order('created_at',{ascending:false}).limit(200)
+    NOTAS = data||[]; updBadge()
+    if(document.getElementById('v-dashboard')?.classList.contains('on')) renderDash()
+    if(document.getElementById('v-notas')?.classList.contains('on')) gRender()
+  }).subscribe()
+}
+
+// Iniciar al cargar la página
+checkAuthAndInit()
+
+async function loadBase(){
+  setLoad(true)
+  try{
+    const [pr,fa,no,ct] = await Promise.all([
+      sb.from('proyectos').select('*,proyecto_fases(fase_id,done),gastos(*)').order('created_at',{ascending:false}),
+      sb.from('fases_plantilla').select('*').eq('activo',true).order('orden'),
+      sb.from('notas_rapidas').select('*,proyectos(nombre)').eq('done',false).order('created_at',{ascending:false}).limit(200),
+      sb.from('contactos').select('*').order('nombre')
+    ])
+    PROYECTOS = pr.data||[]; FASES = fa.data||[]; NOTAS = no.data||[]; CONTACTOS = ct.data||[]
+    // Normalise phases_done
+    PROYECTOS.forEach(p => {
+      p.phases_done = (p.proyecto_fases||[]).filter(f=>f.done).map(f=>f.fase_id)
+    })
+    updBadge(); fillProjSel('gpsel')
+  }catch(e){ console.error(e) }
+  finally{ setLoad(false) }
+}
+
+// Auth check is handled by checkAuthAndInit() above
+
+/* ═══ NAVEGACIÓN ═══ */
+const VT = {dashboard:'Resumen',proyectos:'Proyectos',fases:'Plantilla de Fases',seguimiento:'Seguimiento',notas:'⚡ Notas Rápidas',gastos:'Control de Gastos',contactos:'Contactos',usuarios:'Usuarios'}
+const CTA = {dashboard:'+ Nuevo Proyecto',proyectos:'+ Nuevo',fases:'+ Añadir Fase',seguimiento:'—',notas:'—',gastos:'—',contactos:'+ Contacto',usuarios:'+ Usuario'}
+
+function go(el){
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('on'))
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('on'))
+  el.classList.add('on')
+  const vn = el.dataset.v
+  document.getElementById('v-'+vn).classList.add('on')
+  document.getElementById('toph').textContent = VT[vn]||vn
+  const cta = document.getElementById('mcta')
+  cta.textContent = CTA[vn]||'+ Añadir'
+  cta.style.display = CTA[vn]==='—' ? 'none' : ''
+  if(window.innerWidth < 720) closeSidebar()
+  if(vn==='dashboard') renderDash()
+  if(vn==='proyectos') renderProyectos()
+  if(vn==='fases'){ tplSec='all'; renderFases() }
+  if(vn==='seguimiento') renderSeguimiento()
+  if(vn==='notas'){ fillProjSel('gpsel'); gRender(); gStats() }
+  if(vn==='gastos') renderGastos()
+  if(vn==='contactos') renderContactos()
+  if(vn==='usuarios') renderUsuarios()
+}
+
+function mainCta(){
+  const v = document.querySelector('.view.on')?.id?.replace('v-','')
+  if(v==='proyectos'||v==='dashboard') openNuevoProyecto()
+  else if(v==='fases') openAddFase()
+  else if(v==='contactos') openM('m-contacto')
+  else if(v==='usuarios') openM('m-usuario')
+}
+
+function handleGlobalSearch(val){
+  const v = val.toLowerCase().trim()
+  if(!v){ renderProyectos(); return }
+  const found = PROYECTOS.filter(p =>
+    p.nombre.toLowerCase().includes(v) ||
+    p.direccion?.toLowerCase().includes(v)
+  )
+  // Navegar a proyectos y filtrar
+  go(document.querySelector('[data-v=proyectos]'))
+  renderProyectosFiltered(found)
+}
+
+/* ═══ DASHBOARD ═══ */
+async function renderDash(){
+  const total = PROYECTOS.length
+  const enObra = PROYECTOS.filter(p=>p.estado==='ref').length
+  const inv = PROYECTOS.reduce((a,p)=>a+(p.precio||0)+(p.reforma||0),0)
+  const urg = NOTAS.filter(n=>n.urgente&&!n.done).length
+  const {data:gasData} = await sb.from('gastos').select('coste')
+  const totalGasto = (gasData||[]).reduce((a,g)=>a+(g.coste||0),0)
+
+  document.getElementById('dstats').innerHTML =
+    sc('🏗️',total,'Proyectos','','var(--ink)') +
+    sc('🔨',enObra,'En Obra','','var(--rust)') +
+    sc('💶',fE(inv),'Inversión Total','','var(--gold)') +
+    sc('🚨',urg,'Notas Urgentes','','var(--red)')
+
+  // Proyectos activos
+  const activos = PROYECTOS.filter(p=>p.estado!=='fin').slice(0,5)
+  document.getElementById('dproj').innerHTML = activos.length ?
+    activos.map(p => {
+      const prog = pProg(p)
+      const sc2 = STATUS[p.estado]||STATUS.neg
+      const thumb = p.fotos?.[0]
+      return `<div style="display:flex;align-items:center;gap:11px;padding:10px;border-radius:9px;cursor:pointer;transition:.18s" onmouseover="this.style.background='var(--warm)'" onmouseout="this.style.background=''" onclick="openDetalle('${p.id}')">
+        <div style="width:40px;height:40px;border-radius:8px;overflow:hidden;flex-shrink:0;${thumb?'':'background:var(--warm)'}">
+          ${thumb ? `<img src="${esc(thumb)}" style="width:100%;height:100%;object-fit:cover">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:20px">${p.emoji}</div>`}
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.nombre)}</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+            <div class="prog-bar" style="flex:1;height:3px"><div class="prog-fill" style="width:${prog}%"></div></div>
+            <span style="font-size:10px;font-weight:700;color:var(--gold)">${prog}%</span>
+          </div>
+        </div>
+        <span class="badge ${sc2.c}" style="margin-bottom:0;flex-shrink:0">${sc2.l}</span>
+      </div>`
+    }).join('') :
+    `<div class="empty"><div class="empty-ico">🏗️</div><h3>Sin proyectos activos</h3><p>Crea tu primer proyecto</p></div>`
+
+  // Notas urgentes
+  const urgNotas = NOTAS.filter(n=>n.urgente&&!n.done).slice(0,8)
+  document.getElementById('durg').innerHTML = urgNotas.length ?
+    urgNotas.map(n=>`<div style="padding:10px;border-radius:9px;background:rgba(220,79,79,.05);border:1px solid rgba(220,79,79,.1);margin-bottom:8px;cursor:pointer" onclick="go(document.querySelector('[data-v=notas]'))">
+      <div style="font-size:12px;line-height:1.4">${esc(n.texto.slice(0,80))}${n.texto.length>80?'…':''}</div>
+      ${n.proyectos?.nombre?`<div style="font-size:10px;color:var(--gold);margin-top:4px;font-weight:600">📍 ${esc(n.proyectos.nombre)}</div>`:''}
+    </div>`).join('') :
+    `<div class="empty"><div class="empty-ico">✅</div><h3>Sin urgentes</h3><p>Todo al día</p></div>`
+}
+
+/* ═══ PROYECTOS ═══ */
+function setEstadoFiltro(estado, el){
+  filtroEstadoProj = estado
+  document.querySelectorAll('.filter-chip[data-estado]').forEach(c => c.classList.remove('on'))
+  el.classList.add('on')
+  renderProyectos()
+}
+
+function renderProyectos(){
+  let projs = [...PROYECTOS]
+  const search = (document.getElementById('projSearch')?.value||'').toLowerCase().trim()
+  const sort = document.getElementById('projSort')?.value || 'newest'
+  if(filtroEstadoProj !== 'all') projs = projs.filter(p=>p.estado===filtroEstadoProj)
+  if(search) projs = projs.filter(p=>p.nombre.toLowerCase().includes(search)||p.direccion?.toLowerCase().includes(search))
+  projs = sortProjs(projs, sort)
+  renderProyectosFiltered(projs)
+  document.getElementById('proj-count-sub').textContent = `${projs.length} proyecto${projs.length!==1?'s':''}`
+}
+
+function renderProyectosFiltered(projs){
+  const c = document.getElementById('pgrid')
+  if(!projs.length){
+    c.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-ico">🔍</div><h3>Sin resultados</h3><p>Prueba otro filtro o búsqueda</p></div>'
+    return
+  }
+  c.innerHTML = projs.map(p => projCard(p)).join('')
+}
+
+function sortProjs(projs, sort){
+  if(sort==='newest') return projs
+  if(sort==='oldest') return [...projs].reverse()
+  if(sort==='name') return [...projs].sort((a,b)=>a.nombre.localeCompare(b.nombre))
+  if(sort==='price') return [...projs].sort((a,b)=>((b.precio||0)+(b.reforma||0))-((a.precio||0)+(a.reforma||0)))
+  return projs
+}
+
+function projCard(p){
+  const sc = STATUS[p.estado]||STATUS.neg
+  const prog = pProg(p)
+  const tot = (p.precio||0)+(p.reforma||0)
+  const fotos = p.fotos || []
+  const mainFoto = fotos[0]
+  const urg = NOTAS.filter(n=>n.proyecto_id===p.id&&n.urgente&&!n.done).length
+  return `<div class="proj-card" onclick="openDetalle('${p.id}')">
+    <div class="proj-thumb ${!mainFoto ? p.thumb||'thumb-gold' : ''}">
+      ${mainFoto
+        ? `<img src="${esc(mainFoto)}" alt="${esc(p.nombre)}" loading="lazy"><div class="proj-thumb-overlay"></div>`
+        : `<div class="proj-thumb-emoji">${p.emoji}</div>`
+      }
+      ${fotos.length > 1 ? `<div class="proj-photo-count">📷 ${fotos.length}</div>` : ''}
+      ${urg ? `<div style="position:absolute;top:8px;left:8px;background:var(--red);color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px">🚨 ${urg}</div>` : ''}
+    </div>
+    <div class="proj-body">
+      <span class="badge ${sc.c}"><span class="pulse"></span>${sc.l}</span>
+      <div class="proj-name">${esc(p.nombre)}</div>
+      <div class="proj-addr">📍 ${esc(p.direccion)}</div>
+      <div class="prog-bar"><div class="prog-fill ${p.estado==='fin'?'sage':''}" style="width:${prog}%"></div></div>
+      <div class="proj-meta">
+        <div class="proj-meta-item"><label>Inversión</label><span>${fE(tot)}</span></div>
+        <div class="proj-meta-item"><label>m²</label><span>${p.m2||'—'} m²</span></div>
+        <div class="proj-meta-item"><label>Fases</label><span>${(p.phases_done||[]).length}/${FASES.length}</span></div>
+        <div class="proj-meta-item"><label>Tipo</label><span>${p.tipo||'—'}</span></div>
+      </div>
+    </div>
+  </div>`
+}
+
+/* ═══ DETALLE PROYECTO ═══ */
+async function openDetalle(id){
+  curProj = id
+  const p = PROYECTOS.find(x=>x.id===id); if(!p) return
+  // Cargar gastos frescos
+  const {data:gs} = await sb.from('gastos').select('*').eq('proyecto_id',id).order('created_at',{ascending:false})
+  p.gastos = gs||[]
+  // Cargar fotos
+  if(!p.fotos) await loadProjFotos(p)
+  document.getElementById('md-tit').textContent = p.nombre
+  document.getElementById('md-adr').textContent = p.direccion
+  document.getElementById('md-del').onclick = () => eliminarProyecto(id)
+  // Reset tab
+  document.querySelectorAll('#mdtabs .tab').forEach(t => t.classList.remove('on'))
+  document.querySelector('#mdtabs .tab[data-tab="resumen"]').classList.add('on')
+  curTab = 'resumen'
+  renderMdTab('resumen', p)
+  openM('m-detail')
+}
+
+async function loadProjFotos(p){
+  const {data} = await sb.from('proyecto_fotos').select('*').eq('proyecto_id',p.id).order('orden')
+  p.fotos_obj = data || []
+  p.fotos = (data||[]).map(f => f.url)
+}
+
+function mdTab(el){
+  document.querySelectorAll('#mdtabs .tab').forEach(t => t.classList.remove('on'))
+  el.classList.add('on'); curTab = el.dataset.tab
+  const p = PROYECTOS.find(x=>x.id===curProj)
+  if(p) renderMdTab(curTab, p)
+}
+
+function renderMdTab(tab, p){
+  if(tab==='resumen') mdResumen(p)
+  if(tab==='fotos')   mdFotos(p)
+  if(tab==='fases')   mdFases(p)
+  if(tab==='gastos')  mdGastos(p)
+  if(tab==='notas')   mdNotas(p)
+  if(tab==='texto')   mdTexto(p)
+}
+
+function mdResumen(p){
+  const sc = STATUS[p.estado]||STATUS.neg
+  const prog = pProg(p)
+  const tot = (p.precio||0)+(p.reforma||0)
+  const gReg = (p.gastos||[]).reduce((a,g)=>a+(g.coste||0),0)
+  const gastoPorc = tot > 0 ? Math.round((gReg/tot)*100) : 0
+  const mainFoto = p.fotos?.[0]
+  document.getElementById('mdbody').innerHTML=`<div class="tab-body on" style="padding:18px">
+    ${mainFoto ? `<div style="height:160px;border-radius:10px;overflow:hidden;margin-bottom:16px;cursor:pointer" onclick="openLightbox(${JSON.stringify(p.fotos||[])},0)"><img src="${esc(mainFoto)}" style="width:100%;height:100%;object-fit:cover"></div>` : ''}
+    <div style="display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+          <span class="badge ${sc.c}"><span class="pulse"></span>${sc.l}</span>
+          <select class="fi" style="width:auto;font-size:11px;padding:4px 8px" onchange="cambiarEstado('${p.id}',this.value)">
+            ${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${p.estado===k?'selected':''}>${v.l}</option>`).join('')}
+          </select>
+        </div>
+        <div class="g3" style="margin-bottom:14px;gap:8px">
+          ${ms('Precio Compra',fE(p.precio))}
+          ${ms('Reforma',fE(p.reforma))}
+          ${ms('Inversión Total',fE(tot))}
+          ${ms('Gasto Registrado',fE(gReg))}
+          ${ms('m²',(p.m2||'—')+' m²')}
+          ${ms('Tipo',p.tipo||'—')}
+        </div>
+        <div class="g2" style="margin-bottom:14px;gap:8px">
+          <div>${ms('Inicio',fD(p.inicio))}</div>
+          <div>${ms('Fin Estimado',fD(p.fin_est))}</div>
+        </div>
+        ${p.notas?`<div style="background:var(--warm);padding:12px;border-radius:9px;border-left:3px solid var(--gold);font-size:13px;line-height:1.5;margin-bottom:12px">${esc(p.notas)}</div>`:''}
+        <div style="background:var(--warm);padding:10px 12px;border-radius:9px;margin-bottom:4px">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:6px">Desviación de Gasto</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="prog-bar" style="flex:1;height:6px"><div class="prog-fill ${gastoPorc>90?'':'sage'}" style="width:${Math.min(gastoPorc,100)}%;background:${gastoPorc>90?'var(--rust)':gastoPorc>70?'var(--gold)':'var(--sage)'}"></div></div>
+            <span style="font-size:12px;font-weight:700;color:${gastoPorc>90?'var(--rust)':gastoPorc>70?'var(--gold)':'var(--sage)'}">${gastoPorc}%</span>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center">
+        ${ring(prog)}
+        <div style="font-size:10px;color:var(--muted);margin-top:5px">${(p.phases_done||[]).length}/${FASES.length} fases</div>
+      </div>
+    </div>
+  </div>`
+}
+
+/* ═══ FOTOS ═══ */
+async function mdFotos(p){
+  if(!p.fotos_obj) await loadProjFotos(p)
+  const fotos = p.fotos_obj || []
+  document.getElementById('mdbody').innerHTML=`<div class="tab-body on" style="padding:18px">
+    <div style="margin-bottom:14px">
+      <div class="photo-upload-zone" id="detail-upload-zone"
+        ondragover="e=>{e.preventDefault();this.classList.add('drag-over')}"
+        ondragleave="e=>this.classList.remove('drag-over')"
+        ondrop="handlePhotoDrop(event,'detail','${p.id}')">
+        <input type="file" id="detail-file-input" accept="image/*" multiple onchange="handlePhotoSelect(event,'detail','${p.id}')">
+        <div class="puz-icon">📷</div>
+        <div class="puz-text">Añadir fotos al proyecto</div>
+        <div class="puz-hint">Arrastra o haz clic · JPG, PNG, WEBP</div>
+      </div>
+    </div>
+    ${fotos.length
+      ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px">
+          ${fotos.map((f,i)=>`
+            <div class="photo-thumb-wrap ${i===0?'main-photo':''}" style="aspect-ratio:1" onclick="openLightbox(${JSON.stringify(fotos.map(x=>x.url))},${i})">
+              <img src="${esc(f.url)}" alt="Foto ${i+1}" loading="lazy">
+              <button class="photo-del" onclick="event.stopPropagation();eliminarFoto('${f.id}','${p.id}')">✕</button>
+            </div>
+          `).join('')}
+        </div>`
+      : `<div class="empty"><div class="empty-ico">📷</div><h3>Sin fotos</h3><p>Sube imágenes del proyecto para documentarlo</p></div>`
+    }
+  </div>`
+}
+
+async function handlePhotoSelect(e, context, projId){
+  const files = Array.from(e.target.files)
+  if(!files.length) return
+  const pid = projId || curProj
+  if(context === 'detail'){
+    await uploadFotosToProject(files, pid)
+    const p = PROYECTOS.find(x=>x.id===pid)
+    if(p){ await loadProjFotos(p); mdFotos(p) }
+  } else {
+    // proj form preview (pending)
+    files.forEach(file => {
+      if(file.size > 5*1024*1024){ toast('⚠️ Foto muy grande: '+file.name); return }
+      projPendingPhotos.push(file)
+    })
+    renderProjPhotoPreview()
+  }
+  e.target.value = ''
+}
+
+function handlePhotoDrop(e, context, projId){
+  e.preventDefault()
+  const zone = e.currentTarget; zone.classList.remove('drag-over')
+  const files = Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'))
+  if(!files.length) return
+  const input = zone.querySelector('input[type=file]')
+  const dt = new DataTransfer()
+  files.forEach(f => dt.items.add(f))
+  input.files = dt.files
+  input.dispatchEvent(new Event('change', {bubbles:true}))
+}
+
+function renderProjPhotoPreview(){
+  const c = document.getElementById('proj-photo-preview'); if(!c) return
+  c.innerHTML = projPendingPhotos.map((f,i)=>`
+    <div class="photo-thumb-wrap ${i===0?'main-photo':''}">
+      <img src="${URL.createObjectURL(f)}" alt="">
+      <button class="photo-del" onclick="removePendingPhoto(${i})">✕</button>
+    </div>
+  `).join('')
+}
+
+function removePendingPhoto(i){
+  projPendingPhotos.splice(i,1)
+  renderProjPhotoPreview()
+}
+
+async function uploadFotosToProject(files, projId){
+  let uploaded = 0
+  for(const file of files){
+    if(file.size > 5*1024*1024){ toast('⚠️ '+file.name+' supera 5MB'); continue }
+    try{
+      const ext = file.name.split('.').pop().toLowerCase()
+      const path = `proyectos/${projId}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`
+      const {data:upData, error:upErr} = await sb.storage.from('proyecto-fotos').upload(path, file, {contentType: file.type})
+      if(upErr) throw upErr
+      const {data:{publicUrl}} = sb.storage.from('proyecto-fotos').getPublicUrl(path)
+      // Obtener orden actual
+      const {data:existing} = await sb.from('proyecto_fotos').select('orden').eq('proyecto_id',projId).order('orden',{ascending:false}).limit(1)
+      const orden = existing?.length ? (existing[0].orden+1) : 0
+      await sb.from('proyecto_fotos').insert({proyecto_id:projId, url:publicUrl, path, orden, created_by:null})
+      uploaded++
+    }catch(err){
+      console.error('Upload error:', err)
+      toast('⚠️ Error subiendo '+file.name)
+    }
+  }
+  if(uploaded) toast(`✅ ${uploaded} foto${uploaded>1?'s':''} subida${uploaded>1?'s':''}`)
+}
+
+async function eliminarFoto(fotoId, projId){
+  if(!confirm('¿Eliminar esta foto?')) return
+  const {data:foto} = await sb.from('proyecto_fotos').select('path').eq('id',fotoId).single()
+  if(foto?.path) await sb.storage.from('proyecto-fotos').remove([foto.path])
+  await sb.from('proyecto_fotos').delete().eq('id',fotoId)
+  const p = PROYECTOS.find(x=>x.id===projId)
+  if(p){ await loadProjFotos(p); mdFotos(p); renderProyectos() }
+  toast('🗑 Foto eliminada')
+}
+
+/* ═══ LIGHTBOX ═══ */
+function openLightbox(photos, startIdx){
+  lbPhotos = Array.isArray(photos) ? photos : []
+  if(!lbPhotos.length) return
+  lbIdx = startIdx || 0
+  updateLightbox()
+  document.getElementById('lightbox').classList.add('on')
+}
+function closeLightbox(){ document.getElementById('lightbox').classList.remove('on') }
+function lbPrev(){ lbIdx = (lbIdx-1+lbPhotos.length)%lbPhotos.length; updateLightbox() }
+function lbNext(){ lbIdx = (lbIdx+1)%lbPhotos.length; updateLightbox() }
+function updateLightbox(){
+  document.getElementById('lb-img').src = lbPhotos[lbIdx]
+  document.getElementById('lb-counter').textContent = `${lbIdx+1} / ${lbPhotos.length}`
+}
+document.addEventListener('keydown', e => {
+  if(!document.getElementById('lightbox').classList.contains('on')) return
+  if(e.key==='ArrowLeft') lbPrev()
+  if(e.key==='ArrowRight') lbNext()
+  if(e.key==='Escape') closeLightbox()
+})
+
+/* ═══ GUARDAR PROYECTO ═══ */
+function openNuevoProyecto(){
+  projPendingPhotos = []
+  projEditId = null
+  document.getElementById('m-proj-title').textContent = 'Nuevo Proyecto'
+  document.getElementById('btn-guardar-proj').textContent = '💾 Guardar'
+  ;['fp-n','fp-a'].forEach(id => document.getElementById(id).value = '')
+  ;['fp-p','fp-r','fp-m'].forEach(id => document.getElementById(id).value = '')
+  ;['fp-i','fp-f','fp-no'].forEach(id => document.getElementById(id).value = '')
+  document.getElementById('fp-t').value = 'reforma'
+  document.getElementById('fp-e').value = 'neg'
+  document.getElementById('proj-photo-preview').innerHTML = ''
+  openM('m-proj')
+}
+
+function editarProyectoAbierto(){
+  const p = PROYECTOS.find(x=>x.id===curProj); if(!p) return
+  closeM('m-detail')
+  projPendingPhotos = []
+  projEditId = p.id
+  document.getElementById('m-proj-title').textContent = 'Editar Proyecto'
+  document.getElementById('btn-guardar-proj').textContent = '💾 Actualizar'
+  document.getElementById('fp-n').value = p.nombre||''
+  document.getElementById('fp-a').value = p.direccion||''
+  document.getElementById('fp-p').value = p.precio||''
+  document.getElementById('fp-r').value = p.reforma||''
+  document.getElementById('fp-m').value = p.m2||''
+  document.getElementById('fp-i').value = p.inicio||''
+  document.getElementById('fp-f').value = p.fin_est||''
+  document.getElementById('fp-e').value = p.estado||'neg'
+  document.getElementById('fp-t').value = p.tipo||'reforma'
+  document.getElementById('fp-no').value = p.notas||''
+  document.getElementById('proj-photo-preview').innerHTML = ''
+  openM('m-proj')
+}
+
+async function guardarProyecto(){
+  const n = document.getElementById('fp-n').value.trim()
+  const a = document.getElementById('fp-a').value.trim()
+  if(!n){ toast('⚠️ El nombre es obligatorio'); return }
+  const btn = document.getElementById('btn-guardar-proj')
+  btn.disabled = true; btn.textContent = '⏳ Guardando…'
+  const payload = {
+    nombre: n, direccion: a||'—',
+    tipo: document.getElementById('fp-t').value,
+    estado: document.getElementById('fp-e').value,
+    precio: parseFloat(document.getElementById('fp-p').value)||0,
+    reforma: parseFloat(document.getElementById('fp-r').value)||0,
+    m2: parseFloat(document.getElementById('fp-m').value)||null,
+    inicio: document.getElementById('fp-i').value||null,
+    fin_est: document.getElementById('fp-f').value||null,
+    notas: document.getElementById('fp-no').value.trim()||null,
+    emoji: EMOJIS[Math.floor(Math.random()*EMOJIS.length)],
+    thumb: THUMBS[Math.floor(Math.random()*THUMBS.length)],
+    created_by: null
+  }
+  let projId = projEditId
+  if(projEditId){
+    const {error} = await sb.from('proyectos').update(payload).eq('id',projEditId)
+    if(error){ toast('⚠️ '+error.message); btn.disabled=false; btn.textContent='💾 Actualizar'; return }
+    const idx = PROYECTOS.findIndex(x=>x.id===projEditId)
+    if(idx>=0) Object.assign(PROYECTOS[idx], payload)
+    toast('✅ Proyecto actualizado')
+  } else {
+    const {data,error} = await sb.from('proyectos').insert(payload).select('*,proyecto_fases(fase_id,done),gastos(*)').single()
+    if(error){ toast('⚠️ '+error.message); btn.disabled=false; btn.textContent='💾 Guardar'; return }
+    data.phases_done = []
+    PROYECTOS.unshift(data)
+    projId = data.id
+    toast('✅ Proyecto creado')
+  }
+  // Subir fotos pendientes
+  if(projPendingPhotos.length && projId){
+    await uploadFotosToProject(projPendingPhotos, projId)
+    projPendingPhotos = []
+    const p = PROYECTOS.find(x=>x.id===projId)
+    if(p) await loadProjFotos(p)
+  }
+  btn.disabled = false; btn.textContent = '💾 Guardar'
+  closeM('m-proj'); renderProyectos(); renderDash(); fillProjSel('gpsel')
+}
+
+async function eliminarProyecto(id){
+  if(!confirm('¿Eliminar este proyecto y todos sus datos?')) return
+  await sb.from('proyectos').delete().eq('id',id)
+  PROYECTOS = PROYECTOS.filter(p=>p.id!==id)
+  closeM('m-detail'); renderProyectos(); renderDash()
+  toast('🗑 Proyecto eliminado')
+}
+
+async function cambiarEstado(id,val){
+  await sb.from('proyectos').update({estado:val}).eq('id',id)
+  const p = PROYECTOS.find(x=>x.id===id); if(p){ p.estado=val }
+  renderProyectos()
+}
+
+/* ═══ FASES MODAL ═══ */
+function mdFases(p){
+  const done = p.phases_done||[]
+  const pct = pProg(p)
+  const sects = [['all','Todos'],['legal','Legal'],['arq','Arq.'],['obra','Obra'],['elect','Elec.'],['font','Font.'],['dis','Dis.']]
+  const filtered = projSec==='all' ? FASES : FASES.filter(f=>f.sector===projSec)
+  document.getElementById('mdbody').innerHTML=`
+    <div style="padding:12px 18px 6px;display:flex;gap:5px;flex-wrap:wrap">
+      ${sects.map(([s,l])=>`<div class="sf ${projSec===s?'on':''}" data-s="${s}" onclick="projSec='${s}';mdFases(PROYECTOS.find(x=>x.id==='${p.id}'))">${l}</div>`).join('')}
+    </div>
+    <div style="padding:8px 18px 18px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:10px;background:var(--warm);border-radius:9px">
+        <div class="prog-bar" style="flex:1;height:6px"><div class="prog-fill" style="width:${pct}%"></div></div>
+        <span style="font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--gold)">${pct}%</span>
+        <span style="font-size:11px;color:var(--muted)">${done.length}/${FASES.length}</span>
+      </div>
+      ${filtered.map(f=>{
+        const isDone = done.includes(f.id)
+        const ri = FASES.indexOf(f)
+        return`<div class="phase-item ${isDone?'done':''}">
+          <div class="phase-check" onclick="toggleFase('${p.id}','${f.id}')"></div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:2px;flex-wrap:wrap">
+              <span style="font-size:9px;color:var(--muted);font-weight:700;min-width:18px">${ri+1}.</span>
+              <span class="phase-name">${esc(f.nombre)}</span>${stag(f.sector)}
+            </div>
+            <div class="phase-desc">${esc(f.descripcion||'')}</div>
+          </div>
+        </div>`
+      }).join('')}
+    </div>`
+}
+
+async function toggleFase(projId, faseId){
+  const p = PROYECTOS.find(x=>x.id===projId); if(!p) return
+  if(!p.phases_done) p.phases_done = []
+  const isDone = p.phases_done.includes(faseId)
+  const {data:ex} = await sb.from('proyecto_fases').select('id,done').eq('proyecto_id',projId).eq('fase_id',faseId).maybeSingle()
+  if(ex){
+    await sb.from('proyecto_fases').update({done:!isDone,done_at:!isDone?new Date().toISOString():null}).eq('id',ex.id)
+  } else {
+    await sb.from('proyecto_fases').insert({proyecto_id:projId,fase_id:faseId,done:true,done_at:new Date().toISOString()})
+  }
+  if(isDone) p.phases_done = p.phases_done.filter(x=>x!==faseId)
+  else p.phases_done.push(faseId)
+  mdFases(p)
+  toast(isDone ? '↩ Fase desmarcada' : '✅ Fase completada')
+}
+
+/* ═══ GASTOS MODAL ═══ */
+function mdGastos(p){
+  let gs = p.gastos || []
+  if(filtroTipoGasto !== 'all') gs = gs.filter(g=>g.sector===filtroTipoGasto)
+  const tot = gs.reduce((a,g)=>a+(g.coste||0),0)
+  const sects = ['all','obra','elect','font','legal','arq','dis']
+  document.getElementById('mdbody').innerHTML=`
+    <div class="tab-body on" style="padding:18px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px;flex-wrap:wrap">
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          ${sects.map(s=>`<button class="sf ${filtroTipoGasto===s?'on':''}" data-s="${s}" onclick="setFiltroGasto('${s}','${p.id}')">${s==='all'?'Todos':SMAP[s]?.i+' '+SMAP[s]?.l||s}</button>`).join('')}
+        </div>
+        <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:var(--rust)">${fE(tot)}</div>
+      </div>
+
+      <div class="gasto-add-form">
+        <div class="g3">
+          <div class="form-row" style="margin-bottom:0"><label class="form-lbl">Concepto</label><input id="g-concepto" class="fi" placeholder="Ej: Mano de obra fontanería"></div>
+          <div class="form-row" style="margin-bottom:0"><label class="form-lbl">Coste (€)</label><input id="g-coste" type="number" class="fi" placeholder="0"></div>
+          <div class="form-row" style="margin-bottom:0"><label class="form-lbl">Sector</label>
+            <select id="g-sector" class="fs">
+              <option value="obra">🔨 Obra</option><option value="elect">⚡ Elect.</option>
+              <option value="font">🔧 Font.</option><option value="legal">⚖️ Legal</option>
+              <option value="arq">📐 Arq.</option><option value="dis">🎨 Dis.</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:7px;margin-top:10px">
+          <button class="btn btn-ghost btn-sm" onclick="resetGastoForm()">Cancelar</button>
+          <button class="btn btn-gold btn-sm" onclick="guardarGasto('${p.id}')" id="btn-gasto-save">Guardar Gasto</button>
+        </div>
+      </div>
+
+      <div style="overflow-x:auto">
+        <table class="gtable">
+          <thead>
+            <tr><th>Concepto</th><th>Sector</th><th>Coste</th><th style="width:70px"></th></tr>
+          </thead>
+          <tbody>
+            ${gs.map(g=>`<tr>
+              <td>${esc(g.concepto)}</td>
+              <td>${stag(g.sector||'obra')}</td>
+              <td style="font-weight:700;color:var(--rust)">${fE(g.coste)}</td>
+              <td>
+                <div style="display:flex;gap:5px">
+                  <button class="ico-btn" onclick="editarGasto('${p.id}','${g.id}')" title="Editar">✏️</button>
+                  <button class="ico-btn" onclick="elimGasto('${p.id}','${g.id}')" title="Eliminar" style="color:var(--red)">🗑</button>
+                </div>
+              </td>
+            </tr>`).join('')||'<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--muted)">Sin partidas</td></tr>'}
+            ${gs.length ? `<tr class="tot"><td colspan="2">TOTAL</td><td colspan="2">${fE(tot)}</td></tr>` : ''}
+          </tbody>
+        </table>
+      </div>
+    </div>`
+  if(gastoEditando) _fillGastoForm()
+}
+
+function _fillGastoForm(){
+  document.getElementById('g-concepto').value = gastoEditando.concepto||''
+  document.getElementById('g-coste').value = gastoEditando.coste||''
+  document.getElementById('g-sector').value = gastoEditando.sector||'obra'
+  const btn = document.getElementById('btn-gasto-save')
+  if(btn) btn.textContent = 'Actualizar Gasto'
+}
+
+function setFiltroGasto(tipo, projId){
+  filtroTipoGasto = tipo
+  const p = PROYECTOS.find(x=>x.id===projId); if(p) mdGastos(p)
+}
+
+function editarGasto(projId, gastoId){
+  const p = PROYECTOS.find(x=>x.id===projId); if(!p) return
+  gastoEditando = p.gastos?.find(x=>x.id===gastoId)
+  if(!gastoEditando) return
+  mdGastos(p)
+}
+
+async function guardarGasto(projId){
+  const concepto = document.getElementById('g-concepto').value.trim()
+  const coste = Number(document.getElementById('g-coste').value||0)
+  const sector = document.getElementById('g-sector').value
+  if(!concepto||!coste){ toast('⚠️ Completa los campos'); return }
+  const p = PROYECTOS.find(x=>x.id===projId)
+  if(gastoEditando){
+    await sb.from('gastos').update({concepto,coste,sector}).eq('id',gastoEditando.id)
+    const idx = p.gastos.findIndex(x=>x.id===gastoEditando.id)
+    if(idx>=0) Object.assign(p.gastos[idx],{concepto,coste,sector})
+    toast('✅ Gasto actualizado')
+  } else {
+    const {data,error} = await sb.from('gastos').insert({proyecto_id:projId,concepto,coste,sector}).select().single()
+    if(error){ toast('⚠️ '+error.message); return }
+    if(!p.gastos) p.gastos = []
+    p.gastos.unshift(data)
+    toast('✅ Gasto añadido')
+  }
+  resetGastoForm(); mdGastos(p)
+}
+
+function resetGastoForm(){
+  gastoEditando = null
+  const el = document.getElementById('g-concepto'); if(!el) return
+  document.getElementById('g-concepto').value = ''
+  document.getElementById('g-coste').value = ''
+  document.getElementById('g-sector').value = 'obra'
+  const btn = document.getElementById('btn-gasto-save')
+  if(btn) btn.textContent = 'Guardar Gasto'
+}
+
+async function elimGasto(projId, gastoId){
+  if(!confirm('¿Eliminar gasto?')) return
+  await sb.from('gastos').delete().eq('id',gastoId)
+  const p = PROYECTOS.find(x=>x.id===projId)
+  if(p) p.gastos = p.gastos.filter(g=>g.id!==gastoId)
+  mdGastos(p); toast('🗑 Gasto eliminado')
+}
+
+/* ═══ NOTAS MODAL ═══ */
+function mdNotas(p){
+  gProjId = p.id
+  const vis = NOTAS.filter(n=>n.proyecto_id===p.id)
+  document.getElementById('mdbody').innerHTML=`
+    <div class="tab-body on" style="padding:18px">
+      <div style="background:var(--ink2);border-radius:10px;padding:12px;margin-bottom:14px">
+        <textarea class="nota-ta" id="mn-ta" placeholder="Nota rápida para este proyecto…&#10;Ctrl+Enter para guardar" style="min-height:70px;width:100%" onkeydown="mnKey(event,'${p.id}')"></textarea>
+        <div style="display:flex;justify-content:flex-end;margin-top:8px">
+          <button class="btn-send" style="width:auto;padding:8px 18px;font-size:13px" onclick="mnSubmit('${p.id}')">⚡ Guardar</button>
+        </div>
+      </div>
+      <div id="mn-feed">
+        ${vis.length ? vis.map(n=>nCard(n)).join('') : '<div class="empty"><div class="empty-ico">📝</div><h3>Sin notas</h3><p>Escribe la primera nota para este proyecto</p></div>'}
+      </div>
+    </div>`
+}
+
+function mnKey(e, projId){ if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){ e.preventDefault(); mnSubmit(projId) }}
+
+async function mnSubmit(projId){
+  const ta = document.getElementById('mn-ta')
+  const txt = ta.value.trim(); if(!txt) return
+  const ai = localClassify(txt)
+  const {data,error} = await sb.from('notas_rapidas').insert({
+    proyecto_id:projId, texto:txt, categorias:ai.categorias, fase:ai.fase,
+    importe:ai.importe, urgente:ai.urgente, prioridad:ai.prioridad
+  }).select('*,proyectos(nombre)').single()
+  if(error){ toast('⚠️ '+error.message); return }
+  NOTAS.unshift(data); updBadge()
+  ta.value = ''
+  const p = PROYECTOS.find(x=>x.id===projId); if(p) mdNotas(p)
+  toast('⚡ Nota guardada')
+}
+
+/* ═══ NOTAS TEXTO ═══ */
+function mdTexto(p){
+  document.getElementById('mdbody').innerHTML=`
+    <div class="tab-body on" style="padding:18px">
+      <div style="margin-bottom:14px">
+        <textarea class="ft" id="tx-ta" placeholder="Escribe una nota libre sobre este proyecto…" style="min-height:80px;margin-bottom:8px"></textarea>
+        <div style="display:flex;justify-content:flex-end">
+          <button class="btn btn-gold btn-sm" onclick="guardarTexto('${p.id}')">Guardar Nota</button>
+        </div>
+      </div>
+      <div id="tx-list"><div class="loader"></div></div>
+    </div>`
+  loadTextNotes(p.id)
+}
+
+async function loadTextNotes(projId){
+  const {data} = await sb.from('notas_texto').select('*').eq('proyecto_id',projId).order('created_at',{ascending:false})
+  const c = document.getElementById('tx-list'); if(!c) return
+  c.innerHTML = (data||[]).length ?
+    data.map(n=>`<div class="note-item">
+      <div class="note-date">${fD(n.created_at)}</div>
+      <div class="note-text">${esc(n.texto)}</div>
+      <button class="btn btn-ghost btn-xs note-del" onclick="elimTexto('${n.id}','${projId}')">🗑</button>
+    </div>`).join('') :
+    '<div class="empty"><div class="empty-ico">📄</div><h3>Sin notas de texto</h3></div>'
+}
+
+async function guardarTexto(projId){
+  const txt = document.getElementById('tx-ta').value.trim(); if(!txt) return
+  const {error} = await sb.from('notas_texto').insert({proyecto_id:projId,texto:txt})
+  if(error){ toast('⚠️ '+error.message); return }
+  document.getElementById('tx-ta').value = ''
+  loadTextNotes(projId); toast('✅ Nota guardada')
+}
+
+async function elimTexto(id, projId){
+  await sb.from('notas_texto').delete().eq('id',id)
+  loadTextNotes(projId); toast('🗑 Nota eliminada')
+}
+
+/* ═══ FASES PLANTILLA ═══ */
+function renderFases(){
+  const sects = [['all','Todos'],['legal','Legal'],['arq','Arquitecto'],['obra','Obra'],['elect','Electricista'],['font','Fontanero'],['dis','Diseño']]
+  document.getElementById('tplf').innerHTML = sects.map(([s,l])=>
+    `<div class="sf ${tplSec===s?'on':''}" data-s="${s}" onclick="tplSec='${s}';renderFases()">${l}</div>`
+  ).join('')
+  const filtered = tplSec==='all' ? FASES : FASES.filter(f=>f.sector===tplSec)
+  document.getElementById('tpll').innerHTML = filtered.map((f,i)=>`
+    <div class="phase-item" draggable="true"
+      ondragstart="dragIdx=${FASES.indexOf(f)}"
+      ondragover="event.preventDefault()"
+      ondrop="dropFase(event,${FASES.indexOf(f)})">
+      <div class="drag-handle" title="Arrastrar">⠿</div>
+      <div class="phase-check ${FASES.indexOf(f) < 10 ? '' : ''}"></div>
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:2px;flex-wrap:wrap">
+          <span style="font-size:9px;font-weight:700;color:var(--muted);min-width:20px">${FASES.indexOf(f)+1}.</span>
+          <span class="phase-name">${esc(f.nombre)}</span>${stag(f.sector)}
+        </div>
+        <div class="phase-desc">${esc(f.descripcion||'')}</div>
+      </div>
+      <div class="phase-actions">
+        <button class="ico-btn" onclick="elimFase('${f.id}')">🗑</button>
+      </div>
+    </div>`
+  ).join('')
+}
+
+function openAddFase(){ document.getElementById('addFaseBox').style.display='block' }
+
+async function guardarFase(){
+  const n = document.getElementById('nfn').value.trim()
+  const s = document.getElementById('nfs').value
+  const d = document.getElementById('nfd').value.trim()
+  if(!n){ toast('⚠️ Nombre obligatorio'); return }
+  const {data,error} = await sb.from('fases_plantilla').insert({nombre:n,sector:s,descripcion:d||null,orden:FASES.length+1}).select().single()
+  if(error){ toast('⚠️ '+error.message); return }
+  FASES.push(data)
+  document.getElementById('nfn').value = ''; document.getElementById('nfd').value = ''
+  document.getElementById('addFaseBox').style.display = 'none'
+  renderFases(); toast('✅ Fase añadida')
+}
+
+async function dropFase(e, toIdx){
+  e.preventDefault()
+  if(dragIdx===null||dragIdx===toIdx) return
+  const [moved] = FASES.splice(dragIdx,1); FASES.splice(toIdx,0,moved)
+  await Promise.all(FASES.map((f,i) => sb.from('fases_plantilla').update({orden:i+1}).eq('id',f.id)))
+  renderFases()
+}
+
+async function elimFase(id){
+  if(!confirm('¿Eliminar esta fase?')) return
+  await sb.from('fases_plantilla').update({activo:false}).eq('id',id)
+  FASES = FASES.filter(f=>f.id!==id)
+  renderFases(); toast('🗑 Eliminada')
+}
+
+/* ═══ SEGUIMIENTO ═══ */
+function renderSeguimiento(){
+  const c = document.getElementById('segl')
+  const filt = document.getElementById('segSort')?.value || 'all'
+  let projs = filt==='all' ? PROYECTOS : PROYECTOS.filter(p=>p.estado===filt)
+  if(!projs.length){ c.innerHTML='<div class="empty"><div class="empty-ico">🏗️</div><h3>Sin proyectos</h3></div>'; return }
+  c.innerHTML = projs.map(p => {
+    const sc = STATUS[p.estado]||STATUS.neg
+    const prog = pProg(p)
+    const gR = (p.gastos||[]).reduce((a,g)=>a+(g.coste||0),0)
+    const urg = NOTAS.filter(n=>n.proyecto_id===p.id&&n.urgente&&!n.done).length
+    const byS = {}
+    FASES.forEach(f => {
+      if(!byS[f.sector]) byS[f.sector]={t:0,d:0}
+      byS[f.sector].t++
+      if((p.phases_done||[]).includes(f.id)) byS[f.sector].d++
+    })
+    const thumb = p.fotos?.[0]
+    return`<div class="seg-card">
+      <div style="display:grid;grid-template-columns:52px 1fr auto;gap:14px;align-items:start">
+        <div style="width:52px;height:52px;border-radius:10px;overflow:hidden;flex-shrink:0;background:var(--warm);display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="openDetalle('${p.id}')">
+          ${thumb ? `<img src="${esc(thumb)}" style="width:100%;height:100%;object-fit:cover">` : `<div style="font-size:26px">${p.emoji}</div>`}
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">
+            <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;cursor:pointer" onclick="openDetalle('${p.id}')">${esc(p.nombre)}</div>
+            <span class="badge ${sc.c}"><span class="pulse"></span>${sc.l}</span>
+            ${urg?`<span style="background:rgba(220,32,32,.1);color:var(--red);font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px">🚨 ${urg}</span>`:''}
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:10px">📍 ${esc(p.direccion)} · ${p.m2||'—'} m²</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <div class="prog-bar" style="flex:1;max-width:280px;height:5px"><div class="prog-fill" style="width:${prog}%"></div></div>
+            <span style="font-size:11px;font-weight:700;color:var(--gold)">${prog}%</span>
+            <span style="font-size:10px;color:var(--muted)">${(p.phases_done||[]).length}/${FASES.length}</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            ${Object.entries(byS).map(([s,d])=>
+              `<div style="background:var(--warm);padding:5px 9px;border-radius:7px;text-align:center;min-width:68px">
+                <div style="font-size:9px;color:var(--muted);margin-bottom:2px">${SMAP[s]?.i||''} ${SMAP[s]?.l||s}</div>
+                <div style="font-size:11px;font-weight:700;color:${d.d===d.t?'var(--sage)':'var(--ink)'}">${d.d}/${d.t}</div>
+              </div>`
+            ).join('')}
+          </div>
+        </div>
+        <div style="text-align:right;min-width:110px">
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">Gasto</div>
+          <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:800">${fE(gR)}</div>
+          <button class="btn btn-gold btn-sm" style="margin-top:8px" onclick="openDetalle('${p.id}')">Ver →</button>
+        </div>
+      </div>
+    </div>`
+  }).join('')
+}
+
+/* ═══ GASTOS GLOBAL ═══ */
+async function renderGastos(){
+  const {data:gs} = await sb.from('gastos').select('*,proyectos(nombre)').order('created_at',{ascending:false})
+  const totG = (gs||[]).reduce((a,g)=>a+(g.coste||0),0)
+
+  // Por sector
+  const bySector = {}
+  ;(gs||[]).forEach(g => {
+    if(!bySector[g.sector]) bySector[g.sector] = 0
+    bySector[g.sector] += g.coste||0
+  })
+
+  document.getElementById('gastosG').innerHTML=`
+    <div class="stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:18px">
+      ${sc('🧾',fE(totG),'Gasto Total','','var(--rust)')}
+      ${sc('📝',(gs||[]).length,'Partidas','','var(--gold)')}
+      ${sc('🏗️',PROYECTOS.filter(p=>p.estado==='ref').length,'Obras activas','','var(--sage)')}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr auto;gap:18px;margin-bottom:18px;align-items:start;flex-wrap:wrap">
+      <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:16px">
+        <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:12px">Distribución por Sector</div>
+        ${Object.entries(bySector).sort((a,b)=>b[1]-a[1]).map(([s,v])=>{
+          const pct = totG > 0 ? Math.round((v/totG)*100) : 0
+          return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <span style="width:80px;font-size:11px;color:var(--muted)">${stag(s)}</span>
+            <div class="prog-bar" style="flex:1;height:6px"><div class="prog-fill" style="width:${pct}%;background:var(--rust)"></div></div>
+            <span style="font-size:11px;font-weight:700;min-width:60px;text-align:right">${fE(v)}</span>
+            <span style="font-size:10px;color:var(--muted);min-width:28px">${pct}%</span>
+          </div>`
+        }).join('')||'<div style="color:var(--muted);font-size:12px">Sin datos</div>'}
+      </div>
+    </div>
+    <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--line);font-family:'Syne',sans-serif;font-weight:700;font-size:13px">Todas las Partidas</div>
+      <div style="overflow-x:auto">
+        <table class="gtable">
+          <thead><tr><th>Proyecto</th><th>Concepto</th><th>Sector</th><th>Coste</th><th>Fecha</th></tr></thead>
+          <tbody>
+            ${(gs||[]).map(g=>`<tr>
+              <td style="font-weight:600;color:var(--sky);cursor:pointer;white-space:nowrap" onclick="openDetalle('${g.proyecto_id}')">${esc(g.proyectos?.nombre||'—')}</td>
+              <td>${esc(g.concepto)}</td>
+              <td>${stag(g.sector||'obra')}</td>
+              <td style="font-weight:700;color:var(--rust);white-space:nowrap">${fE(g.coste)}</td>
+              <td style="font-size:11px;color:var(--muted);white-space:nowrap">${g.fecha?fD(g.fecha):'—'}</td>
+            </tr>`).join('')||'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">Sin partidas</td></tr>'}
+            ${(gs||[]).length?`<tr class="tot"><td colspan="3">TOTAL</td><td colspan="2">${fE(totG)}</td></tr>`:''}
+          </tbody>
+        </table>
+      </div>
+    </div>`
+}
+
+/* ═══ CONTACTOS ═══ */
+let ctFiltro = 'all'
+function setCtFiltro(s, el){
+  ctFiltro = s
+  document.querySelectorAll('.filter-chip[data-sector]').forEach(c => c.classList.remove('on'))
+  el.classList.add('on')
+  renderContactos()
+}
+
+function renderContactos(){
+  const c = document.getElementById('ctlist')
+  const search = (document.getElementById('ctSearch')?.value||'').toLowerCase()
+  let cts = CONTACTOS
+  if(ctFiltro !== 'all') cts = cts.filter(ct=>ct.sector===ctFiltro)
+  if(search) cts = cts.filter(ct=>ct.nombre.toLowerCase().includes(search)||(ct.empresa||'').toLowerCase().includes(search))
+  if(!cts.length){ c.innerHTML='<div class="empty"><div class="empty-ico">👥</div><h3>Sin contactos</h3><p>Añade proveedores y profesionales</p></div>'; return }
+  c.innerHTML = `<div class="ct-grid">` +
+    cts.map(ct=>`<div class="ct-card">
+      <div class="ct-actions">
+        <button class="ico-btn" onclick="editarContacto('${ct.id}')" title="Editar">✏️</button>
+        <button class="ico-btn" onclick="elimContacto('${ct.id}')" title="Eliminar" style="color:var(--red)">🗑</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px;padding-right:48px">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--warm);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${SMAP[ct.sector||'otro']?.i||'👤'}</div>
+        <div>
+          <div style="font-weight:600;font-size:13px">${esc(ct.nombre)}</div>
+          <div style="font-size:10px;color:var(--muted)">${esc(ct.empresa||'Autónomo')}</div>
+        </div>
+      </div>
+      ${stag(ct.sector||'otro')}
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:3px">
+        ${ct.telefono?`<a href="tel:${esc(ct.telefono)}" style="font-size:12px;color:var(--sky);display:flex;align-items:center;gap:4px"><span>📞</span><span>${esc(ct.telefono)}</span></a>`:''}
+        ${ct.email?`<a href="mailto:${esc(ct.email)}" style="font-size:12px;color:var(--sky);display:flex;align-items:center;gap:4px"><span>✉️</span><span>${esc(ct.email)}</span></a>`:''}
+      </div>
+      ${ct.notas?`<div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.4;border-top:1px solid var(--line);padding-top:8px">${esc(ct.notas)}</div>`:''}
+    </div>`).join('') + '</div>'
+}
+
+function editarContacto(id){
+  const ct = CONTACTOS.find(x=>x.id===id); if(!ct) return
+  document.getElementById('fc-n').value = ct.nombre||''
+  document.getElementById('fc-e').value = ct.empresa||''
+  document.getElementById('fc-s').value = ct.sector||'otro'
+  document.getElementById('fc-t').value = ct.telefono||''
+  document.getElementById('fc-m').value = ct.email||''
+  document.getElementById('fc-no').value = ct.notas||''
+  openM('m-contacto')
+}
+
+async function guardarContacto(){
+  const n = document.getElementById('fc-n').value.trim(); if(!n){ toast('⚠️ Nombre obligatorio'); return }
+  const {data,error} = await sb.from('contactos').insert({
+    nombre:n, empresa:document.getElementById('fc-e').value.trim(),
+    sector:document.getElementById('fc-s').value,
+    telefono:document.getElementById('fc-t').value.trim(),
+    email:document.getElementById('fc-m').value.trim(),
+    notas:document.getElementById('fc-no').value.trim()
+  }).select().single()
+  if(error){ toast('⚠️ '+error.message); return }
+  CONTACTOS.push(data); CONTACTOS.sort((a,b)=>a.nombre.localeCompare(b.nombre))
+  ;['fc-n','fc-e','fc-t','fc-m','fc-no'].forEach(id => document.getElementById(id).value = '')
+  closeM('m-contacto'); renderContactos(); toast('✅ Contacto guardado')
+}
+
+async function elimContacto(id){
+  if(!confirm('¿Eliminar contacto?')) return
+  await sb.from('contactos').delete().eq('id',id)
+  CONTACTOS = CONTACTOS.filter(c=>c.id!==id); renderContactos(); toast('🗑 Eliminado')
+}
+
+/* ═══ USUARIOS ═══ */
+async function renderUsuarios(){
+  const {data} = await sb.from('perfiles').select('*').order('created_at')
+  const c = document.getElementById('uslist')
+  if(!data?.length){ c.innerHTML='<div class="loader">Sin usuarios</div>'; return }
+  c.innerHTML = data.map(u=>`<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line)">
+    <div style="width:32px;height:32px;border-radius:50%;background:${u.rol==='admin'?'var(--gold)':u.rol==='encargado'?'var(--sky)':'var(--sage)'};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:${u.rol==='admin'?'var(--ink)':'#fff'};flex-shrink:0">${u.nombre[0].toUpperCase()}</div>
+    <div style="flex:1">
+      <div style="font-size:13px;font-weight:600">${esc(u.nombre)}</div>
+      <div style="font-size:11px;color:var(--muted)">${u.rol}</div>
+    </div>
+    <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:${u.activo?'rgba(78,124,90,.1)':'rgba(220,79,79,.1)'};color:${u.activo?'var(--sage)':'var(--red)'}">${u.activo?'Activo':'Inactivo'}</span>
+  </div>`).join('')
+}
+
+async function guardarUsuario(){
+  const n=document.getElementById('fu-n').value.trim()
+  const e=document.getElementById('fu-e').value.trim()
+  const p=document.getElementById('fu-p').value
+  const r=document.getElementById('fu-r').value
+  if(!n||!e||!p){ toast('⚠️ Todos los campos son obligatorios'); return }
+  if(p.length<8){ toast('⚠️ Contraseña mínimo 8 caracteres'); return }
+  toast('ℹ️ Crea el usuario desde Supabase → Authentication → Add User con metadata: {"nombre":"'+n+'","rol":"'+r+'"}')
+  closeM('m-usuario')
+}
+
+/* ═══ NOTAS RÁPIDAS GLOBAL ═══ */
+function gKey(e){ if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){ e.preventDefault(); gSubmit() }}
+function gChip(t){ const ta=document.getElementById('gta'); ta.value=(ta.value.trim()+' '+t).trim(); ta.focus() }
+function gTogUrg(){ gIsUrg=!gIsUrg; document.getElementById('gurg').classList.toggle('on',gIsUrg) }
+function gFilt(f, el){ gFiltMode=f; document.querySelectorAll('.fpill').forEach(b=>b.classList.remove('on')); el.classList.add('on'); gRender() }
+
+async function gSubmit(){
+  const ta = document.getElementById('gta')
+  const txt = ta.value.trim(); if(!txt){ ta.focus(); return }
+  document.getElementById('gsend').classList.add('proc')
+  document.getElementById('gspin').style.display = 'block'
+  document.getElementById('glbl').textContent = 'Clasificando…'
+  document.getElementById('gico').style.display = 'none'
+  const bar = document.getElementById('gpbar'); const fill = document.getElementById('gpfill')
+  bar.classList.add('on'); fill.style.width = '70%'
+  const ai = localClassify(txt)
+  const {data,error} = await sb.from('notas_rapidas').insert({
+    proyecto_id:gProjId||null, texto:txt, categorias:ai.categorias, fase:ai.fase,
+    importe:ai.importe, urgente:ai.urgente||gIsUrg, prioridad:ai.prioridad
+  }).select('*,proyectos(nombre)').single()
+  fill.style.width = '100%'
+  setTimeout(()=>{ bar.classList.remove('on'); fill.style.width='0' }, 400)
+  document.getElementById('gsend').classList.remove('proc')
+  document.getElementById('gspin').style.display = 'none'
+  document.getElementById('glbl').textContent = 'Guardar'
+  document.getElementById('gico').style.display = ''
+  if(error){ toast('⚠️ '+error.message); return }
+  if(data){ NOTAS.unshift(data); updBadge() }
+  ta.value = ''
+  if(gIsUrg){ gIsUrg=false; document.getElementById('gurg').classList.remove('on') }
+  gRender(); gStats()
+  if(document.getElementById('v-dashboard').classList.contains('on')) renderDash()
+  toast('⚡ Nota guardada'); ta.focus()
+}
+
+function gRender(){
+  const feed = document.getElementById('gfeed'); if(!feed) return
+  const search = (document.getElementById('gsrch')?.value||'').toLowerCase()
+  let vis = NOTAS.filter(n => {
+    if(gProjId&&n.proyecto_id&&n.proyecto_id!==gProjId) return false
+    if(gFiltMode==='urgente'&&!n.urgente) return false
+    if(gFiltMode==='pendiente'&&n.done) return false
+    if(search&&!n.texto.toLowerCase().includes(search)&&!(n.fase||'').toLowerCase().includes(search)) return false
+    return true
+  })
+  const urgs = vis.filter(n=>n.urgente&&!n.done)
+  const ub = document.getElementById('gurb'); const uc = document.getElementById('gurbc')
+  if(ub&&uc){
+    if(urgs.length){ ub.classList.add('has'); uc.innerHTML=urgs.map(n=>`<div class="urg-chip">🚨 ${esc(n.texto.slice(0,38))}…</div>`).join('') }
+    else ub.classList.remove('has')
+  }
+  feed.innerHTML = vis.length ?
+    vis.map(n=>nCard(n)).join('') :
+    `<div class="empty"><div class="empty-ico">${NOTAS.length?'🔍':'📝'}</div><h3>${NOTAS.length?'Sin resultados':'Primera nota'}</h3><p>${NOTAS.length?'Prueba otro filtro':'Escribe algo en el campo'}</p></div>`
+}
+
+function gStats(){
+  const el = document.getElementById('gnstats'); if(!el) return
+  const scope = gProjId ? NOTAS.filter(n=>n.proyecto_id===gProjId) : NOTAS
+  const pend = scope.filter(n=>!n.done)
+  const urg = pend.filter(n=>n.urgente).length
+  const imp = pend.reduce((a,n)=>a+(n.importe||0),0)
+  el.innerHTML = `
+    <div class="nstat"><div class="nstat-v" style="color:var(--gold)">${pend.length}</div><div class="nstat-l">Pendientes</div></div>
+    <div class="nstat"><div class="nstat-v" style="color:var(--red)">${urg}</div><div class="nstat-l">Urgentes</div></div>
+    <div class="nstat"><div class="nstat-v" style="color:var(--sage2)">${imp?imp.toLocaleString('es-ES')+'€':'0€'}</div><div class="nstat-l">Importes</div></div>`
+}
+
+async function marcarNDone(id){
+  const n = NOTAS.find(x=>x.id===id); if(!n) return
+  n.done = !n.done; n.done_at = n.done ? new Date().toISOString() : null
+  await sb.from('notas_rapidas').update({done:n.done,done_at:n.done_at}).eq('id',id)
+  updBadge(); gRender(); gStats()
+  if(document.getElementById('v-dashboard').classList.contains('on')) renderDash()
+}
+
+async function elimNota(id){
+  await sb.from('notas_rapidas').delete().eq('id',id)
+  NOTAS = NOTAS.filter(n=>n.id!==id); gRender(); gStats(); updBadge(); toast('🗑 Nota eliminada')
+}
+
+async function gClearDone(){
+  const done = NOTAS.filter(n=>n.done); if(!done.length){ toast('Nada que limpiar'); return }
+  if(!confirm(`¿Eliminar ${done.length} nota(s) completadas?`)) return
+  await Promise.all(done.map(n=>sb.from('notas_rapidas').delete().eq('id',n.id)))
+  NOTAS = NOTAS.filter(n=>!n.done); gRender(); gStats(); updBadge(); toast(`🧹 ${done.length} eliminadas`)
+}
+
+function nCard(n){
+  const cats = Array.isArray(n.categorias) ? n.categorias : []
+  const mc = cats[0]||'otros'; const col = CATM[mc]?.col||'var(--muted)'
+  const ts = n.created_at ? new Date(n.created_at).toLocaleString('es-ES',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : ''
+  return `<div class="nota-card ${n.done?'done-c':''}" style="--nc:${col}">
+    <div class="ntop">
+      <button class="ndone-btn" onclick="marcarNDone('${n.id}')">${n.done?'✓':''}</button>
+      <div class="ntxt">${n.urgente&&!n.done?'🚨 ':''}${esc(n.texto)}</div>
+      <button class="ndel" onclick="elimNota('${n.id}')">✕</button>
+    </div>
+    <div class="ntags">
+      ${n.urgente?'<span class="ntag nt-urgente">🚨 Urgente</span>':''}
+      ${cats.map(c=>`<span class="ntag ${CATM[c]?.nc||''}">${CATM[c]?.i||''} ${CATM[c]?.l||c}</span>`).join('')}
+      ${n.importe?`<span class="ntag nt-gasto">💶 ${parseFloat(n.importe).toLocaleString('es-ES')} €</span>`:''}
+    </div>
+    <div class="nmeta">
+      ${n.proyectos?.nombre?`<span style="color:var(--gold);font-weight:600">📍 ${esc(n.proyectos.nombre)}</span>`:''}
+      <span>${ts}</span>
+      <span style="color:${n.prioridad==='alta'?'var(--red)':n.prioridad==='media'?'var(--gold)':'var(--muted)'}">${n.prioridad==='alta'?'🔴':n.prioridad==='media'?'🟡':'⚪'} ${n.prioridad||'media'}</span>
+    </div>
+    ${n.fase&&n.fase!=='General'?`<div class="nfase">⚙️ ${esc(n.fase)}</div>`:''}
+  </div>`
+}
+
+/* ═══ CLASIFICADOR LOCAL ═══ */
+function localClassify(t){
+  const tl = t.toLowerCase(); const cats = []; let imp=null, urg=false, fase='General'
+  const m = t.match(/(\d+[\.,]?\d*)\s*€|(\d+[\.,]?\d*)\s*euros?/i)
+  if(m){ imp=parseFloat((m[1]||m[2]).replace(',','.')); cats.push('gasto') }
+  if(/urgent|mañana|hoy|ahora|inmediato|ya\b|rápido/i.test(tl)){ urg=true; cats.push('urgente') }
+  if(/cemento|arena|ladrillo|mortero|pintura|cable|tubo|pvc|madera|azulejo|yeso|saco|litros/i.test(tl)){ cats.push('material'); fase='Material/Suministro' }
+  if(/electricist|electricidad|cuadro|enchufe|luz|foco/i.test(tl)){ cats.push('manoobra'); fase='Instalación eléctrica' }
+  if(/fontaner|grifo|tubería|desagüe|baño|sanitario|wc|ducha/i.test(tl)){ cats.push('manoobra'); fase='Instalación de fontanería' }
+  if(/peones?|albañil|operario|trabajador|personal/i.test(tl)){ cats.push('manoobra'); if(fase==='General') fase='Mano de obra' }
+  if(/notario|firma|escritura|contrato|arras/i.test(tl)){ cats.push('legal'); fase='Legal/Notarial' }
+  if(/licencia|permiso|ayuntamiento|vía pública/i.test(tl)){ cats.push('licencias'); fase='Licencias' }
+  if(/pagar|factura|cobrar|recibo|presupuest/i.test(tl)){ if(!cats.includes('gasto')) cats.push('gasto') }
+  if(/proveedor|pedido|entreg|comprar|ferretería/i.test(tl)){ cats.push('proveedor') }
+  if(/llamar|reunión|email|contactar/i.test(tl)){ cats.push('admin') }
+  if(/pintura|lijar|barniz|acabado/i.test(tl)){ fase='Pintura y acabados' }
+  if(!cats.length) cats.push('otros')
+  return { categorias:[...new Set(cats)], fase, importe:imp, urgente:urg, prioridad:urg?'alta':imp?'media':'baja' }
+}
+
+/* ═══ EXPORTAR CSV ═══ */
+function exportarProyectosCSV(){
+  const rows = [['Nombre','Dirección','Tipo','Estado','Precio','Reforma','m²','Inicio','Fin Est.','Fases']]
+  PROYECTOS.forEach(p => rows.push([p.nombre,p.direccion,p.tipo,STATUS[p.estado]?.l||p.estado,p.precio,p.reforma,p.m2||'',p.inicio||'',p.fin_est||'',`${(p.phases_done||[]).length}/${FASES.length}`]))
+  downloadCSV(rows, 'rehabitaco_proyectos.csv')
+}
+
+function exportarGastosCSV(){
+  sb.from('gastos').select('*,proyectos(nombre)').order('created_at',{ascending:false}).then(({data}) => {
+    const rows = [['Proyecto','Concepto','Sector','Coste','Fecha']]
+    ;(data||[]).forEach(g => rows.push([g.proyectos?.nombre||'—',g.concepto,g.sector,g.coste,g.fecha||'']))
+    downloadCSV(rows, 'rehabitaco_gastos.csv')
+  })
+}
+
+function downloadCSV(rows, filename){
+  const csv = rows.map(r => r.map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n')
+  const a = document.createElement('a')
+  a.href = 'data:text/csv;charset=utf-8,\ufeff'+encodeURIComponent(csv)
+  a.download = filename; a.click()
+  toast('📥 CSV descargado')
+}
+
+/* ═══ RESPONSIVE DASHBOARD GRID ═══ */
+function updateDashGrid(){
+  const g = document.getElementById('dash-grid'); if(!g) return
+  g.style.gridTemplateColumns = window.innerWidth < 860 ? '1fr' : '3fr 2fr'
+}
+window.addEventListener('resize', updateDashGrid)
+updateDashGrid()
 </script>
-
-<!-- ...existing code... -->
-
-
+</body>
+</html>
