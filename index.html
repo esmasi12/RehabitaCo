@@ -10,6 +10,7 @@
 <title>RehabitaCo — Gestión de Obras</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
 <style>
 /* ═══════════════════════════════════════════════════════════
@@ -863,6 +864,14 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
         <span class="nav-icon">👥</span><span class="nav-label">Contactos</span>
       </div>
 
+      <div class="nav-sect">Análisis</div>
+      <div class="nav-item" data-v="analisis-financiero" onclick="go(this)">
+        <span class="nav-icon">📈</span><span class="nav-label">Análisis Financiero</span>
+      </div>
+      <div class="nav-item" data-v="dashboard-cartera" onclick="go(this)">
+        <span class="nav-icon">🗂️</span><span class="nav-label">Dashboard Cartera</span>
+      </div>
+
       <div class="nav-sect">Configuración</div>
       <div class="nav-item" data-v="fases" onclick="go(this)">
         <span class="nav-icon">📋</span><span class="nav-label">Plantilla Fases</span>
@@ -1099,6 +1108,44 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
         <div id="uslist" style="background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden"><div class="loader"></div></div>
       </div>
 
+
+      <!-- ANÁLISIS FINANCIERO POR PROYECTO -->
+      <div id="v-analisis-financiero" class="view">
+        <div class="sec-head">
+          <div>
+            <div class="sec-title">📈 Análisis Financiero</div>
+            <div class="sec-sub" id="af-sub">Selecciona un proyecto para ver su análisis completo</div>
+          </div>
+          <div class="sec-actions">
+            <select class="sort-sel" id="af-proj-sel" onchange="cargarAnalisisFinanciero(this.value)" style="min-width:200px;font-size:13px">
+              <option value="">— Selecciona proyecto —</option>
+            </select>
+          </div>
+        </div>
+        <div id="af-body">
+          <div style="text-align:center;padding:60px 20px;color:var(--muted)">
+            <div style="font-size:48px;margin-bottom:16px">📊</div>
+            <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:8px">Elige un proyecto</div>
+            <div style="font-size:13px">El agente calculará automáticamente ROI, rentabilidad, desglose de costes y más</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DASHBOARD CARTERA GLOBAL -->
+      <div id="v-dashboard-cartera" class="view">
+        <div class="sec-head">
+          <div>
+            <div class="sec-title">🗂️ Dashboard de Cartera</div>
+            <div class="sec-sub">Visión global financiera de todos tus proyectos</div>
+          </div>
+          <div class="sec-actions">
+            <button class="btn btn-outline btn-sm" onclick="exportarCarteraCSV()">↓ CSV</button>
+            <button class="btn btn-gold btn-sm" onclick="cargarDashboardCartera()">↻ Actualizar</button>
+          </div>
+        </div>
+        <div id="dc-body"><div class="loader"></div></div>
+      </div>
+
     </div><!-- /content -->
   </div><!-- /main -->
 </div><!-- /app -->
@@ -1141,6 +1188,45 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
         </select>
       </div>
       <div class="form-row"><label class="form-lbl">Notas</label><textarea class="ft" id="fp-no"></textarea></div>
+
+      <!-- CAMPOS FINANCIEROS PARA AGENTES -->
+      <div style="background:var(--gold-bg);border:1.5px solid rgba(212,168,71,.25);border-radius:10px;padding:14px;margin-bottom:14px">
+        <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;margin-bottom:10px;color:var(--gold)">📊 Datos para análisis financiero automático</div>
+        <div class="g2">
+          <div class="form-row"><label class="form-lbl">Precio Venta Proyectado (€)</label><input type="number" class="fi" id="fp-pv" placeholder="0 — si ya conoces el ARV"></div>
+          <div class="form-row"><label class="form-lbl">Precio Venta Real (€)</label><input type="number" class="fi" id="fp-pvr" placeholder="0 — al cerrar la venta"></div>
+        </div>
+        <div class="g3">
+          <div class="form-row"><label class="form-lbl">Comunidad Autónoma</label>
+            <select class="fs" id="fp-ca">
+              <option value="">— Sin especificar —</option>
+              <option>Andalucía</option><option>Aragón</option><option>Asturias</option>
+              <option>Baleares</option><option>Canarias</option><option>Cantabria</option>
+              <option>Castilla - La Mancha</option><option>Castilla León</option>
+              <option>Cataluña</option><option>Ceuta</option><option>Comunidad de Madrid</option>
+              <option>Comunidad Valenciana</option><option>Extremadura</option><option>Galicia</option>
+              <option>La Rioja</option><option>Melilla</option><option>Murcia</option>
+              <option>Navarra</option><option>País Vasco</option>
+            </select>
+          </div>
+          <div class="form-row"><label class="form-lbl">Gastos Compra Extras (€)</label><input type="number" class="fi" id="fp-gc" placeholder="Notaría, registro…"></div>
+          <div class="form-row"><label class="form-lbl">Gastos Venta Extras (€)</label><input type="number" class="fi" id="fp-gv" placeholder="Plusvalía, comisión…"></div>
+        </div>
+        <div class="g3">
+          <div class="form-row"><label class="form-lbl">Mobiliario / Equipam. (€)</label><input type="number" class="fi" id="fp-mob" placeholder="0"></div>
+          <div class="form-row"><label class="form-lbl">Alquiler Mensual (€)</label><input type="number" class="fi" id="fp-alq" placeholder="Si es para alquilar"></div>
+          <div class="form-row"><label class="form-lbl">Gastos Anuales Alquiler (€)</label><input type="number" class="fi" id="fp-gaa" placeholder="IBI, comunidad, seguros…"></div>
+        </div>
+        <div class="g3">
+          <div class="form-row"><label class="form-lbl">Hipoteca Importe (€)</label><input type="number" class="fi" id="fp-hi" placeholder="0 si no hay hipoteca"></div>
+          <div class="form-row"><label class="form-lbl">Hipoteca Plazo (años)</label><input type="number" class="fi" id="fp-hp" placeholder="25"></div>
+          <div class="form-row"><label class="form-lbl">Hipoteca Interés (%)</label><input type="number" class="fi" id="fp-hint" placeholder="3.5" step="0.01"></div>
+        </div>
+        <div class="g2">
+          <div class="form-row"><label class="form-lbl">Revalorización Anual Estimada (%)</label><input type="number" class="fi" id="fp-rev" placeholder="2" step="0.1"></div>
+          <div class="form-row"><label class="form-lbl">Fecha de Venta Real</label><input type="date" class="fi" id="fp-fv"></div>
+        </div>
+      </div>
 
       <!-- FOTO UPLOAD -->
       <div class="form-row">
@@ -1490,8 +1576,8 @@ async function loadBase(){
 // Auth check is handled by checkAuthAndInit() above
 
 /* ═══ NAVEGACIÓN ═══ */
-const VT = {dashboard:'Resumen',proyectos:'Proyectos',fases:'Plantilla de Fases',seguimiento:'Seguimiento',notas:'⚡ Notas Rápidas',gastos:'Control de Gastos',contactos:'Contactos',usuarios:'Usuarios'}
-const CTA = {dashboard:'+ Nuevo Proyecto',proyectos:'+ Nuevo',fases:'+ Añadir Fase',seguimiento:'—',notas:'—',gastos:'—',contactos:'+ Contacto',usuarios:'+ Usuario'}
+const VT = {dashboard:'Resumen',proyectos:'Proyectos',fases:'Plantilla de Fases',seguimiento:'Seguimiento',notas:'⚡ Notas Rápidas',gastos:'Control de Gastos',contactos:'Contactos',usuarios:'Usuarios','analisis-financiero':'📈 Análisis Financiero','dashboard-cartera':'🗂️ Dashboard Cartera'}
+const CTA = {dashboard:'+ Nuevo Proyecto',proyectos:'+ Nuevo',fases:'+ Añadir Fase',seguimiento:'—',notas:'—',gastos:'—',contactos:'+ Contacto',usuarios:'+ Usuario','analisis-financiero':'—','dashboard-cartera':'—'}
 
 function go(el){
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('on'))
@@ -1512,6 +1598,8 @@ function go(el){
   if(vn==='gastos') renderGastos()
   if(vn==='contactos') renderContactos()
   if(vn==='usuarios') renderUsuarios()
+  if(vn==='analisis-financiero') initAnalisisFinanciero()
+  if(vn==='dashboard-cartera') cargarDashboardCartera()
 }
 
 function mainCta(){
@@ -1879,6 +1967,9 @@ function openNuevoProyecto(){
   ;['fp-i','fp-f','fp-no'].forEach(id => document.getElementById(id).value = '')
   document.getElementById('fp-t').value = 'reforma'
   document.getElementById('fp-e').value = 'neg'
+  // Clear financial fields
+  ;['fp-pv','fp-pvr','fp-gc','fp-gv','fp-mob','fp-alq','fp-gaa','fp-hi','fp-hp','fp-hint','fp-rev','fp-fv'].forEach(id => { const el=document.getElementById(id); if(el) el.value='' })
+  document.getElementById('fp-ca').value = ''
   document.getElementById('proj-photo-preview').innerHTML = ''
   openM('m-proj')
 }
@@ -1900,6 +1991,20 @@ function editarProyectoAbierto(){
   document.getElementById('fp-e').value = p.estado||'neg'
   document.getElementById('fp-t').value = p.tipo||'reforma'
   document.getElementById('fp-no').value = p.notas||''
+  // Campos financieros
+  document.getElementById('fp-pv').value = p.precio_venta||''
+  document.getElementById('fp-pvr').value = p.precio_venta_real||''
+  document.getElementById('fp-ca').value = p.comunidad_autonoma||''
+  document.getElementById('fp-gc').value = p.gastos_compra_extra||''
+  document.getElementById('fp-gv').value = p.gastos_venta_extra||''
+  document.getElementById('fp-mob').value = p.mobiliario||''
+  document.getElementById('fp-alq').value = p.alquiler_mensual||''
+  document.getElementById('fp-gaa').value = p.gastos_anuales_alq||''
+  document.getElementById('fp-hi').value = p.hipoteca_importe||''
+  document.getElementById('fp-hp').value = p.hipoteca_plazo||''
+  document.getElementById('fp-hint').value = p.hipoteca_interes ? (p.hipoteca_interes*100).toFixed(2) : ''
+  document.getElementById('fp-rev').value = p.revalorizacion_anual ? (p.revalorizacion_anual*100).toFixed(1) : ''
+  document.getElementById('fp-fv').value = p.fecha_venta||''
   document.getElementById('proj-photo-preview').innerHTML = ''
   openM('m-proj')
 }
@@ -1920,6 +2025,20 @@ async function guardarProyecto(){
     inicio: document.getElementById('fp-i').value||null,
     fin_est: document.getElementById('fp-f').value||null,
     notas: document.getElementById('fp-no').value.trim()||null,
+    // Campos financieros para agentes
+    precio_venta: parseFloat(document.getElementById('fp-pv').value)||null,
+    precio_venta_real: parseFloat(document.getElementById('fp-pvr').value)||null,
+    comunidad_autonoma: document.getElementById('fp-ca').value||null,
+    gastos_compra_extra: parseFloat(document.getElementById('fp-gc').value)||null,
+    gastos_venta_extra: parseFloat(document.getElementById('fp-gv').value)||null,
+    mobiliario: parseFloat(document.getElementById('fp-mob').value)||null,
+    alquiler_mensual: parseFloat(document.getElementById('fp-alq').value)||null,
+    gastos_anuales_alq: parseFloat(document.getElementById('fp-gaa').value)||null,
+    hipoteca_importe: parseFloat(document.getElementById('fp-hi').value)||null,
+    hipoteca_plazo: parseFloat(document.getElementById('fp-hp').value)||null,
+    hipoteca_interes: document.getElementById('fp-hint').value ? parseFloat(document.getElementById('fp-hint').value)/100 : null,
+    revalorizacion_anual: document.getElementById('fp-rev').value ? parseFloat(document.getElementById('fp-rev').value)/100 : null,
+    fecha_venta: document.getElementById('fp-fv').value||null,
     emoji: EMOJIS[Math.floor(Math.random()*EMOJIS.length)],
     thumb: THUMBS[Math.floor(Math.random()*THUMBS.length)],
     created_by: null
@@ -2627,6 +2746,424 @@ function updateDashGrid(){
 }
 window.addEventListener('resize', updateDashGrid)
 updateDashGrid()
+
+/* ═══════════════════════════════════════════════════════════
+   MOTOR FINANCIERO — CÁLCULOS INLINE (sin módulos ES)
+═══════════════════════════════════════════════════════════ */
+const ITP_LOCAL = {
+  'Andalucía':0.08,'Aragón':0.08,'Asturias':0.08,'Baleares':0.08,'Canarias':0.065,
+  'Cantabria':0.10,'Castilla - La Mancha':0.09,'Castilla León':0.08,'Cataluña':0.10,
+  'Ceuta':0.06,'Comunidad de Madrid':0.06,'Comunidad Valenciana':0.10,'Extremadura':0.08,
+  'Galicia':0.09,'La Rioja':0.07,'Melilla':0.06,'Murcia':0.08,'Navarra':0.06,'País Vasco':0.04
+}
+function getITP(ca){ return ITP_LOCAL[ca] ?? 0.08 }
+function fmtEur(v){ if(v==null||isNaN(v))return'—'; return Number(v).toLocaleString('es-ES',{minimumFractionDigits:0,maximumFractionDigits:0})+' €' }
+function fmtPct(v,d=1){ if(v==null||isNaN(v))return'—'; return Number(v).toFixed(d)+'%' }
+function fmtMeses(m){ if(!m)return'—'; return m>=12?`${Math.floor(m/12)}a ${m%12}m`:`${m}m` }
+
+function calcCV(p, gastosReg=0){
+  const precio=p.precio||0, reforma=p.reforma||0
+  const pv=p.precio_venta_real||p.precio_venta||0
+  const itp=precio*getITP(p.comunidad_autonoma)
+  const mob=p.mobiliario||0, gc=p.gastos_compra_extra||0, gv=p.gastos_venta_extra||0
+  const invTotal=precio+itp+reforma+mob+gc
+  const ben=pv-invTotal-gv
+  const roi=invTotal>0?ben/invTotal:0
+  const fi=p.inicio?new Date(p.inicio):null
+  const ff=p.fecha_venta?new Date(p.fecha_venta):(p.fin_est?new Date(p.fin_est):null)
+  const meses=(fi&&ff)?Math.max(1,Math.round((ff-fi)/(1000*60*60*24*30))):null
+  return {tipo:'cv',precioCompra:precio,itp,itpPct:getITP(p.comunidad_autonoma),reforma,mob,gc,gv,gastosReg,pv,invTotal,ben,roi,roiPct:roi*100,per:ben>0&&pv>0?pv/ben:null,meses,roiAnu:meses?(roi/(meses/12)):null,m2inv:p.m2>0?invTotal/p.m2:null,m2pv:p.m2>0&&pv>0?pv/p.m2:null,margen:pv>0?((pv-invTotal)/pv)*100:0}
+}
+
+function calcAlq(p){
+  const precio=p.precio||0, reforma=p.reforma||0, mob=p.mobiliario||0
+  const itp=precio*getITP(p.comunidad_autonoma)
+  const inv=precio+itp+reforma+mob
+  const hi=p.hipoteca_importe||0, hp=p.hipoteca_plazo||25, hint=p.hipoteca_interes||0.035
+  let cuota=0
+  if(hi>0){const r=hint/12,n=hp*12;cuota=hi*r/(1-Math.pow(1+r,-n))}
+  const alq=p.alquiler_mensual||0, ga=p.gastos_anuales_alq||1500, rev=p.revalorizacion_anual||0.02
+  const ing=alq*12, cf=(alq-cuota-(ga/12))*12, reval=precio*rev
+  const rb=precio>0?ing/precio:0
+  const rn=inv>0?(cf+reval)/inv:0
+  return {tipo:'alq',precioCompra:precio,itp,reforma,mob,hipImporte:hi,hipPlazo:hp,hipInt:hint,alqMens:alq,gasAnuales:ga,inv,cuota,cfMens:alq-cuota-(ga/12),cfAnual:cf,reval,rb,rbPct:rb*100,rn,rnPct:rn*100,per:ing>0?precio/ing:null,payback:cf>0?inv/cf:null,m2inv:p.m2>0?inv/p.m2:null,m2alq:p.m2>0&&alq>0?alq/p.m2:null}
+}
+
+const SCOL={legal:'#3A6EA8',arq:'#7A6EA8',obra:'#C25C3A',elect:'#D4A847',font:'#4E7C5A',dis:'#C25C8A'}
+const SLBL={legal:'⚖️ Legal',arq:'📐 Arq.',obra:'🔨 Obra',elect:'⚡ Elec.',font:'🔧 Font.',dis:'🎨 Dis.'}
+
+// Chart registry to destroy before recreating
+const _charts = {}
+function mkChart(id, cfg){
+  if(_charts[id]) _charts[id].destroy()
+  const ctx = document.getElementById(id)
+  if(!ctx) return
+  _charts[id] = new Chart(ctx, cfg)
+}
+
+/* ═══════════════════════════════════════════════════════════
+   AGENTE 1 — ANÁLISIS FINANCIERO POR PROYECTO
+═══════════════════════════════════════════════════════════ */
+function initAnalisisFinanciero(){
+  fillProjSel('af-proj-sel', true)
+  const body = document.getElementById('af-body')
+  body.innerHTML = `<div style="text-align:center;padding:60px 20px;color:var(--muted)"><div style="font-size:48px;margin-bottom:16px">📊</div><div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:8px">Elige un proyecto</div><div style="font-size:13px">El agente calculará automáticamente ROI, rentabilidad, desglose de costes y más</div></div>`
+}
+
+async function cargarAnalisisFinanciero(projId){
+  if(!projId) return
+  const body = document.getElementById('af-body')
+  body.innerHTML = '<div class="loader"></div>'
+  const p = PROYECTOS.find(x=>x.id===projId)
+  if(!p){ body.innerHTML='<div class="empty"><h3>Proyecto no encontrado</h3></div>'; return }
+
+  // Cargar gastos frescos
+  const {data:gs} = await sb.from('gastos').select('*').eq('proyecto_id',projId).order('created_at',{ascending:false})
+  const gastos = gs||[]
+  const gastosReg = gastos.reduce((s,g)=>s+(g.coste||0),0)
+  const gastosPorSector = gastos.reduce((acc,g)=>{acc[g.sector]=(acc[g.sector]||0)+(g.coste||0);return acc},{})
+
+  const kpis = p.tipo==='alquiler' ? calcAlq(p) : calcCV(p, gastosReg)
+  const progPct = pProg(p)
+  const done = (p.phases_done||[]).length
+
+  // Fases por sector
+  const fps={}
+  FASES.forEach(f=>{
+    if(!fps[f.sector]) fps[f.sector]={t:0,d:0}
+    fps[f.sector].t++
+    if((p.phases_done||[]).includes(f.id)) fps[f.sector].d++
+  })
+
+  const esAlq = kpis.tipo==='alq'
+  const sc = STATUS[p.estado]||STATUS.neg
+
+  body.innerHTML = `
+  <!-- KPI CARDS -->
+  <div class="stats-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+    ${esAlq ? `
+    ${kpiCard('💰',fmtPct(kpis.rnPct),'Rentabilidad Neta',kpis.rn>0?'var(--sage)':'var(--red)')}
+    ${kpiCard('📆',kpis.cfMens>=0?fmtEur(kpis.cfMens):'⚠️ Negativo','Cash-Flow Mensual',kpis.cfMens>=0?'var(--gold)':'var(--red)')}
+    ${kpiCard('🔁',fmtPct(kpis.rbPct),'Rentabilidad Bruta','var(--sky)')}
+    ${kpiCard('⏱️',kpis.payback?kpis.payback.toFixed(1)+' años':'—','Payback','var(--lav)')}
+    ` : `
+    ${kpiCard('💰',fmtPct(kpis.roiPct),'ROI Total',kpis.roi>0?'var(--sage)':'var(--red)')}
+    ${kpiCard('📈',fmtEur(kpis.ben),'Beneficio Neto',kpis.ben>0?'var(--gold)':'var(--red)')}
+    ${kpiCard('⏱️',kpis.meses?fmtMeses(kpis.meses):'—','Duración Operación','var(--sky)')}
+    ${kpiCard('🏷️',kpis.roiAnu?fmtPct(kpis.roiAnu*100):'—','ROI Anualizado','var(--lav)')}
+    `}
+  </div>
+
+  <!-- ROW 1: Desglose Inversión + Métricas Clave -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px">
+    <!-- Donut desglose inversión -->
+    <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px">
+      <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:4px">Composición de la Inversión</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:14px">Total: <strong>${fmtEur(kpis.invTotal||kpis.inv)}</strong></div>
+      <div style="position:relative;height:200px"><canvas id="ch-donut"></canvas></div>
+    </div>
+
+    <!-- Métricas tabla -->
+    <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px">
+      <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:14px">Parámetros del Proyecto</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${metricRow('Precio Compra', fmtEur(kpis.precioCompra))}
+        ${metricRow('ITP ('+fmtPct(kpis.itpPct*100,0)+')', fmtEur(kpis.itp))}
+        ${metricRow('Coste Reforma', fmtEur(kpis.reforma))}
+        ${kpis.mob>0?metricRow('Mobiliario/Equipam.', fmtEur(kpis.mob)):''}
+        ${kpis.gc>0?metricRow('Gastos compra extra', fmtEur(kpis.gc)):''}
+        ${gastosReg>0?metricRow('Gastos registrados', fmtEur(gastosReg), true):''}
+        ${metricRow('INVERSIÓN TOTAL', fmtEur(kpis.invTotal||kpis.inv), true)}
+        ${esAlq ? `
+        ${metricRow('Alquiler Mensual', fmtEur(kpis.alqMens))}
+        ${metricRow('Cuota Hipoteca/mes', fmtEur(kpis.cuota))}
+        ${metricRow('Gastos anuales', fmtEur(kpis.gasAnuales))}
+        ` : `
+        ${metricRow('Precio Venta Proyectado', fmtEur(kpis.pv))}
+        ${kpis.gv>0?metricRow('Gastos venta extra', fmtEur(kpis.gv)):''}
+        ${metricRow('BENEFICIO NETO', fmtEur(kpis.ben), true)}
+        ${kpis.m2inv?metricRow('Coste por m²', fmtEur(kpis.m2inv)):''}
+        ${kpis.m2pv?metricRow('PV por m²', fmtEur(kpis.m2pv)):''}
+        `}
+        ${metricRow('Comunidad Autónoma', p.comunidad_autonoma||'No especificada')}
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 2: Gastos por sector + Progreso fases -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px">
+    <!-- Barras gastos por sector -->
+    <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px">
+      <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:4px">Gastos Registrados por Sector</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:14px">Total registrado: <strong>${fmtEur(gastosReg)}</strong></div>
+      ${Object.keys(gastosPorSector).length ? `<div style="position:relative;height:220px"><canvas id="ch-sectores"></canvas></div>` : `<div class="empty" style="padding:30px 0"><div class="empty-ico">📝</div><p>Sin gastos registrados</p></div>`}
+    </div>
+
+    <!-- Progreso fases por sector -->
+    <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px">
+      <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:4px">Progreso de Fases</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:14px">${done}/${FASES.length} completadas · <strong style="color:var(--gold)">${progPct}%</strong></div>
+      <div style="position:relative;height:220px"><canvas id="ch-fases"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ROW 3: Desviación presupuestaria + notas urgentes -->
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-bottom:18px">
+    <!-- Desviación vs presupuesto -->
+    <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px">
+      <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:14px">Presupuesto vs. Gasto Real por Sector</div>
+      ${Object.keys(gastosPorSector).length ? `<div style="position:relative;height:180px"><canvas id="ch-desviacion"></canvas></div>` : `<div class="empty" style="padding:20px 0"><div class="empty-ico">📋</div><p>Registra gastos para ver desviaciones</p></div>`}
+    </div>
+    <!-- Info proyecto -->
+    <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px">
+      <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:14px">📍 ${p.nombre}</div>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:12px">
+        ${metricRow('Estado','<span class="badge '+sc.c+' " style="margin-bottom:0">'+sc.l+'</span>')}
+        ${metricRow('Tipo', p.tipo)}
+        ${metricRow('Dirección', p.direccion)}
+        ${metricRow('Superficie', p.m2?(p.m2+' m²'):'—')}
+        ${metricRow('Inicio', fD(p.inicio))}
+        ${metricRow('Fin estimado', fD(p.fin_est))}
+        ${p.fecha_venta?metricRow('Fecha venta', fD(p.fecha_venta)):''}
+      </div>
+      <div style="margin-top:14px">
+        <button class="btn btn-gold btn-sm" style="width:100%" onclick="openDetalle('${p.id}')">Abrir Proyecto →</button>
+      </div>
+    </div>
+  </div>`
+
+  // Render charts after DOM
+  setTimeout(() => {
+    // Donut: composición inversión
+    const dLabels=[], dData=[], dBg=[]
+    if(kpis.precioCompra>0){dLabels.push('Precio compra');dData.push(kpis.precioCompra);dBg.push('#3A6EA8')}
+    if(kpis.itp>0){dLabels.push('ITP');dData.push(kpis.itp);dBg.push('#7A6EA8')}
+    if(kpis.reforma>0){dLabels.push('Reforma');dData.push(kpis.reforma);dBg.push('#C25C3A')}
+    if((kpis.mob||0)>0){dLabels.push('Mobiliario');dData.push(kpis.mob);dBg.push('#C25C8A')}
+    if((kpis.gc||0)>0){dLabels.push('Gastos compra');dData.push(kpis.gc);dBg.push('#D4A847')}
+    mkChart('ch-donut',{type:'doughnut',data:{labels:dLabels,datasets:[{data:dData,backgroundColor:dBg,borderWidth:2,borderColor:'var(--paper)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11},padding:10}}}}})
+
+    // Barras: gastos por sector
+    if(Object.keys(gastosPorSector).length){
+      const sects=Object.keys(gastosPorSector).sort((a,b)=>gastosPorSector[b]-gastosPorSector[a])
+      mkChart('ch-sectores',{type:'bar',data:{labels:sects.map(s=>SLBL[s]||s),datasets:[{label:'Gasto real',data:sects.map(s=>gastosPorSector[s]),backgroundColor:sects.map(s=>SCOL[s]||'#9A8F80'),borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>fmtEur(v)}}}}})
+    }
+
+    // Barras: progreso fases por sector
+    const fsects=Object.keys(fps)
+    mkChart('ch-fases',{type:'bar',data:{labels:fsects.map(s=>SLBL[s]||s),datasets:[{label:'Completadas',data:fsects.map(s=>fps[s].d),backgroundColor:fsects.map(s=>SCOL[s]||'#9A8F80'),borderRadius:4},{label:'Pendientes',data:fsects.map(s=>fps[s].t-fps[s].d),backgroundColor:fsects.map(s=>(SCOL[s]||'#9A8F80')+'33'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10}}}},scales:{x:{stacked:true},y:{stacked:true,ticks:{precision:0}}}}})
+
+    // Barras: presupuesto vs gasto real por sector (comparativa)
+    if(Object.keys(gastosPorSector).length){
+      const allS=[...new Set([...Object.keys(gastosPorSector)])]
+      const presup={obra:p.reforma||0}
+      mkChart('ch-desviacion',{type:'bar',data:{labels:allS.map(s=>SLBL[s]||s),datasets:[{label:'Presupuestado',data:allS.map(s=>presup[s]||0),backgroundColor:'rgba(212,168,71,.3)',borderColor:'#D4A847',borderWidth:1.5,borderRadius:4},{label:'Gasto real',data:allS.map(s=>gastosPorSector[s]||0),backgroundColor:allS.map(s=>SCOL[s]+'88'||'#9A8F8088'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10}}}},scales:{y:{ticks:{callback:v=>fmtEur(v)}}}}})
+    }
+  }, 60)
+
+  document.getElementById('af-sub').textContent = p.nombre + ' · ' + (sc.l)
+}
+
+function kpiCard(ico,val,lbl,col='var(--gold)'){
+  return `<div class="stat-card"><div class="stat-ico">${ico}</div><div class="stat-val" style="color:${col};font-size:18px">${val}</div><div class="stat-lbl">${lbl}</div></div>`
+}
+function metricRow(lbl,val,bold=false){
+  return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)"><span style="font-size:11px;color:var(--muted)">${lbl}</span><span style="font-size:12px;font-weight:${bold?'700':'500'}">${val}</span></div>`
+}
+
+/* ═══════════════════════════════════════════════════════════
+   AGENTE 2 — DASHBOARD DE CARTERA GLOBAL
+═══════════════════════════════════════════════════════════ */
+async function cargarDashboardCartera(){
+  const body = document.getElementById('dc-body')
+  body.innerHTML = '<div class="loader"></div>'
+
+  // Cargar todos los gastos
+  const {data:todosGastos} = await sb.from('gastos').select('*').order('created_at',{ascending:false})
+  const gs = todosGastos||[]
+
+  // Calcular KPIs individuales de cada proyecto
+  const analisis = PROYECTOS.map(p => {
+    const gastosP = gs.filter(g=>g.proyecto_id===p.id)
+    const gReg = gastosP.reduce((s,g)=>s+(g.coste||0),0)
+    const kpis = p.tipo==='alquiler' ? calcAlq(p) : calcCV(p, gReg)
+    return { p, kpis, gReg, gastosP }
+  })
+
+  // Totales de cartera
+  const invTotal = analisis.reduce((s,a)=>s+(a.kpis.invTotal||a.kpis.inv||0),0)
+  const gastTotal = gs.reduce((s,g)=>s+(g.coste||0),0)
+  const finalizados = analisis.filter(a=>a.p.estado==='fin')
+  const retornoTotal = finalizados.reduce((s,a)=>s+(a.kpis.pv||0),0)
+  const benefTotal = finalizados.reduce((s,a)=>s+(a.kpis.ben||0),0)
+  const roiMedio = finalizados.length>0 ? finalizados.reduce((s,a)=>s+(a.kpis.roi||0),0)/finalizados.length : null
+  const porEstado={neg:0,ref:0,act:0,fin:0}
+  PROYECTOS.forEach(p=>porEstado[p.estado]=(porEstado[p.estado]||0)+1)
+  const gastosPorSectorGlobal=gs.reduce((acc,g)=>{acc[g.sector]=(acc[g.sector]||0)+(g.coste||0);return acc},{})
+
+  // Comparativa ROI por proyecto
+  const comparativa = analisis
+    .filter(a=>(a.kpis.invTotal||a.kpis.inv||0)>0)
+    .sort((a,b)=>(b.kpis.roi||0)-(a.kpis.roi||0))
+
+  // Evolución temporal
+  const byMes={}
+  PROYECTOS.forEach(p=>{
+    if(!p.inicio)return
+    const m=p.inicio.slice(0,7)
+    if(!byMes[m]){byMes[m]={inv:0,n:0}}
+    byMes[m].inv+=(p.precio||0)+(p.reforma||0); byMes[m].n++
+  })
+  const meses=Object.keys(byMes).sort()
+  let acum=0
+  const evol=meses.map(m=>{acum+=(byMes[m].inv);return{m,inv:byMes[m].inv,acum,n:byMes[m].n}})
+  const mesLabels=evol.map(e=>{const[y,mo]=e.m.split('-');return['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][parseInt(mo)-1]+' '+y})
+
+  body.innerHTML = `
+  <!-- KPIs globales -->
+  <div class="stats-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+    ${kpiCard('💶',fmtEur(invTotal),'Inversión Total Cartera','var(--gold)')}
+    ${kpiCard('💰',fmtEur(benefTotal),'Beneficio Generado',benefTotal>=0?'var(--sage)':'var(--red)')}
+    ${kpiCard('📊',roiMedio!=null?fmtPct(roiMedio*100):'—','ROI Medio Cartera','var(--sky)')}
+    ${kpiCard('🏗️',fmtEur(gastTotal),'Gasto Total Registrado','var(--rust)')}
+  </div>
+
+  <!-- ROW 1: Comparativa inversión/retorno + estados -->
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-bottom:18px">
+    <!-- Barras comparativa inversión vs retorno -->
+    <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px">
+      <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:4px">Inversión vs. Retorno por Proyecto</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:14px">Comparativa económica de toda la cartera</div>
+      <div style="position:relative;height:240px"><canvas id="dc-inv-ret"></canvas></div>
+    </div>
+
+    <!-- Donut por estado -->
+    <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px">
+      <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:4px">Cartera por Estado</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:14px">${PROYECTOS.length} proyectos en total</div>
+      <div style="position:relative;height:200px"><canvas id="dc-estados"></canvas></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:10px">
+        ${['neg','ref','act','fin'].filter(k=>porEstado[k]>0).map(k=>{
+          const lbs={neg:'Negociación',ref:'En Reforma',act:'En Venta',fin:'Finalizado'}
+          const cls={neg:'var(--muted)',ref:'var(--gold)',act:'var(--sage)',fin:'var(--sky)'}
+          return `<div style="font-size:10px;display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:${cls[k]};flex-shrink:0"></span>${lbs[k]}: <strong>${porEstado[k]}</strong></div>`
+        }).join('')}
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 2: ROI por proyecto + gastos por sector global -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px">
+    <!-- Barras ROI -->
+    <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px">
+      <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:4px">ROI por Proyecto (%)</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:14px">Ordenado de mayor a menor rentabilidad</div>
+      <div style="position:relative;height:220px"><canvas id="dc-roi"></canvas></div>
+    </div>
+
+    <!-- Gastos globales por sector -->
+    <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px">
+      <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:4px">Distribución de Gastos por Sector</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:14px">Total registrado en todos los proyectos</div>
+      ${Object.keys(gastosPorSectorGlobal).length ? `<div style="position:relative;height:220px"><canvas id="dc-sectores"></canvas></div>` : `<div class="empty" style="padding:30px 0"><div class="empty-ico">📝</div><p>Sin gastos registrados</p></div>`}
+    </div>
+  </div>
+
+  <!-- ROW 3: Evolución temporal + tabla resumen -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px">
+    <!-- Evolución inversión acumulada -->
+    <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px">
+      <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:4px">Evolución Temporal de Inversión</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:14px">Inversión acumulada por fecha de inicio</div>
+      ${evol.length>0 ? `<div style="position:relative;height:200px"><canvas id="dc-evol"></canvas></div>` : `<div class="empty" style="padding:30px 0"><div class="empty-ico">📅</div><p>Define fechas de inicio en los proyectos</p></div>`}
+    </div>
+
+    <!-- Tabla resumen proyectos -->
+    <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px;overflow:auto">
+      <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:14px">Resumen por Proyecto</div>
+      <table class="gtable" style="font-size:11px">
+        <thead><tr><th>Proyecto</th><th>Inversión</th><th>ROI</th><th>Gastos</th><th>Progreso</th></tr></thead>
+        <tbody>
+          ${comparativa.map(a=>{
+            const sc=STATUS[a.p.estado]||STATUS.neg
+            const roi=a.kpis.roi!=null?fmtPct(a.kpis.roiPct||a.kpis.rnPct):'—'
+            const roiCol=a.kpis.roi>0?'var(--sage)':a.kpis.roi<0?'var(--red)':'var(--muted)'
+            return `<tr onclick="go(document.querySelector('[data-v=analisis-financiero]'));setTimeout(()=>{document.getElementById('af-proj-sel').value='${a.p.id}';cargarAnalisisFinanciero('${a.p.id}')},100)" style="cursor:pointer">
+              <td>
+                <div style="font-weight:600;font-size:11px">${a.p.nombre.length>20?a.p.nombre.slice(0,20)+'…':a.p.nombre}</div>
+                <span class="badge ${sc.c}" style="margin-bottom:0;font-size:8px">${sc.l}</span>
+              </td>
+              <td style="font-weight:600">${fmtEur(a.kpis.invTotal||a.kpis.inv)}</td>
+              <td style="font-weight:700;color:${roiCol}">${roi}</td>
+              <td style="color:var(--rust)">${fmtEur(a.gReg)}</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:5px">
+                  <div class="prog-bar" style="flex:1;height:4px"><div class="prog-fill" style="width:${pProg(a.p)}%"></div></div>
+                  <span style="font-size:9px;color:var(--gold);font-weight:700">${pProg(a.p)}%</span>
+                </div>
+              </td>
+            </tr>`
+          }).join('')}
+        </tbody>
+        <tr class="tot">
+          <td>TOTAL CARTERA</td>
+          <td>${fmtEur(invTotal)}</td>
+          <td style="color:${(roiMedio||0)>0?'var(--sage)':'var(--red)'}">${roiMedio!=null?fmtPct(roiMedio*100):'—'}</td>
+          <td style="color:var(--rust)">${fmtEur(gastTotal)}</td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+  </div>`
+
+  setTimeout(() => {
+    // Comparativa inversión vs retorno
+    const cNames = comparativa.map(a=>a.p.nombre.length>15?a.p.nombre.slice(0,15)+'…':a.p.nombre)
+    mkChart('dc-inv-ret',{type:'bar',data:{labels:cNames,datasets:[
+      {label:'Inversión',data:comparativa.map(a=>a.kpis.invTotal||a.kpis.inv||0),backgroundColor:'rgba(58,110,168,.7)',borderRadius:4},
+      {label:'Retorno Proyect.',data:comparativa.map(a=>a.kpis.pv||0),backgroundColor:'rgba(78,124,90,.7)',borderRadius:4},
+      {label:'Gastos Reales',data:comparativa.map(a=>a.gReg),backgroundColor:'rgba(194,92,58,.5)',borderRadius:4}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10}}}},scales:{y:{ticks:{callback:v=>fmtEur(v)}}}}})
+
+    // Donut estados
+    const estK=['neg','ref','act','fin'].filter(k=>porEstado[k]>0)
+    const estLbl={neg:'Negociación',ref:'En Reforma',act:'En Venta',fin:'Finalizado'}
+    const estCol={neg:'#9A8F80',ref:'#D4A847',act:'#4E7C5A',fin:'#3A6EA8'}
+    mkChart('dc-estados',{type:'doughnut',data:{labels:estK.map(k=>estLbl[k]),datasets:[{data:estK.map(k=>porEstado[k]),backgroundColor:estK.map(k=>estCol[k]),borderWidth:2,borderColor:'var(--paper)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}})
+
+    // ROI por proyecto
+    const roiColors=comparativa.map(a=>(a.kpis.roi||0)>0?'rgba(78,124,90,.8)':'rgba(194,92,58,.8)')
+    mkChart('dc-roi',{type:'bar',data:{labels:cNames,datasets:[{label:'ROI %',data:comparativa.map(a=>parseFloat((a.kpis.roiPct||a.kpis.rnPct||0).toFixed(1))),backgroundColor:roiColors,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v+'%'}}}}})
+
+    // Gastos por sector global
+    if(Object.keys(gastosPorSectorGlobal).length){
+      const gsSects=Object.keys(gastosPorSectorGlobal).sort((a,b)=>gastosPorSectorGlobal[b]-gastosPorSectorGlobal[a])
+      mkChart('dc-sectores',{type:'bar',data:{labels:gsSects.map(s=>SLBL[s]||s),datasets:[{label:'Gasto total',data:gsSects.map(s=>gastosPorSectorGlobal[s]),backgroundColor:gsSects.map(s=>SCOL[s]||'#9A8F80'),borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{callback:v=>fmtEur(v)}}}}})
+    }
+
+    // Evolución temporal
+    if(evol.length>0){
+      mkChart('dc-evol',{type:'line',data:{labels:mesLabels,datasets:[
+        {label:'Inversión periodo',data:evol.map(e=>e.inv),backgroundColor:'rgba(212,168,71,.15)',borderColor:'#D4A847',borderWidth:2,fill:true,tension:0.3,pointRadius:4},
+        {label:'Inversión acumulada',data:evol.map(e=>e.acum),backgroundColor:'transparent',borderColor:'#3A6EA8',borderWidth:2,borderDash:[],tension:0.3,pointRadius:4}
+      ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10}}}},scales:{y:{ticks:{callback:v=>fmtEur(v)}}}}})
+    }
+  }, 60)
+}
+
+/* ═══ Exportar cartera CSV ═══ */
+function exportarCarteraCSV(){
+  if(!PROYECTOS.length){ toast('Sin datos para exportar'); return }
+  const rows=[['Proyecto','Tipo','Estado','Precio Compra','Reforma','Precio Venta Proyect.','Precio Venta Real','Comunidad Autónoma','m²','ROI Est. %','Inicio','Fin Est.','Fecha Venta']]
+  PROYECTOS.forEach(p=>{
+    const kpis = p.tipo==='alquiler' ? calcAlq(p) : calcCV(p)
+    rows.push([p.nombre,p.tipo,STATUS[p.estado]?.l||p.estado,p.precio||0,p.reforma||0,p.precio_venta||0,p.precio_venta_real||0,p.comunidad_autonoma||'',p.m2||'',(kpis.roiPct||kpis.rnPct||0).toFixed(2),p.inicio||'',p.fin_est||'',p.fecha_venta||''])
+  })
+  downloadCSV(rows,'rehabitaco_cartera_financiera.csv')
+}
+
+const SLBL = {legal:'⚖️ Legal',arq:'📐 Arq.',obra:'🔨 Obra',elect:'⚡ Elec.',font:'🔧 Font.',dis:'🎨 Dis.'}
+const SCOL = {legal:'#3A6EA8',arq:'#7A6EA8',obra:'#C25C3A',elect:'#D4A847',font:'#4E7C5A',dis:'#C25C8A'}
 </script>
 </body>
 </html>
