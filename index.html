@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>RehabitaCo — Gestión de Obras</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
@@ -1049,6 +1049,23 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
         <span class="nav-icon">🗂️</span><span class="nav-label">Dashboard Cartera</span>
       </div>
 
+      <div class="nav-sect">Analytics & IA</div>
+      <div class="nav-item" data-v="an-overview" onclick="go(this)">
+        <span class="nav-icon">📊</span><span class="nav-label">Dashboard Ejecutivo</span>
+      </div>
+      <div class="nav-item" data-v="an-predictor" onclick="go(this)">
+        <span class="nav-icon">🔮</span><span class="nav-label">Predictor ROI</span>
+      </div>
+      <div class="nav-item" data-v="an-obra" onclick="go(this)">
+        <span class="nav-icon">🏗️</span><span class="nav-label">Control de Obra</span>
+      </div>
+      <div class="nav-item" data-v="an-comparador" onclick="go(this)">
+        <span class="nav-icon">⚖️</span><span class="nav-label">Comparador</span>
+      </div>
+      <div class="nav-item" data-v="an-agente" onclick="go(this)">
+        <span class="nav-icon">✦</span><span class="nav-label">Agente IA</span>
+      </div>
+
       <div class="nav-sect">Configuración</div>
       <div class="nav-item" data-v="fases" onclick="go(this)">
         <span class="nav-icon">📋</span><span class="nav-label">Plantilla Fases</span>
@@ -1322,6 +1339,377 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
         </div>
         <div id="dc-body"><div class="loader"></div></div>
       </div>
+
+      <!-- ══════ ANALYTICS: DASHBOARD EJECUTIVO ══════ -->
+      <div id="v-an-overview" class="view">
+        <div class="sec-head">
+          <div><div class="sec-title">📊 Dashboard Ejecutivo</div><div class="sec-sub">Visión global de cartera · KPIs clave · Evolución patrimonial</div></div>
+        </div>
+        <div class="kpi-row">
+          <div class="kpi-card ag">
+            <div class="kpi-ico">💰</div><div class="kpi-val">2.84M€</div>
+            <div class="kpi-lbl">Capital desplegado</div>
+            <div class="kpi-delta up">↑ +340K este trimestre</div>
+            <div class="kpi-sparkline"><canvas id="sp1"></canvas></div>
+          </div>
+          <div class="kpi-card as">
+            <div class="kpi-ico">📈</div><div class="kpi-val">23.7%</div>
+            <div class="kpi-lbl">ROI Medio Cartera</div>
+            <div class="kpi-delta up">↑ +2.1pp vs año anterior</div>
+            <div class="kpi-sparkline"><canvas id="sp2"></canvas></div>
+          </div>
+          <div class="kpi-card asky">
+            <div class="kpi-ico">🏠</div><div class="kpi-val">12</div>
+            <div class="kpi-lbl">Proyectos activos</div>
+            <div class="kpi-delta neu">3 neg · 4 ref · 3 venta · 2 fin</div>
+            <div class="kpi-sparkline"><canvas id="sp3"></canvas></div>
+          </div>
+          <div class="kpi-card aru">
+            <div class="kpi-ico">⏱️</div><div class="kpi-val">6.2m</div>
+            <div class="kpi-lbl">Duración media flip</div>
+            <div class="kpi-delta dn">↑ +0.4m sobre objetivo</div>
+            <div class="kpi-sparkline"><canvas id="sp4"></canvas></div>
+          </div>
+        </div>
+        <div class="chart-grid g21">
+          <div class="chart-card">
+            <div class="chart-head"><div><div class="chart-title">Evolución Patrimonial & Beneficios</div><div class="chart-sub">Capital desplegado vs. retornos acumulados · 24 meses</div></div></div>
+            <div class="chart-wrap" style="height:210px"><canvas id="cEvolucion"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-head"><div><div class="chart-title">Estado Cartera</div><div class="chart-sub">Distribución actual</div></div></div>
+            <div class="chart-wrap" style="height:160px"><canvas id="cEstados"></canvas></div>
+            <div style="display:flex;flex-direction:column;gap:5px;margin-top:10px">
+              <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--muted)">🟤 Negociación</span><span class="mono" style="font-weight:700">3</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--muted)">🟡 En reforma</span><span class="mono" style="font-weight:700">4</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--muted)">🟢 En venta</span><span class="mono" style="font-weight:700">3</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--muted)">⚫ Finalizados</span><span class="mono" style="font-weight:700">2</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="chart-grid g12">
+          <div class="chart-card">
+            <div class="chart-head"><div><div class="chart-title">Gasto por Sector</div><div class="chart-sub">Distribución global €</div></div></div>
+            <div class="chart-wrap" style="height:210px"><canvas id="cSectores"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-head"><div><div class="chart-title">ROI por Proyecto — Comparativa</div><div class="chart-sub">Inversión · Retorno · ordenado por ROI</div></div></div>
+            <div class="chart-wrap" style="height:210px"><canvas id="cROI"></canvas></div>
+          </div>
+        </div>
+        <div class="chart-grid g2">
+          <div class="chart-card">
+            <div class="chart-head"><div><div class="chart-title">Coste & Precio/m²</div><div class="chart-sub">Eficiencia de adquisición y reforma · €/m²</div></div></div>
+            <div class="chart-wrap" style="height:170px"><canvas id="cM2"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-head"><div><div class="chart-title">Cash Flow Mensual Proyectado</div><div class="chart-sub">Alquiler + retornos por ventas estimadas</div></div></div>
+            <div class="chart-wrap" style="height:170px"><canvas id="cCashFlow"></canvas></div>
+          </div>
+        </div>
+        <div style="margin-bottom:16px">
+          <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+            <span style="color:var(--gold)">✦</span> Insights Automáticos
+            <span style="font-size:9px;font-weight:600;color:var(--muted);letter-spacing:.8px;text-transform:uppercase">generados por IA · hace 2h</span>
+          </div>
+          <div class="insight-row">
+            <div class="insight-card al-gold"><div class="insight-ico">⚡</div><div><div class="insight-title">Reforma Calle Mayor retrasada</div><div class="insight-desc">8 meses vs 5 estimados. Cada mes extra consume ~3.200€ en costes financieros. Prioriza cerrar electricidad y fontanería.</div></div></div>
+            <div class="insight-card al-sage"><div class="insight-ico">🚀</div><div><div class="insight-title">Mejor ROI de la cartera</div><div class="insight-desc">Piso Fuencarral: 31.4% ROI en 4.2 meses. Modelo a replicar: 55-80m², zona centro, inversión &lt;80K€, reforma &lt;35% precio compra.</div></div></div>
+            <div class="insight-card al-red"><div class="insight-ico">⚠️</div><div><div class="insight-title">Desvío en fontanería (+32%)</div><div class="insight-desc">Sector fontanería acumula +24% sobre ppto. en 3 proyectos. Revisa proveedor o metodología de presupuestado.</div></div></div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Ranking de Proyectos por Rentabilidad</div><div class="chart-sub">Ordenado por ROI descendente</div></div></div>
+          <div style="overflow-x:auto">
+            <table class="data-table">
+              <thead><tr><th>#</th><th>Proyecto</th><th>Tipo</th><th>Estado</th><th>Inversión</th><th>PV / Rent.</th><th>Beneficio</th><th>ROI</th><th>Duración</th><th>€/m²</th><th>Score</th></tr></thead>
+              <tbody>
+                <tr><td style="font-weight:800;color:var(--gold)">1</td><td><strong>Piso Fuencarral Madrid</strong><br><span style="font-size:10px;color:var(--muted)">C/ Fuencarral 44, 3ºA</span></td><td><span class="tag tag-obra">Flip</span></td><td><span class="badge bs-fin">Finalizado</span></td><td class="mono">78.400€</td><td class="mono" style="color:var(--green)">102.000€</td><td class="mono" style="color:var(--sage);font-weight:700">+23.600€</td><td style="font-weight:800;color:var(--sage)">31.4%</td><td>4.2m</td><td class="mono">1.430€</td><td style="font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--sage)">A+</td></tr>
+                <tr><td style="font-weight:800;color:var(--muted)">2</td><td><strong>Ático Gràcia BCN</strong><br><span style="font-size:10px;color:var(--muted)">C/ Verdi 12, Àtic</span></td><td><span class="tag tag-obra">Flip</span></td><td><span class="badge bs-act">En Venta</span></td><td class="mono">134.000€</td><td class="mono" style="color:var(--muted)">168.000€ est.</td><td class="mono" style="color:#a07820;font-weight:700">+34.000€ est.</td><td style="font-weight:800;color:#a07820">25.4%</td><td>6.8m ⚠️</td><td class="mono">1.680€</td><td style="font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:#a07820">A</td></tr>
+                <tr><td style="font-weight:800;color:var(--muted)">3</td><td><strong>Casa Calle Mayor</strong><br><span style="font-size:10px;color:var(--muted)">C/ Mayor 77, Bajo</span></td><td><span class="tag tag-obra">Flip</span></td><td><span class="badge bs-ref">En Reforma</span></td><td class="mono">210.000€</td><td class="mono" style="color:var(--muted)">255.000€ est.</td><td class="mono" style="color:var(--muted)">+45.000€ est.</td><td style="font-weight:800;color:var(--muted)">21.4%</td><td>8.0m ⚠️</td><td class="mono">1.775€</td><td style="font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:#a07820">B</td></tr>
+                <tr><td style="font-weight:800;color:var(--muted)">4</td><td><strong>Piso Alquiler Valencia</strong><br><span style="font-size:10px;color:var(--muted)">Av. Blasco Ibáñez 8, 2B</span></td><td><span class="tag tag-font">Alquiler</span></td><td><span class="badge bs-act">Activo</span></td><td class="mono">95.000€</td><td class="mono" style="color:var(--sage)">850€/mes</td><td class="mono" style="color:var(--sage);font-weight:700">7.2% renta neta</td><td style="font-weight:800;color:var(--sky)">7.2%</td><td>Indefinido</td><td class="mono">1.390€</td><td style="font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--sky)">B+</td></tr>
+                <tr><td style="font-weight:800;color:var(--muted)">5</td><td><strong>Nave Getafe</strong><br><span style="font-size:10px;color:var(--muted)">Pol. Ind. Los Ángeles</span></td><td><span class="tag tag-legal">Rehab.</span></td><td><span class="badge bs-neg">Negociación</span></td><td class="mono">380.000€</td><td class="mono" style="color:var(--muted)">—</td><td class="mono" style="color:var(--muted)">—</td><td style="font-weight:800;color:var(--muted)">—</td><td>—</td><td class="mono">—</td><td style="font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--muted)">?</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div><!-- /an-overview -->
+
+      <!-- ══════ ANALYTICS: PREDICTOR ROI ══════ -->
+      <div id="v-an-predictor" class="view">
+        <div class="sec-head">
+          <div><div class="sec-title">🔮 Predictor de Rentabilidad</div><div class="sec-sub">Calcula ROI antes de comprar · Simula escenarios · Toma decisiones con datos</div></div>
+        </div>
+        <div class="predictor-grid">
+          <div>
+            <div class="pred-form">
+              <div class="pf-title">⚙️ Parámetros del Proyecto</div>
+              <div class="pf-group"><label class="pf-label">Tipo de operación</label><select class="pf-select" id="pTipo" onchange="updatePredictor()"><option value="flip">Compra-reforma-venta (Flip)</option><option value="alquiler">Compra-reforma-alquiler</option></select></div>
+              <div class="pf-group"><label class="pf-label">Comunidad Autónoma</label><select class="pf-select" id="pCCAA" onchange="updatePredictor()"><option>Comunidad de Madrid</option><option>Comunidad Valenciana</option><option>Cataluña</option><option>Andalucía</option><option>País Vasco</option><option>Galicia</option><option>Castilla León</option><option>Aragón</option></select></div>
+              <hr class="pf-divider">
+              <div class="pf-subtitle">📦 Adquisición</div>
+              <div class="pf-row">
+                <div class="pf-group"><label class="pf-label">Precio compra (€)</label><input type="number" class="pf-input" id="pPrecio" value="120000" oninput="updatePredictor()"></div>
+                <div class="pf-group"><label class="pf-label">Superficie (m²)</label><input type="number" class="pf-input" id="pM2" value="75" oninput="updatePredictor()"></div>
+              </div>
+              <div class="pf-row">
+                <div class="pf-group"><label class="pf-label">Reforma (€)</label><input type="number" class="pf-input" id="pReforma" value="35000" oninput="updatePredictor()"></div>
+                <div class="pf-group"><label class="pf-label">Mobiliario (€)</label><input type="number" class="pf-input" id="pMob" value="5000" oninput="updatePredictor()"></div>
+              </div>
+              <div class="pf-group"><label class="pf-label">Gastos compra adicionales (€)</label><input type="number" class="pf-input" id="pGCompra" value="2000" oninput="updatePredictor()"></div>
+              <hr class="pf-divider">
+              <div class="pf-subtitle" id="pSeccionVenta">💸 Venta</div>
+              <div id="flipFields">
+                <div class="pf-row">
+                  <div class="pf-group"><label class="pf-label">Precio venta objetivo (€)</label><input type="number" class="pf-input" id="pPVenta" value="185000" oninput="updatePredictor()"></div>
+                  <div class="pf-group"><label class="pf-label">Gastos de venta (€)</label><input type="number" class="pf-input" id="pGVenta" value="7000" oninput="updatePredictor()"></div>
+                </div>
+              </div>
+              <div id="alqFields" style="display:none">
+                <div class="pf-row">
+                  <div class="pf-group"><label class="pf-label">Alquiler mensual (€)</label><input type="number" class="pf-input" id="pAlq" value="800" oninput="updatePredictor()"></div>
+                  <div class="pf-group"><label class="pf-label">Gastos anuales (€)</label><input type="number" class="pf-input" id="pGAlq" value="1500" oninput="updatePredictor()"></div>
+                </div>
+              </div>
+              <hr class="pf-divider">
+              <div class="pf-subtitle">⏱️ Timing</div>
+              <div class="pf-row">
+                <div class="pf-group"><label class="pf-label">Meses estimados</label><input type="number" class="pf-input" id="pMeses" value="6" oninput="updatePredictor()"></div>
+                <div class="pf-group"><label class="pf-label">Variación realista (%)</label><input type="number" class="pf-input" id="pVariacion" value="15" oninput="updatePredictor()"></div>
+              </div>
+              <button class="btn btn-gold" style="width:100%;justify-content:center;margin-top:6px" onclick="updatePredictor()">✦ Calcular Predicción</button>
+            </div>
+            <div class="pred-form">
+              <div class="pf-title">🎯 Score de Viabilidad</div>
+              <div class="score-wrap">
+                <div class="score-ring">
+                  <svg width="80" height="80" viewBox="0 0 80 80"><circle cx="40" cy="40" r="32" fill="none" stroke="#E4DDD0" stroke-width="8"/><circle id="scoreArc" cx="40" cy="40" r="32" fill="none" stroke="#4E7C5A" stroke-width="8" stroke-dasharray="201.1" stroke-dashoffset="50.3" stroke-linecap="round"/></svg>
+                  <div class="score-ring-num" id="scoreNum">75</div>
+                </div>
+                <div><div class="score-lbl" id="scoreLbl">Operación Viable</div><div class="score-desc" id="scoreDesc">ROI aceptable · Margen de seguridad positivo.</div></div>
+              </div>
+              <div style="margin-top:14px;display:flex;flex-direction:column;gap:7px">
+                <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">ITP estimado</span><span class="mono" id="sdITP" style="font-weight:700">7.200€ (6%)</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">Inversión total</span><span class="mono" id="sdInv" style="font-weight:700">169.200€</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">Margen seguridad</span><span class="mono" id="sdMseg" style="font-weight:700;color:var(--sage)">8.5%</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">Coste/m²</span><span class="mono" id="sdCm2" style="font-weight:700">2.256€</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">PV/m²</span><span class="mono" id="sdPvm2" style="font-weight:700">2.467€</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="result-panel">
+            <div>
+              <div style="font-family:'Syne',sans-serif;font-size:13.5px;font-weight:700;margin-bottom:12px">📐 Resultado Principal</div>
+              <div class="result-hero">
+                <div><div class="res-val" id="resROI">8.8%</div><div class="res-lbl">ROI Neto</div><div class="res-note warn" id="resROIrating">⚡ Aceptable</div></div>
+                <div><div class="res-val" id="resBen">14.800€</div><div class="res-lbl">Beneficio Neto</div><div class="res-note warn" id="resAnual">17.6% anualizado</div></div>
+                <div><div class="res-val" id="resInv">169.200€</div><div class="res-lbl">Inversión Total</div><div class="res-note dim">incluye ITP y gastos</div></div>
+              </div>
+            </div>
+            <div>
+              <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:10px">🎭 Análisis de Escenarios</div>
+              <div class="scenario-cards">
+                <div class="sce-card bull"><div class="sce-title">🐂 Optimista</div><div class="sce-roi" id="sceBull" style="color:var(--sage)">+12.4%</div><div class="sce-desc">Precio superior · obra en tiempo</div></div>
+                <div class="sce-card base"><div class="sce-title">📊 Base</div><div class="sce-roi" id="sceBase" style="color:#a07820">+8.8%</div><div class="sce-desc">Precio objetivo · +variación normal</div></div>
+                <div class="sce-card bear"><div class="sce-title">🐻 Pesimista</div><div class="sce-roi" id="sceBear" style="color:var(--rust)">+4.1%</div><div class="sce-desc">−10% precio venta · +30% reforma</div></div>
+              </div>
+            </div>
+            <div>
+              <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:10px">🧱 Desglose de Inversión</div>
+              <div style="height:175px"><canvas id="cWaterfall"></canvas></div>
+            </div>
+            <div>
+              <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:10px">📅 Impacto del Timing en ROI Anualizado</div>
+              <div style="height:155px"><canvas id="cTiming"></canvas></div>
+            </div>
+            <div class="bep-row">
+              <div><div class="bep-lbl">Precio mínimo de venta (BEP)</div><div class="bep-val" id="bepVal" style="color:var(--rust)">174.200€</div><div style="font-size:10.5px;color:var(--muted)">para no perder dinero</div></div>
+              <div><div class="bep-lbl">Margen sobre BEP</div><div class="bep-val" id="bepMargen" style="color:var(--sage)">+10.800€</div><div style="font-size:10.5px;color:var(--muted)" id="bepPct">+5.8% sobre BEP</div></div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /an-predictor -->
+
+      <!-- ══════ ANALYTICS: CONTROL DE OBRA ══════ -->
+      <div id="v-an-obra" class="view">
+        <div class="sec-head">
+          <div><div class="sec-title">🏗️ Control de Obra & Progreso</div><div class="sec-sub">Fases · Desviaciones · Alertas · Proyección de finalización</div></div>
+        </div>
+        <div class="proj-tabs-an">
+          <button class="proj-tab-an on" onclick="selProjAn(this)">🏠 Casa Calle Mayor</button>
+          <button class="proj-tab-an" onclick="selProjAn(this)">🌇 Ático Gràcia</button>
+          <button class="proj-tab-an" onclick="selProjAn(this)">🏡 Valencia Alquiler</button>
+        </div>
+        <div class="kpi-row cols5">
+          <div class="kpi-card ag"><div class="kpi-ico">⏱️</div><div class="kpi-val">67%</div><div class="kpi-lbl">Progreso Obra</div><div class="kpi-delta neu">12 de 18 fases</div></div>
+          <div class="kpi-card aru"><div class="kpi-ico">💸</div><div class="kpi-val">184K€</div><div class="kpi-lbl">Gasto Real</div><div class="kpi-delta dn">↑ +26K sobre ppto.</div></div>
+          <div class="kpi-card as"><div class="kpi-ico">📅</div><div class="kpi-val">8.0m</div><div class="kpi-lbl">Meses Transcurridos</div><div class="kpi-delta dn">↑ +3m sobre plan</div></div>
+          <div class="kpi-card asky"><div class="kpi-ico">🎯</div><div class="kpi-val">+26K€</div><div class="kpi-lbl">Desvío Acumulado</div><div class="kpi-delta dn">+13.9% del presupuesto</div></div>
+          <div class="kpi-card alav"><div class="kpi-ico">📆</div><div class="kpi-val">Oct'25</div><div class="kpi-lbl">Fin Estimado</div><div class="kpi-delta warn">⚠️ Revisado (+2m)</div></div>
+        </div>
+        <div class="chart-grid g21">
+          <div class="chart-card">
+            <div class="chart-head">
+              <div><div class="chart-title">Timeline de Fases</div><div class="chart-sub">Estado actual · Casa Calle Mayor</div></div>
+              <div style="display:flex;gap:10px;font-size:10.5px;color:var(--muted);align-items:center;flex-shrink:0">
+                <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:var(--sage);display:inline-block"></span>Hecha</span>
+                <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:var(--gold);display:inline-block"></span>Activa</span>
+                <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#ccc8bf;display:inline-block"></span>Pendiente</span>
+              </div>
+            </div>
+            <div style="overflow-y:auto;max-height:420px"><div class="tl-wrap" id="tlBody"></div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="chart-card" style="flex:1">
+              <div class="chart-head"><div><div class="chart-title">Real vs Presupuesto por Sector</div><div class="chart-sub">Gasto acumulado en €</div></div></div>
+              <div style="height:155px"><canvas id="cDesviacion"></canvas></div>
+            </div>
+            <div class="chart-card" style="flex:1">
+              <div class="chart-head"><div><div class="chart-title">Curva S — Avance de Obra</div><div class="chart-sub">% progreso planificado vs real</div></div></div>
+              <div style="height:155px"><canvas id="cCurvaS"></canvas></div>
+            </div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div class="chart-title">🚨 Alertas de Control</div></div>
+          <div class="alert-row red"><span class="alert-ico">🔴</span><div class="alert-body"><div class="alert-title">Fontanería: desvío +4.800€ (+32%)</div><div class="alert-desc">Proveedor facturó trabajos no presupuestados. Revisar contrato.</div></div><button class="btn btn-outline btn-sm">Gestionar</button></div>
+          <div class="alert-row yellow"><span class="alert-ico">🟡</span><div class="alert-body"><div class="alert-title">Electricidad: 3 semanas de retraso</div><div class="alert-desc">Espera de materiales. No crítico si se recupera en obra civil.</div></div><button class="btn btn-outline btn-sm">Ver fase</button></div>
+          <div class="alert-row green" style="margin-bottom:0"><span class="alert-ico">🟢</span><div class="alert-body"><div class="alert-title">Legal y Arquitectura completadas en plazo</div><div class="alert-desc">Sin desvíos. Cédula de habitabilidad en tramitación.</div></div><span style="font-size:11px;color:var(--sage);font-weight:700;white-space:nowrap">✓ OK</span></div>
+        </div>
+      </div><!-- /an-obra -->
+
+      <!-- ══════ ANALYTICS: COMPARADOR ══════ -->
+      <div id="v-an-comparador" class="view">
+        <div class="sec-head">
+          <div><div class="sec-title">⚖️ Comparador de Proyectos</div><div class="sec-sub">Análisis multidimensional · Rentabilidad · Riesgo · Eficiencia</div></div>
+        </div>
+        <div class="comp-grid-an">
+          <div class="comp-card winner">
+            <div class="comp-check">✓</div>
+            <div class="comp-name">Piso Fuencarral Madrid</div><div class="comp-type">🏠 Flip · Finalizado</div>
+            <div class="comp-kpis">
+              <div class="comp-row"><span class="comp-lbl">Inversión</span><span class="comp-val">78.400€</span></div>
+              <div class="comp-row"><span class="comp-lbl">Beneficio Neto</span><span class="comp-val best">+23.600€</span></div>
+              <div class="comp-row"><span class="comp-lbl">ROI</span><span class="comp-val best">31.4% 🏆</span></div>
+              <div class="comp-row"><span class="comp-lbl">Duración</span><span class="comp-val best">4.2 meses</span></div>
+              <div class="comp-row"><span class="comp-lbl">Coste/m²</span><span class="comp-val best">1.430€</span></div>
+              <div class="comp-row"><span class="comp-lbl">PV/m²</span><span class="comp-val">1.875€</span></div>
+              <div class="comp-row"><span class="comp-lbl">Margen seg.</span><span class="comp-val best">23.9%</span></div>
+              <div class="comp-row"><span class="comp-lbl">ROI anualizado</span><span class="comp-val best">89.7%</span></div>
+            </div>
+          </div>
+          <div class="comp-card">
+            <div class="comp-name">Ático Gràcia BCN</div><div class="comp-type">🌇 Flip · En Venta</div>
+            <div class="comp-kpis">
+              <div class="comp-row"><span class="comp-lbl">Inversión</span><span class="comp-val">134.000€</span></div>
+              <div class="comp-row"><span class="comp-lbl">Beneficio Neto</span><span class="comp-val">+34.000€ est.</span></div>
+              <div class="comp-row"><span class="comp-lbl">ROI</span><span class="comp-val" style="color:#a07820">25.4%</span></div>
+              <div class="comp-row"><span class="comp-lbl">Duración</span><span class="comp-val worst">6.8 meses ⚠️</span></div>
+              <div class="comp-row"><span class="comp-lbl">Coste/m²</span><span class="comp-val worst">1.680€</span></div>
+              <div class="comp-row"><span class="comp-lbl">PV/m²</span><span class="comp-val best">2.100€</span></div>
+              <div class="comp-row"><span class="comp-lbl">Margen seg.</span><span class="comp-val" style="color:#a07820">20.2%</span></div>
+              <div class="comp-row"><span class="comp-lbl">ROI anualizado</span><span class="comp-val" style="color:#a07820">44.9%</span></div>
+            </div>
+          </div>
+          <div class="comp-card">
+            <div class="comp-name">Alquiler Valencia</div><div class="comp-type">🏡 Alquiler · Activo</div>
+            <div class="comp-kpis">
+              <div class="comp-row"><span class="comp-lbl">Inversión</span><span class="comp-val">95.000€</span></div>
+              <div class="comp-row"><span class="comp-lbl">Cash Flow Anual</span><span class="comp-val best">+6.840€</span></div>
+              <div class="comp-row"><span class="comp-lbl">Rent. Neta</span><span class="comp-val" style="color:var(--sky)">7.2%</span></div>
+              <div class="comp-row"><span class="comp-lbl">Duración</span><span class="comp-val">Indefinida</span></div>
+              <div class="comp-row"><span class="comp-lbl">Coste/m²</span><span class="comp-val">1.390€</span></div>
+              <div class="comp-row"><span class="comp-lbl">Alq./m²</span><span class="comp-val best">11.3€/m²</span></div>
+              <div class="comp-row"><span class="comp-lbl">Payback</span><span class="comp-val worst">13.9 años</span></div>
+              <div class="comp-row"><span class="comp-lbl">PER</span><span class="comp-val">9.8x</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="chart-grid g12">
+          <div class="chart-card">
+            <div class="chart-head"><div><div class="chart-title">Radar Riesgo / Rentabilidad</div><div class="chart-sub">Comparativa multidimensional de los 3 proyectos</div></div></div>
+            <div style="height:270px"><canvas id="cRadar"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-head"><div><div class="chart-title">Rentabilidad vs Riesgo</div><div class="chart-sub">ROI% en función del riesgo percibido · tamaño = inversión</div></div></div>
+            <div style="height:270px"><canvas id="cBubble"></canvas></div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div class="chart-title" style="display:flex;align-items:center;gap:8px"><span style="color:var(--gold)">✦</span> Conclusión del Agente Financiero</div></div>
+          <div style="background:var(--ink2);border-radius:10px;padding:18px;color:rgba(255,255,255,.82);font-size:12.5px;line-height:1.8">
+            El <strong style="color:var(--gold2)">Piso Fuencarral Madrid</strong> es el modelo de operación más eficiente de la cartera: <strong style="color:var(--sage2)">31.4% ROI en 4.2 meses</strong> equivale a un ROI anualizado del 89.7%. La clave fue la combinación de precio bajo (&lt;80K€), reforma contenida y ejecución rápida.<br><br>
+            El <strong style="color:var(--gold2)">Ático Gràcia</strong> muestra buenas métricas de precio/m² pero el retraso de 2 meses ha erosionado el ROI anualizado a menos de la mitad. <strong style="color:#fff">Cada mes adicional en un flip representa una pérdida implícita de 6-8 puntos porcentuales de ROI anualizado.</strong><br><br>
+            <strong style="color:#fff">Recomendación para escalar:</strong> Prioriza el modelo "flip rápido" (4-6 meses), activos entre 70K-120K€ en zonas de alta rotación, y reforma estrictamente &lt;35% del precio de compra.
+          </div>
+        </div>
+      </div><!-- /an-comparador -->
+
+      <!-- ══════ ANALYTICS: AGENTE IA ══════ -->
+      <div id="v-an-agente" class="view">
+        <div class="sec-head">
+          <div>
+            <div class="sec-title" style="display:flex;align-items:center;gap:10px">
+              <span style="color:var(--gold)">✦</span> Agente Financiero IA
+              <span style="font-size:10px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--ink);padding:3px 9px;border-radius:20px;font-weight:800">BETA</span>
+            </div>
+            <div class="sec-sub">Analizador inteligente de tu cartera · Responde en tiempo real sobre proyectos, ROI y estrategia</div>
+          </div>
+          <div class="sec-actions"><button class="btn btn-outline btn-sm" onclick="clearAIChat()">🗑️ Limpiar chat</button></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:start">
+          <div class="ai-panel">
+            <div class="ai-head">
+              <div class="ai-avatar-an">✦</div>
+              <div><div class="ai-name">Agente Financiero RehabitaCo</div><div class="ai-status"><span class="ai-dot"></span> Conectado · Analizando tu cartera</div></div>
+            </div>
+            <div class="ai-messages" id="aiMessages">
+              <div class="ai-msg ai">
+                <div class="ai-avatar-an" style="width:28px;height:28px;font-size:12px;flex-shrink:0">✦</div>
+                <div class="ai-bubble">Hola 👋 Soy tu <strong>Agente Financiero</strong>. Tengo acceso completo a tu cartera: proyectos, gastos y métricas.<br><br>Puedo ayudarte con <span style="color:var(--gold2)">ROI por proyecto</span>, <span style="color:var(--gold2)">desvíos presupuestarios</span>, <span style="color:var(--gold2)">viabilidad pre-compra</span> o <span style="color:var(--gold2)">proyección patrimonial</span>.<br><br>¿En qué te ayudo hoy?</div>
+              </div>
+            </div>
+            <div class="ai-quick-row">
+              <button class="ai-quick" onclick="sendQuickAI('¿Cuál es el proyecto con mejor ROI de mi cartera?')">🏆 Mejor ROI</button>
+              <button class="ai-quick" onclick="sendQuickAI('¿Qué proyectos tienen desvío presupuestario?')">⚠️ Desvíos</button>
+              <button class="ai-quick" onclick="sendQuickAI('¿Cuál es el ROI anualizado medio de mis flips?')">📊 ROI anualizado</button>
+              <button class="ai-quick" onclick="sendQuickAI('Si compro un piso por 150.000€ en Madrid, ¿qué reforma máxima me permito para un ROI del 20%?')">🔮 Simular</button>
+              <button class="ai-quick" onclick="sendQuickAI('¿Cómo llego a 1M€ de patrimonio neto en 5 años?')">🚀 Proyección</button>
+            </div>
+            <div class="ai-input-row">
+              <textarea class="ai-input" id="aiInput" rows="1" placeholder="Pregunta sobre tus proyectos, ROI, desvíos, estrategia..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAIMsg()}" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
+              <button class="ai-send" id="aiSendBtn" onclick="sendAIMsg()">➤</button>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div class="chart-card">
+              <div class="chart-head"><div class="chart-title">📌 Contexto de Cartera</div></div>
+              <div style="display:flex;flex-direction:column;gap:8px;font-size:11.5px">
+                <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Proyectos totales</span><span class="mono" style="font-weight:700">12</span></div>
+                <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Capital desplegado</span><span class="mono" style="font-weight:700">2.84M€</span></div>
+                <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">ROI medio</span><span class="mono" style="font-weight:700;color:var(--sage)">23.7%</span></div>
+                <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Beneficio acumulado</span><span class="mono" style="font-weight:700;color:var(--sage)">+342K€</span></div>
+                <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Proyectos en riesgo</span><span class="mono" style="font-weight:700;color:var(--rust)">2</span></div>
+              </div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-head"><div class="chart-title">🧠 Capacidades</div></div>
+              <div style="display:flex;flex-direction:column;gap:7px;font-size:11px">
+                <div style="display:flex;gap:7px"><span style="color:var(--sage);font-weight:700">✓</span> Análisis ROI y rentabilidad por proyecto</div>
+                <div style="display:flex;gap:7px"><span style="color:var(--sage);font-weight:700">✓</span> Detección de desvíos presupuestarios</div>
+                <div style="display:flex;gap:7px"><span style="color:var(--sage);font-weight:700">✓</span> Predicción de rentabilidad pre-compra</div>
+                <div style="display:flex;gap:7px"><span style="color:var(--sage);font-weight:700">✓</span> Comparativa de activos y escenarios</div>
+                <div style="display:flex;gap:7px"><span style="color:var(--sage);font-weight:700">✓</span> Proyección patrimonial 3-5 años</div>
+                <div style="display:flex;gap:7px;color:var(--muted)"><span style="color:var(--gold);font-weight:700">⟳</span> Análisis de mercado en tiempo real <em>(próx.)</em></div>
+              </div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-head"><div class="chart-title">📊 KPI Rápido</div></div>
+              <div style="height:110px"><canvas id="cMiniKpi"></canvas></div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /an-agente -->
 
     </div><!-- /content -->
   </div><!-- /main -->
@@ -3341,6 +3729,461 @@ function exportarCarteraCSV(){
 
 const SLBL = {legal:'⚖️ Legal',arq:'📐 Arq.',obra:'🔨 Obra',elect:'⚡ Elec.',font:'🔧 Font.',dis:'🎨 Dis.'}
 const SCOL_SECUNDARY = {legal:'#3A6EA8',arq:'#7A6EA8',obra:'#C25C3A',elect:'#D4A847',font:'#4E7C5A',dis:'#C25C8A'}
+
+/* ═══════════════════════════════════════════════════════════
+   ANALYTICS & IA — JAVASCRIPT NUEVO
+═══════════════════════════════════════════════════════════ */
+
+/* ─── Paleta de colores ─── */
+const C = {
+  gold:'#D4A847', gold2:'#E8C46A', rust:'#C25C3A', sage:'#4E7C5A',
+  sage2:'#6B9E78', sky:'#3A6EA8', lav:'#7A6EA8', dis:'#C25C8A',
+  muted:'#9A8F80', red:'#DC4F4F', green:'#3D9E5A', ink:'#0F0F0D'
+}
+const gridLine = { color:'rgba(228,221,208,0.55)', drawBorder:false }
+
+/* ─── Datos demo ─── */
+const MESES24 = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic',
+                 'Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
+const CAPITAL24 = [320,380,410,480,520,560,620,710,780,840,920,980,1050,1140,1220,1310,1480,1620,1800,1950,2100,2300,2600,2840]
+const BENEF24   = [0,12,12,28,28,45,55,72,85,105,118,140,155,178,195,218,250,275,295,310,322,330,340,342]
+const ITP_RATES = {
+  'Comunidad de Madrid':0.06,'Comunidad Valenciana':0.10,'Cataluña':0.10,
+  'Andalucía':0.08,'País Vasco':0.04,'Galicia':0.09,'Castilla León':0.08,'Aragón':0.08
+}
+const FASES_OBRA = [
+  {n:'Estudio de mercado y viabilidad',  sec:'legal',st:'done',coste:1200, ppto:1000},
+  {n:'Visita y peritación técnica',       sec:'arq',  st:'done',coste:800,  ppto:800},
+  {n:'Due Diligence legal',               sec:'legal',st:'done',coste:2400, ppto:2000},
+  {n:'Contrato de arras',                 sec:'legal',st:'done',coste:0,    ppto:0},
+  {n:'Firma notarial y escritura',        sec:'legal',st:'done',coste:3200, ppto:3000},
+  {n:'Proyecto básico y ejecutivo',       sec:'arq',  st:'done',coste:4800, ppto:4500},
+  {n:'Selección de contratistas',         sec:'obra', st:'done',coste:0,    ppto:0},
+  {n:'Inicio de obra y demolición',       sec:'obra', st:'done',coste:8400, ppto:8000},
+  {n:'Estructura y albañilería',          sec:'obra', st:'done',coste:28000,ppto:25000,delay:'+3 sem.'},
+  {n:'Instalación eléctrica',             sec:'elect',st:'done',coste:9800, ppto:8500, delay:'+3 sem.'},
+  {n:'Instalación de fontanería',         sec:'font', st:'done',coste:15800,ppto:12000,delay:'+4 sem.'},
+  {n:'Climatización HVAC',               sec:'font', st:'done',coste:7200, ppto:6000},
+  {n:'Alicatado y pavimento',             sec:'obra', st:'act', coste:null, ppto:14000},
+  {n:'Carpintería y puertas',             sec:'dis',  st:'pen', coste:null, ppto:9000},
+  {n:'Pintura y acabados finales',        sec:'dis',  st:'pen', coste:null, ppto:6000},
+  {n:'Cocina y baños — equipamiento',     sec:'dis',  st:'pen', coste:null, ppto:18000},
+  {n:'Certificado final de obra',         sec:'arq',  st:'pen', coste:null, ppto:1200},
+  {n:'Fotografía y home staging',         sec:'dis',  st:'pen', coste:null, ppto:3000},
+]
+const SEC_LBL_AN = {legal:'Legal',arq:'Arq.',obra:'Obra',elect:'Elect.',font:'Font.',dis:'Dis.'}
+
+/* ─── Inicializar cuando se entra en una vista Analytics ─── */
+let analyticsInited = false
+function initAnalyticsIfNeeded() {
+  if (analyticsInited) return
+  analyticsInited = true
+  setTimeout(() => {
+    initSparklines()
+    initChartEvolucion()
+    initChartEstados()
+    initChartSectores()
+    initChartROI()
+    initChartM2()
+    initChartCashFlow()
+    initChartDesviacion()
+    initChartCurvaS()
+    initChartRadar()
+    initChartBubble()
+    initChartMiniKpi()
+    renderTimeline()
+    updatePredictor()
+  }, 80)
+}
+
+/* ─── Navegar a vista Analytics ─── */
+const _goOrig = window.go ? window.go.toString() : null
+const _goBase = go  // referencia original a go()
+function goAnalytics(el) {
+  _goBase(el)
+  const v = el.dataset ? el.dataset.v : el
+  if (v && v.startsWith('an-')) initAnalyticsIfNeeded()
+}
+// Parchear los nav-items de analytics para que llamen initAnalyticsIfNeeded
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('[data-v^="an-"]').forEach(el => {
+    el.addEventListener('click', () => initAnalyticsIfNeeded())
+  })
+})
+
+/* ─── Helper para tab de obra ─── */
+function selProjAn(btn) {
+  document.querySelectorAll('.proj-tab-an').forEach(b => b.classList.remove('on'))
+  btn.classList.add('on')
+}
+
+/* ─── Sparklines ─── */
+function initSparklines() {
+  ;[
+    {id:'sp1', data:[180,210,240,280,310,340], color:C.gold},
+    {id:'sp2', data:[18,19,21,20,22,23.7],    color:C.sage},
+    {id:'sp3', data:[4,6,8,9,11,12],           color:C.sky},
+    {id:'sp4', data:[4.8,5.2,5.8,6.0,6.1,6.2],color:C.rust},
+  ].forEach(s => {
+    const el = document.getElementById(s.id); if (!el) return
+    new Chart(el, {
+      type:'line',
+      data:{labels:['','','','','',''],datasets:[{data:s.data,borderColor:s.color,backgroundColor:s.color+'28',borderWidth:2,fill:true,tension:.4,pointRadius:0}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}}
+    })
+  })
+}
+
+/* ─── Evolución patrimonial ─── */
+function initChartEvolucion() {
+  const el = document.getElementById('cEvolucion'); if (!el) return
+  new Chart(el, {
+    type:'line',
+    data:{labels:MESES24,datasets:[
+      {label:'Capital desplegado (K€)',data:CAPITAL24,borderColor:C.gold,backgroundColor:C.gold+'18',fill:true,tension:.4,borderWidth:2.5,pointRadius:0,pointHoverRadius:4},
+      {label:'Beneficio acumulado (K€)',data:BENEF24,borderColor:C.sage,backgroundColor:C.sage+'18',fill:true,tension:.4,borderWidth:2,pointRadius:0,pointHoverRadius:4}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:true,position:'top',align:'end',labels:{boxWidth:10,boxHeight:2,font:{size:10.5},padding:12}},tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.parsed.y}K€`}}},scales:{x:{grid:gridLine,ticks:{maxRotation:0,maxTicksLimit:8}},y:{grid:gridLine,ticks:{callback:v=>v+'K'}}}}
+  })
+}
+
+/* ─── Estados cartera ─── */
+function initChartEstados() {
+  const el = document.getElementById('cEstados'); if (!el) return
+  new Chart(el, {
+    type:'doughnut',
+    data:{labels:['Negociación','En Reforma','En Venta','Finalizados'],datasets:[{data:[3,4,3,2],backgroundColor:[C.muted,C.gold,C.sage,C.ink+'99'],borderWidth:3,borderColor:'#FDFCF8'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}
+  })
+}
+
+/* ─── Sectores ─── */
+function initChartSectores() {
+  const el = document.getElementById('cSectores'); if (!el) return
+  new Chart(el, {
+    type:'doughnut',
+    data:{labels:['⚖️ Legal','📐 Arq.','🔨 Obra','⚡ Elect.','🔧 Font.','🎨 Dis.'],datasets:[{data:[24000,18000,85000,28000,42000,36000],backgroundColor:[C.sky,C.lav,C.rust,C.gold,C.sage,C.dis],borderWidth:3,borderColor:'#FDFCF8'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{display:true,position:'right',labels:{boxWidth:10,boxHeight:10,font:{size:10.5},padding:8}}}}
+  })
+}
+
+/* ─── ROI barras ─── */
+function initChartROI() {
+  const el = document.getElementById('cROI'); if (!el) return
+  new Chart(el, {
+    type:'bar',
+    data:{labels:['Fuencarral','Gràcia','Valencia','C.Mayor','Getafe'],datasets:[
+      {label:'Inversión',data:[78400,134000,95000,210000,380000],backgroundColor:C.sky+'88',borderRadius:5},
+      {label:'Retorno',  data:[102000,168000,0,255000,0],backgroundColor:C.sage+'88',borderRadius:5}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false}},y:{grid:gridLine,ticks:{callback:v=>(v/1000).toFixed(0)+'K€'}}},plugins:{legend:{display:true,position:'top',align:'end',labels:{boxWidth:10,boxHeight:10,font:{size:10.5},padding:10}}}}
+  })
+}
+
+/* ─── Coste/m² ─── */
+function initChartM2() {
+  const el = document.getElementById('cM2'); if (!el) return
+  new Chart(el, {
+    type:'bar',
+    data:{labels:['Fuencarral','Gràcia','Valencia','C.Mayor'],datasets:[
+      {label:'Coste/m²',data:[1430,1680,1390,1775],backgroundColor:C.rust+'99',borderRadius:5},
+      {label:'PV/m²',   data:[1875,2100,0,2267],   backgroundColor:C.sage+'99',borderRadius:5}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false}},y:{grid:gridLine,ticks:{callback:v=>v+'€'}}},plugins:{legend:{display:true,position:'top',align:'end',labels:{boxWidth:10,boxHeight:10,font:{size:10.5},padding:10}}}}
+  })
+}
+
+/* ─── Cash flow ─── */
+function initChartCashFlow() {
+  const el = document.getElementById('cCashFlow'); if (!el) return
+  new Chart(el, {
+    type:'bar',
+    data:{labels:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],datasets:[
+      {label:'Alquiler mensual',data:Array(12).fill(850),backgroundColor:C.sage+'99',borderRadius:4},
+      {label:'Retornos venta (K€)',type:'line',data:[0,0,0,102,0,0,0,0,168,0,0,255],borderColor:C.gold,backgroundColor:C.gold+'15',fill:true,tension:.4,borderWidth:2,pointRadius:3,pointBackgroundColor:C.gold,yAxisID:'y2'}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false}},y:{grid:gridLine,position:'left',ticks:{callback:v=>v+'€'}},y2:{position:'right',grid:{display:false},ticks:{callback:v=>v>0?v+'K€':''}}},plugins:{legend:{display:true,position:'top',align:'end',labels:{boxWidth:10,boxHeight:10,font:{size:10.5},padding:10}}}}
+  })
+}
+
+/* ─── Desviación obra ─── */
+function initChartDesviacion() {
+  const el = document.getElementById('cDesviacion'); if (!el) return
+  new Chart(el, {
+    type:'bar',
+    data:{labels:['⚖️ Legal','📐 Arq.','🔨 Obra','⚡ Elect.','🔧 Font.','🎨 Dis.'],datasets:[
+      {label:'Presupuestado',data:[6000,5300,47000,8500,18000,16200],backgroundColor:'#E4DDD0',borderRadius:4},
+      {label:'Real',         data:[7600,5600,44400,9800,23000,0],   backgroundColor:C.gold+'BB',borderRadius:4}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false}},y:{grid:gridLine,ticks:{callback:v=>(v/1000).toFixed(0)+'K'}}},plugins:{legend:{display:true,position:'top',align:'end',labels:{boxWidth:8,boxHeight:8,font:{size:10},padding:8}}}}
+  })
+}
+
+/* ─── Curva S ─── */
+function initChartCurvaS() {
+  const el = document.getElementById('cCurvaS'); if (!el) return
+  new Chart(el, {
+    type:'line',
+    data:{labels:['M1','M2','M3','M4','M5','M6','M7','M8','M9','M10'],datasets:[
+      {label:'Planificado',data:[5,12,25,40,55,70,82,90,96,100],borderColor:C.muted,borderDash:[5,5],borderWidth:2,fill:false,tension:.4,pointRadius:0},
+      {label:'Real',       data:[4,10,20,33,47,61,67,null,null,null],borderColor:C.gold,borderWidth:2.5,fill:false,tension:.4,pointRadius:3,pointBackgroundColor:C.gold}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false}},y:{grid:gridLine,min:0,max:100,ticks:{callback:v=>v+'%'}}},plugins:{legend:{display:true,position:'top',align:'end',labels:{boxWidth:10,boxHeight:2,font:{size:10.5},padding:10}}}}
+  })
+}
+
+/* ─── Radar comparador ─── */
+function initChartRadar() {
+  const el = document.getElementById('cRadar'); if (!el) return
+  new Chart(el, {
+    type:'radar',
+    data:{labels:['ROI','Velocidad','Bajo Riesgo','Cash Flow','Escalabilidad','Efic. m²'],datasets:[
+      {label:'Fuencarral',   data:[95,90,80,40,85,82],borderColor:C.sage,backgroundColor:C.sage+'22',borderWidth:2,pointRadius:3},
+      {label:'Gràcia',       data:[78,55,65,40,70,88],borderColor:C.gold,backgroundColor:C.gold+'22',borderWidth:2,pointRadius:3},
+      {label:'Valencia Alq.',data:[30,20,90,85,55,70],borderColor:C.sky, backgroundColor:C.sky+'22', borderWidth:2,pointRadius:3}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,scales:{r:{grid:{color:'rgba(228,221,208,.5)'},pointLabels:{font:{size:10.5}},min:0,max:100,ticks:{display:false,stepSize:25}}},plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,boxHeight:10,font:{size:10.5},padding:10}}}}
+  })
+}
+
+/* ─── Bubble chart ─── */
+function initChartBubble() {
+  const el = document.getElementById('cBubble'); if (!el) return
+  new Chart(el, {
+    type:'bubble',
+    data:{datasets:[
+      {label:'Fuencarral',data:[{x:20,y:31.4,r:14}],backgroundColor:C.sage+'BB'},
+      {label:'Gràcia',    data:[{x:45,y:25.4,r:20}],backgroundColor:C.gold+'BB'},
+      {label:'Valencia',  data:[{x:15,y:7.2, r:13}],backgroundColor:C.sky+'BB'},
+      {label:'C.Mayor',   data:[{x:60,y:21.4,r:26}],backgroundColor:C.rust+'BB'}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:gridLine,title:{display:true,text:'Riesgo (%) →',font:{size:10}}},y:{grid:gridLine,title:{display:true,text:'ROI / Rentabilidad (%)',font:{size:10}},ticks:{callback:v=>v+'%'}}},plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,boxHeight:10,font:{size:10.5},padding:10}}}}
+  })
+}
+
+/* ─── Mini KPI ─── */
+function initChartMiniKpi() {
+  const el = document.getElementById('cMiniKpi'); if (!el) return
+  new Chart(el, {
+    type:'bar',
+    data:{labels:['ROI%','Rent.Alq','Desvío','Progreso'],datasets:[{data:[23.7,7.2,13.9,67],backgroundColor:[C.sage,C.sky,C.rust,C.gold],borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false}},y:{display:false}},plugins:{legend:{display:false}}}
+  })
+}
+
+/* ─── Timeline de fases ─── */
+function renderTimeline() {
+  const cont = document.getElementById('tlBody'); if (!cont) return
+  const secColors = {legal:C.sky,arq:C.lav,obra:C.rust,elect:C.gold,font:C.sage,dis:C.dis}
+  cont.innerHTML = FASES_OBRA.map((f, i) => {
+    const isDone = f.st==='done', isAct = f.st==='act'
+    const dotCls = isDone?'done':isAct?'act':'pen'
+    const bg     = isDone?secColors[f.sec]:isAct?C.gold:'#ccc8bf'
+    const cosStr = f.coste!=null?f.coste.toLocaleString('es-ES')+'€':'—'
+    const pptStr = f.ppto>0?f.ppto.toLocaleString('es-ES')+'€':'—'
+    const devStr = (f.coste!=null&&f.coste>f.ppto&&f.ppto>0)?`<span style="color:${C.red};font-weight:700"> (+${Math.round((f.coste-f.ppto)/f.ppto*100)}% desv.)</span>`:''
+    const pct    = isDone?100:isAct?55:0
+    const stTag  = isDone?`<span style="font-size:10px;font-weight:700;color:${C.sage}">✓ Completada</span>`:isAct?`<span style="font-size:10px;font-weight:700;color:${C.gold}">⟳ En curso</span>`:`<span style="font-size:10px;color:${C.muted}">Pendiente</span>`
+    const delStr = f.delay?`<span style="color:${C.red}">${f.delay}</span>`:''
+    return `<div class="tl-item">
+      <div class="tl-dot ${dotCls}" style="background:${bg}"></div>
+      <div style="padding-left:8px">
+        <div class="tl-name">${i+1}. ${f.n}<span class="tag tag-${f.sec}">${SEC_LBL_AN[f.sec]}</span>${stTag}</div>
+        <div class="tl-meta"><span>Ppto: ${pptStr}</span>${f.coste!=null?`<span style="color:${C.rust};font-weight:600">Real: ${cosStr}${devStr}</span>`:''}${delStr}</div>
+        ${pct>0?`<div class="tl-bar-track"><div class="tl-bar-fill ${isDone?'sage':''}" style="width:${pct}%"></div></div>`:''}
+      </div>
+    </div>`
+  }).join('')
+}
+
+/* ─── Predictor de ROI ─── */
+let chartWF = null, chartTM = null
+
+function updatePredictor() {
+  const tipo    = document.getElementById('pTipo')?.value||'flip'
+  const isAlq   = tipo==='alquiler'
+  const ff = document.getElementById('flipFields'); if(ff) ff.style.display=isAlq?'none':''
+  const af = document.getElementById('alqFields');  if(af) af.style.display=isAlq?'':' none'
+  const ps = document.getElementById('pSeccionVenta'); if(ps) ps.textContent=isAlq?'🏡 Alquiler':'💸 Venta'
+
+  const precio  = +document.getElementById('pPrecio')?.value  ||0
+  const m2      = +document.getElementById('pM2')?.value      ||1
+  const reforma = +document.getElementById('pReforma')?.value ||0
+  const mob     = +document.getElementById('pMob')?.value     ||0
+  const gCompra = +document.getElementById('pGCompra')?.value ||0
+  const pventa  = +document.getElementById('pPVenta')?.value  ||0
+  const gVenta  = +document.getElementById('pGVenta')?.value  ||0
+  const meses   = +document.getElementById('pMeses')?.value   ||6
+  const alq     = +document.getElementById('pAlq')?.value     ||0
+  const gastoAlq= +document.getElementById('pGAlq')?.value    ||0
+  const ccaa    = document.getElementById('pCCAA')?.value     ||'Comunidad de Madrid'
+
+  const itpRate = ITP_RATES[ccaa]||0.08
+  const itp     = precio*itpRate
+  const inv     = precio+itp+reforma+mob+gCompra
+
+  let roi, beneficio, bep, roiAnual
+  if (isAlq) {
+    const cfAnual=alq*12-gastoAlq; roi=inv>0?cfAnual/inv:0; beneficio=cfAnual; bep=inv; roiAnual=roi
+  } else {
+    beneficio=pventa-inv-gVenta; roi=inv>0?beneficio/inv:0; bep=inv+gVenta; roiAnual=meses>0?roi/(meses/12):0
+  }
+
+  const roiPct=roi*100, roiAPct=roiAnual*100
+  const margenSeg=pventa>0?((pventa-bep)/pventa*100):0
+  let score=50
+  if(roiPct>25)score+=25;else if(roiPct>15)score+=15;else if(roiPct>8)score+=5;else score-=20
+  if(margenSeg>15)score+=15;else if(margenSeg>8)score+=8;else score-=10
+  if(meses<=5)score+=10;else if(meses>10)score-=10
+  score=Math.max(5,Math.min(98,score))
+
+  const f  = n=>n.toLocaleString('es-ES',{maximumFractionDigits:0})+'€'
+  const fp = n=>(n>=0?'+':'')+n.toFixed(1)+'%'
+
+  const sd=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v}
+  const elROI=document.getElementById('resROI'); if(elROI){elROI.textContent=fp(roiPct).replace('+','');elROI.style.color=roiPct>20?C.sage:roiPct>10?C.gold:C.red}
+  const elRt=document.getElementById('resROIrating'); if(elRt){if(roiPct>25){elRt.textContent='🚀 Excelente';elRt.className='res-note good'}else if(roiPct>15){elRt.textContent='✓ Muy bueno';elRt.className='res-note good'}else if(roiPct>8){elRt.textContent='⚡ Aceptable';elRt.className='res-note warn'}else{elRt.textContent='⚠️ Revisar';elRt.className='res-note bad'}}
+  const elBen=document.getElementById('resBen'); if(elBen){elBen.textContent=(beneficio>=0?'+':'')+f(Math.abs(beneficio));elBen.style.color=beneficio>0?C.sage:C.red}
+  const elAn=document.getElementById('resAnual'); if(elAn)elAn.textContent=fp(roiAPct)+' anualizado'
+  const elInv=document.getElementById('resInv'); if(elInv)elInv.textContent=f(inv)
+
+  const roiBull=isAlq?roiPct*1.15:((pventa*1.08-inv-gVenta*0.9)/inv*100)
+  const roiBear=isAlq?roiPct*0.7:((pventa*0.90-(inv+reforma*0.30)-gVenta)/(inv+reforma*0.30)*100)
+  const elBull=document.getElementById('sceBull');if(elBull)elBull.textContent=fp(roiBull)
+  const elBase=document.getElementById('sceBase');if(elBase)elBase.textContent=fp(roiPct)
+  const elBear=document.getElementById('sceBear');if(elBear)elBear.textContent=fp(roiBear)
+
+  const arc=document.getElementById('scoreArc'); if(arc){const cLen=201.1;arc.setAttribute('stroke-dashoffset',(cLen-score/100*cLen).toFixed(1));arc.setAttribute('stroke',score>=70?C.sage:score>=50?C.gold:C.red)}
+  const elSN=document.getElementById('scoreNum');if(elSN)elSN.textContent=score
+  const elSL=document.getElementById('scoreLbl');if(elSL)elSL.textContent=score>=80?'🚀 Excelente':score>=65?'✅ Viable':score>=45?'⚡ Atención':'⚠️ Alto Riesgo'
+
+  sd('sdITP',f(itp)+' ('+Math.round(itpRate*100)+'%)')
+  sd('sdInv',f(inv))
+  const elMs=document.getElementById('sdMseg');if(elMs){elMs.textContent=margenSeg.toFixed(1)+'%';elMs.style.color=margenSeg>10?C.green:margenSeg>5?C.gold:C.red}
+  sd('sdCm2',m2>0?Math.round(inv/m2)+'€/m²':'—')
+  sd('sdPvm2',(m2>0&&pventa>0)?Math.round(pventa/m2)+'€/m²':'—')
+
+  const elBepV=document.getElementById('bepVal');if(elBepV)elBepV.textContent=f(bep)
+  const elBepM=document.getElementById('bepMargen');if(elBepM){elBepM.textContent=(pventa-bep>=0?'+':'')+f(Math.abs(pventa-bep));elBepM.style.color=pventa>bep?C.green:C.red}
+  const elBepP=document.getElementById('bepPct');if(elBepP)elBepP.textContent=bep>0?(fp((pventa-bep)/bep*100)+' sobre BEP'):'—'
+
+  drawWaterfall(precio,itp,reforma,mob,gCompra,gVenta,pventa)
+  drawTiming(meses,roi)
+}
+
+function drawWaterfall(precio,itp,reforma,mob,gCompra,gVenta,pventa){
+  const el=document.getElementById('cWaterfall');if(!el)return
+  if(chartWF){chartWF.destroy();chartWF=null}
+  chartWF=new Chart(el,{type:'bar',data:{labels:['Compra','ITP','Reforma','Mob.','G.Compra','G.Venta','P.Venta'],datasets:[{data:[precio,itp,reforma,mob,gCompra,gVenta,pventa],backgroundColor:[C.sky+'BB',C.lav+'BB',C.rust+'BB',C.dis+'BB',C.gold+'BB',C.muted+'BB',C.sage+'BB'],borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false}},y:{grid:gridLine,ticks:{callback:v=>(v/1000).toFixed(0)+'K'}}},plugins:{legend:{display:false}}}})
+}
+
+function drawTiming(mesesAct,roi){
+  const el=document.getElementById('cTiming');if(!el)return
+  if(chartTM){chartTM.destroy();chartTM=null}
+  const pts=[2,3,4,5,6,8,10,12,18,24]
+  chartTM=new Chart(el,{type:'line',data:{labels:pts.map(m=>m+'m'),datasets:[{label:'ROI Anualizado %',data:pts.map(m=>(roi/(m/12)*100).toFixed(1)),borderColor:C.gold,backgroundColor:C.gold+'18',fill:true,tension:.4,borderWidth:2.5,pointRadius:3,pointBackgroundColor:C.gold}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false}},y:{grid:gridLine,ticks:{callback:v=>v+'%'}}},plugins:{legend:{display:false}}}})
+}
+
+/* ─── Agente IA ─── */
+const AI_SYSTEM = `Eres el Agente Financiero de RehabitaCo, especialista en inversión inmobiliaria en España.
+
+Cartera actual:
+- 12 proyectos: 3 negociación, 4 reforma, 3 en venta, 2 finalizados
+- Capital desplegado: 2.840.000€ | ROI medio: 23.7% | Beneficio acumulado: 342.000€
+
+Proyectos clave:
+1. Piso Fuencarral Madrid — Flip finalizado — Inv 78.400€ — Venta 102.000€ — ROI 31.4% — 4.2 meses — 55m²
+2. Ático Gràcia BCN — Flip en venta — Inv 134.000€ — PV objetivo 168.000€ — ROI est. 25.4% — 6.8m (2m retraso)
+3. Alquiler Valencia — Inv 95.000€ — 850€/mes — Renta neta 7.2% — 60m²
+4. Casa Calle Mayor — Flip en reforma — Inv 210.000€ — PV 255.000€ — ROI est. 21.4% — 8m activos (3m retraso, +26K desvío)
+5. Nave Getafe — Negociación — 380.000€ objetivo — 950m² uso mixto
+
+Motor de cálculo: Inversión Total = Precio + ITP + Reforma + Mobiliario + Gastos compra. Beneficio Neto = PV - Inversión Total - Gastos venta. ROI = Beneficio / Inversión.
+ITP por CCAA: Madrid 6%, Cataluña 10%, Valencia 10%, Andalucía 8%, País Vasco 4%.
+
+Responde siempre en español. Sé conciso, accionable y usa emojis relevantes. Resalta cifras importantes con **negrita**.`
+
+let aiChatHistory = []
+
+async function sendAIMsg() {
+  const inp = document.getElementById('aiInput')
+  const msg = inp?.value?.trim(); if(!msg) return
+  pushUserMsgAI(msg)
+  inp.value=''; inp.style.height='auto'
+  const btn=document.getElementById('aiSendBtn'); if(btn)btn.disabled=true
+  await getAIReply(msg)
+  if(btn)btn.disabled=false
+}
+
+function sendQuickAI(msg) {
+  const inp=document.getElementById('aiInput'); if(inp)inp.value=msg
+  sendAIMsg()
+}
+
+function pushUserMsgAI(text) {
+  aiChatHistory.push({role:'user',content:text})
+  const cont=document.getElementById('aiMessages'); if(!cont)return
+  const d=document.createElement('div'); d.className='ai-msg user'
+  d.innerHTML=`<div class="ai-bubble">${text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`
+  cont.appendChild(d); cont.scrollTop=cont.scrollHeight
+}
+
+function pushAssistantMsgAI(text) {
+  const cont=document.getElementById('aiMessages'); if(!cont)return
+  const d=document.createElement('div'); d.className='ai-msg ai'
+  const html=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')
+  d.innerHTML=`<div class="ai-avatar-an" style="width:28px;height:28px;font-size:12px;flex-shrink:0">✦</div><div class="ai-bubble">${html}</div>`
+  cont.appendChild(d); cont.scrollTop=cont.scrollHeight
+}
+
+function showTypingAI() {
+  const cont=document.getElementById('aiMessages'); if(!cont)return
+  const d=document.createElement('div'); d.className='ai-msg ai'; d.id='ai-typing'
+  d.innerHTML=`<div class="ai-avatar-an" style="width:28px;height:28px;font-size:12px;flex-shrink:0">✦</div><div class="ai-bubble"><div class="ai-typing-wrap"><span></span><span></span><span></span></div></div>`
+  cont.appendChild(d); cont.scrollTop=cont.scrollHeight
+}
+
+function hideTypingAI() { document.getElementById('ai-typing')?.remove() }
+
+async function getAIReply(msg) {
+  showTypingAI()
+  try {
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:AI_SYSTEM,messages:aiChatHistory.slice(-10)})
+    })
+    const data=await res.json()
+    hideTypingAI()
+    const reply=data?.content?.[0]?.text||'No pude generar respuesta.'
+    aiChatHistory.push({role:'assistant',content:reply})
+    pushAssistantMsgAI(reply)
+  } catch(e) {
+    hideTypingAI()
+    const fb=aiFallback(msg)
+    aiChatHistory.push({role:'assistant',content:fb})
+    pushAssistantMsgAI(fb)
+  }
+}
+
+function aiFallback(msg) {
+  const m=msg.toLowerCase()
+  if(m.includes('mejor roi')||m.includes('rentable'))
+    return `🏆 **Piso Fuencarral Madrid** lidera con **ROI 31.4%** en 4.2 meses → ROI anualizado **89.7%**.\n\nModelo replicable: inversión &lt;80K€, reforma &lt;35% del precio, zona alta rotación, ejecución &lt;5 meses.`
+  if(m.includes('desvío')||m.includes('presupuesto'))
+    return `⚠️ **2 proyectos con desvíos activos:**\n\n1. **Casa Calle Mayor**: +26.000€ (+13.9%). Fontanería +32%.\n2. **Ático Gràcia**: 2 meses de retraso. ROI anualizado erosionado de ~55% a 44.9%.\n\n**Acción:** Renegociar contrato de fontanería en C.Mayor esta semana.`
+  if(m.includes('1m')||m.includes('millón')||m.includes('5 años'))
+    return `🚀 **Plan a 5 años → 1M€ patrimonio neto:**\n\n- Año 1: 3 flips × ~24K€ = +72K€\n- Año 2: Reinversión → 4 flips = +115K€\n- Año 3: 5 flips → +175K€\n- Año 4-5: 6-8 flips/año → acumulado **~1.1M€** ✓`
+  if(m.includes('calcul')||m.includes('150')||m.includes('reforma máxima'))
+    return `🔮 **Simulación: piso 150.000€ Madrid (ITP 6%) con ROI objetivo 20%:**\n\nInversión base: 150.000 + 9.000 (ITP) = **159.000€**\nPara ROI 20% necesitas beneficio neto de **31.800€**\nPrecio venta mínimo: **~200.000€**\n\nReforma máxima para mantener el ROI: **~28.000-30.000€**`
+  return `📊 Basándome en tu cartera: **2.84M€** desplegados, ROI medio **23.7%**, **2 proyectos en riesgo**. ¿Sobre qué proyecto o métrica concreta quieres profundizar?`
+}
+
+function clearAIChat() {
+  aiChatHistory=[]
+  const cont=document.getElementById('aiMessages'); if(!cont)return
+  cont.innerHTML=`<div class="ai-msg ai"><div class="ai-avatar-an" style="width:28px;height:28px;font-size:12px;flex-shrink:0">✦</div><div class="ai-bubble">Chat reiniciado. ¿En qué puedo ayudarte con tu cartera hoy?</div></div>`
+}
 </script>
 </body>
 </html>
