@@ -1338,93 +1338,232 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
       <!-- ══════ ANALYTICS: PREDICTOR ROI ══════ -->
       <div id="v-an-predictor" class="view">
         <div class="sec-head">
-          <div><div class="sec-title">🔮 Predictor de Rentabilidad</div><div class="sec-sub">Calcula ROI antes de comprar · Simula escenarios · Toma decisiones con datos</div></div>
+          <div><div class="sec-title">🔮 Predictor de Rentabilidad</div><div class="sec-sub">Calculadora financiera correcta · Todos los costes reales · Escenarios metodológicos</div></div>
         </div>
         <div class="predictor-grid">
+          <!-- ══ PANEL IZQUIERDO: FORMULARIO ══ -->
           <div>
             <div class="pred-form">
-              <div class="pf-title">⚙️ Parámetros del Proyecto</div>
-              <div class="pf-group"><label class="pf-label">Tipo de operación</label><select class="pf-select" id="pTipo" onchange="updatePredictor()"><option value="flip">Compra-reforma-venta (Flip)</option><option value="alquiler">Compra-reforma-alquiler</option></select></div>
-              <div class="pf-group"><label class="pf-label">Comunidad Autónoma</label><select class="pf-select" id="pCCAA" onchange="updatePredictor()"><option>Comunidad de Madrid</option><option>Comunidad Valenciana</option><option>Cataluña</option><option>Andalucía</option><option>País Vasco</option><option>Galicia</option><option>Castilla León</option><option>Aragón</option></select></div>
-              <hr class="pf-divider">
-              <div class="pf-subtitle">📦 Adquisición</div>
+              <div class="pf-title">⚙️ Operación</div>
+              <div class="pf-row">
+                <div class="pf-group"><label class="pf-label">Tipo de operación</label>
+                  <select class="pf-select" id="pTipo" onchange="updatePredictor()">
+                    <option value="flip">Compra-reforma-venta (Flip)</option>
+                    <option value="alquiler">Compra-reforma-alquiler</option>
+                  </select>
+                </div>
+                <div class="pf-group"><label class="pf-label">Comunidad Autónoma</label>
+                  <select class="pf-select" id="pCCAA" onchange="updatePredictor()">
+                    <option value="madrid">Madrid (ITP 6%)</option>
+                    <option value="valenciana">C. Valenciana (ITP 10%)</option>
+                    <option value="cataluna">Cataluña (ITP 10%)</option>
+                    <option value="andalucia">Andalucía (ITP 7%)</option>
+                    <option value="euskadi">País Vasco (ITP 4%)</option>
+                    <option value="galicia">Galicia (ITP 10%)</option>
+                    <option value="castilla">Castilla y León (ITP 8%)</option>
+                    <option value="aragon">Aragón (ITP 8%)</option>
+                    <option value="canarias">Canarias (IGIC 6.5%)</option>
+                    <option value="murcia">Murcia (ITP 8%)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="pf-row">
+                <div class="pf-group" style="flex:1">
+                  <label class="pf-label">Tipo inmueble</label>
+                  <select class="pf-select" id="pTipoInm" onchange="updatePredictor()">
+                    <option value="segunda">2ª mano (ITP)</option>
+                    <option value="nueva">Obra nueva (IVA + AJD)</option>
+                  </select>
+                </div>
+                <div class="pf-group" style="flex:1">
+                  <label class="pf-label">¿Hay hipoteca?</label>
+                  <select class="pf-select" id="pHipoteca" onchange="updatePredictor()">
+                    <option value="no">Sin financiación</option>
+                    <option value="si">Con hipoteca</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="pred-form">
+              <div class="pf-title">🏠 Adquisición</div>
               <div class="pf-row">
                 <div class="pf-group"><label class="pf-label">Precio compra (€)</label><input type="number" class="pf-input" id="pPrecio" value="120000" oninput="updatePredictor()"></div>
                 <div class="pf-group"><label class="pf-label">Superficie (m²)</label><input type="number" class="pf-input" id="pM2" value="75" oninput="updatePredictor()"></div>
               </div>
-              <div class="pf-row">
-                <div class="pf-group"><label class="pf-label">Reforma (€)</label><input type="number" class="pf-input" id="pReforma" value="35000" oninput="updatePredictor()"></div>
-                <div class="pf-group"><label class="pf-label">Mobiliario (€)</label><input type="number" class="pf-input" id="pMob" value="5000" oninput="updatePredictor()"></div>
+              <!-- Impuesto calculado automáticamente, readonly -->
+              <div style="background:var(--gold-bg);border:1px solid rgba(212,168,71,.2);border-radius:8px;padding:10px 12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gold)">Impuesto transmisión (auto)</div>
+                  <div style="font-size:10px;color:var(--muted);margin-top:2px" id="pImpuestoDesc">ITP 2ª mano</div>
+                </div>
+                <div class="mono" style="font-size:15px;font-weight:800" id="pImpuestoVal">—</div>
               </div>
-              <div class="pf-group"><label class="pf-label">Gastos compra adicionales (€)</label><input type="number" class="pf-input" id="pGCompra" value="2000" oninput="updatePredictor()"></div>
-              <hr class="pf-divider">
-              <div class="pf-subtitle" id="pSeccionVenta">💸 Venta</div>
-              <div id="flipFields">
-                <div class="pf-row">
-                  <div class="pf-group"><label class="pf-label">Precio venta objetivo (€)</label><input type="number" class="pf-input" id="pPVenta" value="185000" oninput="updatePredictor()"></div>
-                  <div class="pf-group"><label class="pf-label">Gastos de venta (€)</label><input type="number" class="pf-input" id="pGVenta" value="7000" oninput="updatePredictor()"></div>
+              <div class="pf-row">
+                <div class="pf-group"><label class="pf-label">Notaría + registro (€) <span style="color:var(--muted);font-weight:400">≈1.5%</span></label><input type="number" class="pf-input" id="pNotaria" value="2000" oninput="updatePredictor()"></div>
+                <div class="pf-group"><label class="pf-label">Gestoría / otros (€)</label><input type="number" class="pf-input" id="pGestoria" value="500" oninput="updatePredictor()"></div>
+              </div>
+              <!-- Hipoteca (visible solo si seleccionado) -->
+              <div id="hipotecaFields" style="display:none">
+                <div style="background:rgba(58,110,168,.07);border:1px solid rgba(58,110,168,.18);border-radius:8px;padding:10px 12px;margin-bottom:10px">
+                  <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--sky);margin-bottom:8px">💳 Costes financieros</div>
+                  <div class="pf-row" style="margin-bottom:0">
+                    <div class="pf-group"><label class="pf-label">Capital prestado (€)</label><input type="number" class="pf-input" id="pCapital" value="80000" oninput="updatePredictor()"></div>
+                    <div class="pf-group"><label class="pf-label">TIN anual (%)</label><input type="number" class="pf-input" id="pTIN" value="3.5" step="0.1" oninput="updatePredictor()"></div>
+                  </div>
+                  <div style="font-size:10px;color:var(--muted);margin-top:6px">Intereses durante la obra incluidos en inversión total.</div>
                 </div>
               </div>
-              <div id="alqFields" style="display:none">
-                <div class="pf-row">
-                  <div class="pf-group"><label class="pf-label">Alquiler mensual (€)</label><input type="number" class="pf-input" id="pAlq" value="800" oninput="updatePredictor()"></div>
-                  <div class="pf-group"><label class="pf-label">Gastos anuales (€)</label><input type="number" class="pf-input" id="pGAlq" value="1500" oninput="updatePredictor()"></div>
-                </div>
-              </div>
-              <hr class="pf-divider">
-              <div class="pf-subtitle">⏱️ Timing</div>
-              <div class="pf-row">
-                <div class="pf-group"><label class="pf-label">Meses estimados</label><input type="number" class="pf-input" id="pMeses" value="6" oninput="updatePredictor()"></div>
-                <div class="pf-group"><label class="pf-label">Variación realista (%)</label><input type="number" class="pf-input" id="pVariacion" value="15" oninput="updatePredictor()"></div>
-              </div>
-              <button class="btn btn-gold" style="width:100%;justify-content:center;margin-top:6px" onclick="updatePredictor()">✦ Calcular Predicción</button>
             </div>
+
+            <div class="pred-form">
+              <div class="pf-title">🔨 Reforma</div>
+              <div class="pf-row">
+                <div class="pf-group"><label class="pf-label">Coste reforma (€)</label><input type="number" class="pf-input" id="pReforma" value="35000" oninput="updatePredictor()"></div>
+                <div class="pf-group"><label class="pf-label">Mobiliario / equip. (€)</label><input type="number" class="pf-input" id="pMob" value="5000" oninput="updatePredictor()"></div>
+              </div>
+              <div class="pf-row">
+                <div class="pf-group"><label class="pf-label">Meses de reforma</label><input type="number" class="pf-input" id="pMeses" value="6" min="1" max="36" oninput="updatePredictor()"></div>
+                <div class="pf-group"><label class="pf-label">Colchón imprevistos (%)</label><input type="number" class="pf-input" id="pColchon" value="15" min="0" max="50" oninput="updatePredictor()"></div>
+              </div>
+            </div>
+
+            <!-- FLIP -->
+            <div id="flipFields" class="pred-form">
+              <div class="pf-title">💸 Venta</div>
+              <div class="pf-group"><label class="pf-label">Precio venta objetivo (€)</label><input type="number" class="pf-input" id="pPVenta" value="185000" oninput="updatePredictor()"></div>
+              <div style="background:var(--warm);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:11px;color:var(--muted)">
+                💡 <strong style="color:var(--ink)">Referencia m²:</strong> el precio se valida automáticamente vs. precio/m² introducido.
+              </div>
+              <div class="pf-row">
+                <div class="pf-group"><label class="pf-label">Agencia inmobiliaria (%) <span style="color:var(--muted);font-weight:400">3–5%</span></label><input type="number" class="pf-input" id="pAgencia" value="3" step="0.5" oninput="updatePredictor()"></div>
+                <div class="pf-group"><label class="pf-label">Notaría venta (€)</label><input type="number" class="pf-input" id="pNotVenta" value="1200" oninput="updatePredictor()"></div>
+              </div>
+              <div class="pf-row">
+                <div class="pf-group"><label class="pf-label">Plusvalía municipal (€)</label><input type="number" class="pf-input" id="pPlusValia" value="0" oninput="updatePredictor()"></div>
+                <div class="pf-group">
+                  <label class="pf-label">IRPF sobre ganancia (%)</label>
+                  <select class="pf-select" id="pIRPF" onchange="updatePredictor()">
+                    <option value="0">No aplica / No residente</option>
+                    <option value="19">19% (hasta 6.000€ gan.)</option>
+                    <option value="21" selected>21% (6k–50k gan.)</option>
+                    <option value="23">23% (50k–200k gan.)</option>
+                    <option value="27">27% (&gt;200k gan.)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- ALQUILER -->
+            <div id="alqFields" style="display:none" class="pred-form">
+              <div class="pf-title">🏡 Alquiler</div>
+              <div class="pf-row">
+                <div class="pf-group"><label class="pf-label">Alquiler mensual bruto (€)</label><input type="number" class="pf-input" id="pAlq" value="900" oninput="updatePredictor()"></div>
+                <div class="pf-group"><label class="pf-label">Vacancia estimada (%)</label><input type="number" class="pf-input" id="pVacancia" value="8" min="0" max="100" oninput="updatePredictor()"></div>
+              </div>
+              <div class="pf-row">
+                <div class="pf-group"><label class="pf-label">IBI anual (€)</label><input type="number" class="pf-input" id="pIBI" value="400" oninput="updatePredictor()"></div>
+                <div class="pf-group"><label class="pf-label">Comunidad / año (€)</label><input type="number" class="pf-input" id="pComunidad" value="600" oninput="updatePredictor()"></div>
+              </div>
+              <div class="pf-row">
+                <div class="pf-group"><label class="pf-label">Seguro multirriesgo (€/año)</label><input type="number" class="pf-input" id="pSeguro" value="250" oninput="updatePredictor()"></div>
+                <div class="pf-group"><label class="pf-label">Mantenimiento / año (€)</label><input type="number" class="pf-input" id="pManten" value="500" oninput="updatePredictor()"></div>
+              </div>
+              <div class="pf-group">
+                <label class="pf-label">IRPF sobre rendimientos netos (%)</label>
+                <select class="pf-select" id="pIRPFAlq" onchange="updatePredictor()">
+                  <option value="0">Exento / No residente</option>
+                  <option value="19" selected>19% (reducción 60%)</option>
+                  <option value="24">24% (no residente UE)</option>
+                  <option value="45">45% (tipo marginal alto)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Score -->
             <div class="pred-form">
               <div class="pf-title">🎯 Score de Viabilidad</div>
               <div class="score-wrap">
                 <div class="score-ring">
-                  <svg width="80" height="80" viewBox="0 0 80 80"><circle cx="40" cy="40" r="32" fill="none" stroke="#E4DDD0" stroke-width="8"/><circle id="scoreArc" cx="40" cy="40" r="32" fill="none" stroke="#4E7C5A" stroke-width="8" stroke-dasharray="201.1" stroke-dashoffset="50.3" stroke-linecap="round"/></svg>
-                  <div class="score-ring-num" id="scoreNum">75</div>
+                  <svg width="80" height="80" viewBox="0 0 80 80"><circle cx="40" cy="40" r="32" fill="none" stroke="#E4DDD0" stroke-width="8"/><circle id="scoreArc" cx="40" cy="40" r="32" fill="none" stroke="#4E7C5A" stroke-width="8" stroke-dasharray="201.1" stroke-dashoffset="100" stroke-linecap="round"/></svg>
+                  <div class="score-ring-num" id="scoreNum">—</div>
                 </div>
-                <div><div class="score-lbl" id="scoreLbl">Operación Viable</div><div class="score-desc" id="scoreDesc">ROI aceptable · Margen de seguridad positivo.</div></div>
+                <div><div class="score-lbl" id="scoreLbl">—</div><div class="score-desc" id="scoreDesc">Introduce los datos y pulsa Calcular.</div></div>
               </div>
-              <div style="margin-top:14px;display:flex;flex-direction:column;gap:7px">
-                <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">ITP estimado</span><span class="mono" id="sdITP" style="font-weight:700">7.200€ (6%)</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">Inversión total</span><span class="mono" id="sdInv" style="font-weight:700">169.200€</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">Margen seguridad</span><span class="mono" id="sdMseg" style="font-weight:700;color:var(--sage)">8.5%</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">Coste/m²</span><span class="mono" id="sdCm2" style="font-weight:700">2.256€</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">PV/m²</span><span class="mono" id="sdPvm2" style="font-weight:700">2.467€</span></div>
-              </div>
+              <!-- Desglose de costes de adquisición -->
+              <div style="margin-top:14px;display:flex;flex-direction:column;gap:6px" id="scoreDesglose"></div>
             </div>
           </div>
+
+          <!-- ══ PANEL DERECHO: RESULTADOS ══ -->
           <div class="result-panel">
             <div>
               <div style="font-family:'Syne',sans-serif;font-size:13.5px;font-weight:700;margin-bottom:12px">📐 Resultado Principal</div>
               <div class="result-hero">
-                <div><div class="res-val" id="resROI">8.8%</div><div class="res-lbl">ROI Neto</div><div class="res-note warn" id="resROIrating">⚡ Aceptable</div></div>
-                <div><div class="res-val" id="resBen">14.800€</div><div class="res-lbl">Beneficio Neto</div><div class="res-note warn" id="resAnual">17.6% anualizado</div></div>
-                <div><div class="res-val" id="resInv">169.200€</div><div class="res-lbl">Inversión Total</div><div class="res-note dim">incluye ITP y gastos</div></div>
+                <div><div class="res-val" id="resROI">—</div><div class="res-lbl" id="resROIlbl">ROI Neto</div><div class="res-note" id="resROIrating">—</div></div>
+                <div><div class="res-val" id="resBen">—</div><div class="res-lbl">Beneficio Neto</div><div class="res-note" id="resAnual">—</div></div>
+                <div><div class="res-val" id="resInv">—</div><div class="res-lbl">Inversión Total</div><div class="res-note dim">todos los costes reales</div></div>
+              </div>
+              <!-- Rentabilidad bruta vs neta (alquiler) -->
+              <div id="alqDesglose" style="display:none;margin-top:10px;background:var(--warm);border:1px solid var(--line);border-radius:10px;padding:12px 14px">
+                <div style="font-size:11px;font-weight:700;margin-bottom:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px">Rentabilidad alquiler</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+                  <div style="text-align:center"><div class="mono" style="font-size:16px;font-weight:800;color:var(--sky)" id="alqBruta">—</div><div style="font-size:10px;color:var(--muted)">Yield bruto</div></div>
+                  <div style="text-align:center"><div class="mono" style="font-size:16px;font-weight:800;color:var(--gold)" id="alqNeta">—</div><div style="font-size:10px;color:var(--muted)">Yield neto gastos</div></div>
+                  <div style="text-align:center"><div class="mono" style="font-size:16px;font-weight:800;color:var(--sage)" id="alqAfterTax">—</div><div style="font-size:10px;color:var(--muted)">After-tax</div></div>
+                </div>
+                <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px;font-size:11px" id="alqCostesDetalle"></div>
               </div>
             </div>
+
             <div>
               <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:10px">🎭 Análisis de Escenarios</div>
+              <div style="font-size:10px;color:var(--muted);margin-bottom:8px">Los escenarios varían precios de mercado <strong>sin duplicar costes de reforma</strong>.</div>
               <div class="scenario-cards">
-                <div class="sce-card bull"><div class="sce-title">🐂 Optimista</div><div class="sce-roi" id="sceBull" style="color:var(--sage)">+12.4%</div><div class="sce-desc">Precio superior · obra en tiempo</div></div>
-                <div class="sce-card base"><div class="sce-title">📊 Base</div><div class="sce-roi" id="sceBase" style="color:#a07820">+8.8%</div><div class="sce-desc">Precio objetivo · +variación normal</div></div>
-                <div class="sce-card bear"><div class="sce-title">🐻 Pesimista</div><div class="sce-roi" id="sceBear" style="color:var(--rust)">+4.1%</div><div class="sce-desc">−10% precio venta · +30% reforma</div></div>
+                <div class="sce-card bull">
+                  <div class="sce-title">🐂 Optimista</div>
+                  <div class="sce-roi" id="sceBull" style="color:var(--sage)">—</div>
+                  <div class="sce-desc" id="sceBullDesc">+8% precio · reforma en plazo</div>
+                </div>
+                <div class="sce-card base">
+                  <div class="sce-title">📊 Base</div>
+                  <div class="sce-roi" id="sceBase" style="color:#a07820">—</div>
+                  <div class="sce-desc">Precio objetivo · sin sorpresas</div>
+                </div>
+                <div class="sce-card bear">
+                  <div class="sce-title">🐻 Pesimista</div>
+                  <div class="sce-roi" id="sceBear" style="color:var(--rust)">—</div>
+                  <div class="sce-desc" id="sceBearDesc">−10% precio · +25% reforma</div>
+                </div>
               </div>
             </div>
+
             <div>
-              <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:10px">🧱 Desglose de Inversión</div>
-              <div style="height:175px"><canvas id="cWaterfall"></canvas></div>
+              <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:10px">🧱 Cascada de Costes e Ingresos</div>
+              <div style="height:200px"><canvas id="cWaterfall"></canvas></div>
             </div>
+
             <div>
-              <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:10px">📅 Impacto del Timing en ROI Anualizado</div>
+              <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:10px">📅 ROI Anualizado según Duración</div>
               <div style="height:155px"><canvas id="cTiming"></canvas></div>
             </div>
+
             <div class="bep-row">
-              <div><div class="bep-lbl">Precio mínimo de venta (BEP)</div><div class="bep-val" id="bepVal" style="color:var(--rust)">174.200€</div><div style="font-size:10.5px;color:var(--muted)">para no perder dinero</div></div>
-              <div><div class="bep-lbl">Margen sobre BEP</div><div class="bep-val" id="bepMargen" style="color:var(--sage)">+10.800€</div><div style="font-size:10.5px;color:var(--muted)" id="bepPct">+5.8% sobre BEP</div></div>
+              <div>
+                <div class="bep-lbl">Precio mínimo venta (BEP)</div>
+                <div class="bep-val" id="bepVal" style="color:var(--rust)">—</div>
+                <div style="font-size:10.5px;color:var(--muted)">para no perder dinero</div>
+              </div>
+              <div>
+                <div class="bep-lbl">Margen sobre BEP</div>
+                <div class="bep-val" id="bepMargen" style="color:var(--sage)">—</div>
+                <div style="font-size:10.5px;color:var(--muted)" id="bepPct">—</div>
+              </div>
+            </div>
+
+            <!-- Advertencia fiscal -->
+            <div style="background:rgba(194,92,58,.07);border:1px solid rgba(194,92,58,.2);border-radius:10px;padding:12px 14px;font-size:11px;color:var(--muted);line-height:1.6">
+              ⚠️ <strong style="color:var(--rust)">Nota fiscal:</strong> Los cálculos de IRPF son orientativos. Consulta con un asesor fiscal para tu situación personal. La plusvalía municipal depende del ayuntamiento y años de tenencia.
             </div>
           </div>
         </div>
@@ -3541,104 +3680,128 @@ const SCOL_SECUNDARY = {legal:'#3A6EA8',arq:'#7A6EA8',obra:'#C25C3A',elect:'#D4A
    ANALYTICS & IA — JAVASCRIPT (conectado a datos reales)
 ═══════════════════════════════════════════════════════════ */
 
-const C = { gold:'#D4A847',gold2:'#E8C46A',rust:'#C25C3A',sage:'#4E7C5A',sage2:'#6B9E78',sky:'#3A6EA8',lav:'#7A6EA8',dis:'#C25C8A',muted:'#9A8F80',red:'#DC4F4F',green:'#3D9E5A',ink:'#0F0F0D' }
-const gridLine = { color:'rgba(228,221,208,0.55)', drawBorder:false }
-const ITP_RATES = { 'Comunidad de Madrid':0.06,'Comunidad Valenciana':0.10,'Cataluña':0.10,'Andalucía':0.08,'País Vasco':0.04,'Galicia':0.09,'Castilla León':0.08,'Aragón':0.08 }
-const SEC_LBL_AN = {legal:'Legal',arq:'Arq.',obra:'Obra',elect:'Elect.',font:'Font.',dis:'Dis.',otros:'Otros'}
-const SECOL = {legal:C.sky,arq:C.lav,obra:C.rust,elect:C.gold,font:C.sage,dis:C.dis,otros:C.muted}
-const fe = (n,d=0) => Number(n||0).toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d})
-const fk = n => { const v=Number(n||0); return v>=1000?(v/1000).toFixed(0)+'K':''+v }
-const fp = (n,d=1) => (Number(n||0)>=0?'+':'')+Number(n||0).toFixed(d)+'%'
+/* ── Paleta y constantes ── */
+const C = {gold:'#D4A847',gold2:'#E8C46A',rust:'#C25C3A',sage:'#4E7C5A',sage2:'#6B9E78',sky:'#3A6EA8',lav:'#7A6EA8',dis:'#C25C8A',muted:'#9A8F80',red:'#DC4F4F',green:'#3D9E5A',ink:'#0F0F0D'}
+const gridLine = {color:'rgba(228,221,208,0.55)',drawBorder:false}
+const ITP_RATES = {'Comunidad de Madrid':0.06,'Comunidad Valenciana':0.10,'Cataluña':0.10,'Andalucía':0.08,'País Vasco':0.04,'Galicia':0.09,'Castilla León':0.08,'Aragón':0.08}
+const SEC_LBL_AN = {legal:'Legal',arq:'Arq.',obra:'Obra',elect:'Elect.',font:'Font.',dis:'Dis.',otros:'Otros',manoobra:'M.Obra',material:'Material',licencias:'Licenc.',gasto:'Gasto',admin:'Admin',proveedor:'Prov.'}
+const SECOL_AN = {legal:C.sky,arq:C.lav,obra:C.rust,elect:C.gold,font:C.sage,dis:C.dis,otros:C.muted,manoobra:C.sage,material:C.rust,licencias:C.lav,gasto:C.red,admin:C.muted,proveedor:C.gold}
+
+/* ── Helpers numéricos (sin colisión con fE global) ── */
+const _fe = (n,d=0) => Number(n||0).toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d})
+const _fk = n => { const v=Number(n||0); return v>=1000?(v/1000).toFixed(1).replace('.0','')+'K':String(Math.round(v)) }
+const _fp = (n,d=1) => (Number(n||0)>=0?'+':'')+Number(n||0).toFixed(d)+'%'
+
+/* ── Calcular métricas reales de un proyecto ──
+   Campos BD: precio, reforma, m2, precio_venta, precio_venta_real,
+              gastos_compra_extra, gastos_venta_extra, mobiliario,
+              comunidad_autonoma, estado, nombre, tipo, gastos[] (array embebido)
+*/
+function _projCalc(p) {
+  const precioCompra = Number(p.precio||0)
+  const reformaEst   = Number(p.reforma||0)
+  const gCompraExtra = Number(p.gastos_compra_extra||0)
+  const mob          = Number(p.mobiliario||0)
+  const gVentaExtra  = Number(p.gastos_venta_extra||0)
+  const m2           = Number(p.m2||0)
+  const ccaa         = p.comunidad_autonoma||'Comunidad de Madrid'
+  const itp          = precioCompra*(ITP_RATES[ccaa]||0.06)
+  const inv          = precioCompra+itp+reformaEst+mob+gCompraExtra
+  const gs           = Array.isArray(p.gastos)?p.gastos:[]
+  const gReal        = gs.reduce((a,g)=>a+Number(g.coste||0),0)
+  const pv           = Number(p.precio_venta_real||p.precio_venta||0)
+  const ben          = pv>0 ? pv-inv-gVentaExtra : null
+  const roi          = (ben!=null&&inv>0) ? ben/inv*100 : null
+  const desvio       = gReal-reformaEst
+  const desvPct      = reformaEst>0 ? desvio/reformaEst*100 : 0
+  // normalizar estado a clave interna
+  const est = (p.estado||'').toLowerCase()
+  const estKey = est.includes('negoc')?'neg'
+               : est.includes('reform')?'ref'
+               : (est.includes('venta')||est.includes('act'))?'act'
+               : (pv>0||est.includes('final')||est.includes('vend'))?'fin'
+               : 'neg'
+  return {...p, precioCompra, reformaEst, gCompraExtra, mob, gVentaExtra, m2, ccaa, itp, inv, gs, gReal, pv, ben, roi, desvio, desvPct, estKey}
+}
+
+/* ── Gestión de gráficos ── */
 let _anCharts = {}
-function destroyChart(id) { if(_anCharts[id]){_anCharts[id].destroy();delete _anCharts[id]} }
-function mkChart(id,cfg) { destroyChart(id); const el=document.getElementById(id); if(!el)return; _anCharts[id]=new Chart(el,cfg); return _anCharts[id] }
+function destroyChart(id){if(_anCharts[id]){_anCharts[id].destroy();delete _anCharts[id]}}
+function mkChart(id,cfg){destroyChart(id);const el=document.getElementById(id);if(!el)return null;_anCharts[id]=new Chart(el,cfg);return _anCharts[id]}
 
 /* ═══════════════════════════════════════════════════
-   DASHBOARD CARTERA — datos reales de Supabase
+   DASHBOARD CARTERA — usa PROYECTOS global (ya cargado)
 ═══════════════════════════════════════════════════ */
 async function renderAnOverview() {
   const body = document.getElementById('an-overview-body')
   if (!body) return
   body.innerHTML = '<div class="loader"></div>'
+
   try {
-    const [{ data: proyectos }, { data: gastos }] = await Promise.all([
-      supabase.from('PROYECTOS').select('*').eq('usuario_id', usuarioActual.id),
-      supabase.from('GASTOS').select('*').eq('usuario_id', usuarioActual.id)
-    ])
-    const ps = proyectos || [], gs = gastos || []
+    // PROYECTOS ya tiene gastos embebidos desde la query principal: select('*,proyecto_fases(fase_id,done),gastos(*)')
+    // Si aún no están cargados, los pedimos nosotros
+    let ps = PROYECTOS && PROYECTOS.length ? PROYECTOS : []
+    if (!ps.length) {
+      const {data, error} = await sb.from('proyectos')
+        .select('*,gastos(*)')
+        .eq('created_by', ME?.id || '')
+        .order('created_at',{ascending:false})
+      if (error) throw error
+      ps = data||[]
+    }
 
-    // ── Cálculos globales ──
-    const totalInv  = ps.reduce((a,p) => a + Number(p.precio_compra||0) + Number(p.gastos_compra||0) + Number(p.reforma_estimada||0), 0)
-    const totalGast = gs.reduce((a,g) => a + Number(g.importe||0), 0)
-    const totalBen  = ps.filter(p=>p.precio_venta).reduce((a,p) => {
-      const inv = Number(p.precio_compra||0)+Number(p.gastos_compra||0)+Number(p.reforma_estimada||0)
-      return a + (Number(p.precio_venta) - inv - Number(p.gastos_venta||0))
-    }, 0)
-    const finalizados = ps.filter(p=>p.precio_venta)
-    const roiMedio = finalizados.length ? finalizados.reduce((a,p) => {
-      const inv = Number(p.precio_compra||0)+Number(p.gastos_compra||0)+Number(p.reforma_estimada||0)
-      const ben = Number(p.precio_venta) - inv - Number(p.gastos_venta||0)
-      return a + (inv>0 ? ben/inv*100 : 0)
-    },0)/finalizados.length : 0
+    // Calcular métricas por proyecto
+    const projs = ps.map(_projCalc)
+    projs.sort((a,b)=>(b.roi||0)-(a.roi||0))
 
-    const estados = {negociacion:0,reforma:0,venta:0,finalizado:0,otro:0}
-    ps.forEach(p => {
-      const e=(p.estado||'').toLowerCase()
-      if(e.includes('negoc'))estados.negociacion++
-      else if(e.includes('reform'))estados.reforma++
-      else if(e.includes('venta'))estados.venta++
-      else if(e.includes('finaliz')||e.includes('vendid')||p.precio_venta)estados.finalizado++
-      else estados.otro++
-    })
+    // KPIs globales
+    const totalInv  = projs.reduce((a,p)=>a+p.inv,0)
+    const totalGast = projs.reduce((a,p)=>a+p.gReal,0)
+    const finz      = projs.filter(p=>p.ben!=null)
+    const roiMedio  = finz.length ? finz.reduce((a,p)=>a+(p.roi||0),0)/finz.length : 0
+    const totalBen  = finz.reduce((a,p)=>a+(p.ben||0),0)
 
-    // ── Gastos por sector ──
+    // Estados
+    const estados = {neg:0,ref:0,act:0,fin:0}
+    projs.forEach(p=>estados[p.estKey]=(estados[p.estKey]||0)+1)
+
+    // Gastos por sector (de todos los gastos embebidos)
     const secMap = {}
-    gs.forEach(g => { const s=(g.sector||'otros').toLowerCase(); secMap[s]=(secMap[s]||0)+Number(g.importe||0) })
+    projs.forEach(p=>p.gs.forEach(g=>{
+      const s=(g.sector||'otros').toLowerCase()
+      secMap[s]=(secMap[s]||0)+Number(g.coste||0)
+    }))
 
-    // ── Ranking proyectos ──
-    const ranking = ps.map(p => {
-      const inv = Number(p.precio_compra||0)+Number(p.gastos_compra||0)+Number(p.reforma_estimada||0)
-      const gProy = gs.filter(g=>g.proyecto_id===p.id).reduce((a,g)=>a+Number(g.importe||0),0)
-      const pv = Number(p.precio_venta||0)
-      const ben = pv>0 ? pv - inv - Number(p.gastos_venta||0) : null
-      const roi = (ben!=null&&inv>0) ? ben/inv*100 : null
-      return { ...p, inv, gProy, ben, roi }
-    }).sort((a,b) => (b.roi||0)-(a.roi||0))
+    // Insights automáticos
+    const conDesvio = projs.filter(p=>p.desvio>p.reformaEst*0.1 && p.reformaEst>0)
+    const top       = projs.find(p=>p.roi!=null)
+    const secTop    = Object.entries(secMap).sort((a,b)=>b[1]-a[1])[0]
 
-    // ── Insights automáticos ──
-    const conDesvio = ps.filter(p => {
-      const gR = gs.filter(g=>g.proyecto_id===p.id).reduce((a,g)=>a+Number(g.importe||0),0)
-      return gR > Number(p.reforma_estimada||0)*1.1
-    })
-    const mejorProj = ranking.find(p=>p.roi!=null)
-    const secDesvio = Object.entries(secMap).sort((a,b)=>b[1]-a[1])[0]
-
-    // ── Render HTML ──
     body.innerHTML = `
     <div class="kpi-row">
       <div class="kpi-card ag">
         <div class="kpi-ico">💰</div>
-        <div class="kpi-val">${fk(totalInv)}€</div>
-        <div class="kpi-lbl">Capital total comprometido</div>
-        <div class="kpi-delta ${totalInv>0?'up':'neu'}">${ps.length} proyecto${ps.length!==1?'s':''} en cartera</div>
+        <div class="kpi-val">${_fk(totalInv)}€</div>
+        <div class="kpi-lbl">Capital comprometido</div>
+        <div class="kpi-delta ${totalInv>0?'up':'neu'}">${projs.length} proyecto${projs.length!==1?'s':''} en cartera</div>
       </div>
       <div class="kpi-card as">
         <div class="kpi-ico">📈</div>
         <div class="kpi-val">${roiMedio>0?roiMedio.toFixed(1)+'%':'—'}</div>
-        <div class="kpi-lbl">ROI medio (proyectos vendidos)</div>
-        <div class="kpi-delta ${roiMedio>15?'up':roiMedio>0?'warn':'neu'}">${finalizados.length} finalizado${finalizados.length!==1?'s':''}</div>
+        <div class="kpi-lbl">ROI medio finaliz.</div>
+        <div class="kpi-delta ${roiMedio>15?'up':roiMedio>0?'warn':'neu'}">${finz.length} finalizado${finz.length!==1?'s':''} · ${_fk(totalBen)}€ benef.</div>
       </div>
       <div class="kpi-card asky">
         <div class="kpi-ico">🏠</div>
-        <div class="kpi-val">${ps.length}</div>
+        <div class="kpi-val">${projs.length}</div>
         <div class="kpi-lbl">Proyectos totales</div>
-        <div class="kpi-delta neu">${estados.reforma} reforma · ${estados.venta} venta · ${estados.negociacion} neg.</div>
+        <div class="kpi-delta neu">${estados.ref||0} reforma · ${estados.act||0} venta · ${estados.neg||0} neg.</div>
       </div>
       <div class="kpi-card aru">
         <div class="kpi-ico">💸</div>
-        <div class="kpi-val">${fk(totalGast)}€</div>
+        <div class="kpi-val">${_fk(totalGast)}€</div>
         <div class="kpi-lbl">Gasto real acumulado</div>
-        <div class="kpi-delta ${totalGast>totalInv*0.9?'dn':'neu'}">${Object.keys(secMap).length} sectores</div>
+        <div class="kpi-delta ${totalGast>totalInv*0.85?'dn':'neu'}">${Object.keys(secMap).length} sectores registrados</div>
       </div>
     </div>
 
@@ -3649,23 +3812,23 @@ async function renderAnOverview() {
       </div>
       <div class="chart-card">
         <div class="chart-head"><div><div class="chart-title">Estado de Cartera</div><div class="chart-sub">Distribución actual</div></div></div>
-        <div class="chart-wrap" style="height:160px"><canvas id="cAnEstados"></canvas></div>
+        <div class="chart-wrap" style="height:150px"><canvas id="cAnEstados"></canvas></div>
         <div style="display:flex;flex-direction:column;gap:5px;margin-top:10px">
-          <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--muted)">🟤 Negociación</span><span class="mono" style="font-weight:700">${estados.negociacion}</span></div>
-          <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--muted)">🟡 En reforma</span><span class="mono" style="font-weight:700">${estados.reforma}</span></div>
-          <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--muted)">🟢 En venta</span><span class="mono" style="font-weight:700">${estados.venta}</span></div>
-          <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--muted)">⚫ Finalizados</span><span class="mono" style="font-weight:700">${estados.finalizado}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--muted)">🟤 Negociación</span><span class="mono" style="font-weight:700">${estados.neg||0}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--muted)">🟡 En reforma</span><span class="mono" style="font-weight:700">${estados.ref||0}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--muted)">🟢 En venta</span><span class="mono" style="font-weight:700">${estados.act||0}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--muted)">⚫ Finalizados</span><span class="mono" style="font-weight:700">${estados.fin||0}</span></div>
         </div>
       </div>
     </div>
 
     <div class="chart-grid g12">
       <div class="chart-card">
-        <div class="chart-head"><div><div class="chart-title">Gasto Real por Sector</div><div class="chart-sub">Distribución total €</div></div></div>
+        <div class="chart-head"><div><div class="chart-title">Gasto Real por Sector</div><div class="chart-sub">€ acumulados en toda la cartera</div></div></div>
         <div class="chart-wrap" style="height:210px"><canvas id="cAnSectores"></canvas></div>
       </div>
       <div class="chart-card">
-        <div class="chart-head"><div><div class="chart-title">ROI por Proyecto</div><div class="chart-sub">Solo proyectos con precio de venta</div></div></div>
+        <div class="chart-head"><div><div class="chart-title">ROI por Proyecto</div><div class="chart-sub">Solo proyectos con precio de venta registrado</div></div></div>
         <div class="chart-wrap" style="height:210px"><canvas id="cAnROI"></canvas></div>
       </div>
     </div>
@@ -3675,30 +3838,30 @@ async function renderAnOverview() {
         <span style="color:var(--gold)">✦</span> Insights de Cartera
       </div>
       <div class="insight-row">
-        ${mejorProj ? `<div class="insight-card al-sage"><div class="insight-ico">🚀</div><div><div class="insight-title">Mejor ROI: ${mejorProj.nombre||mejorProj.direccion||'—'}</div><div class="insight-desc">ROI ${mejorProj.roi.toFixed(1)}% · Beneficio neto ${fe(mejorProj.ben)}€. Modelo a replicar.</div></div></div>` : ''}
-        ${conDesvio.length ? `<div class="insight-card al-red"><div class="insight-ico">⚠️</div><div><div class="insight-title">${conDesvio.length} proyecto${conDesvio.length>1?'s':''} con desvío &gt;10%</div><div class="insight-desc">${conDesvio.map(p=>p.nombre||p.direccion||p.id).join(', ')} superan el presupuesto de reforma.</div></div></div>` : `<div class="insight-card al-sage"><div class="insight-ico">✅</div><div><div class="insight-title">Sin desvíos de obra</div><div class="insight-desc">Todos los proyectos están dentro del presupuesto de reforma.</div></div></div>`}
-        ${secDesvio ? `<div class="insight-card al-gold"><div class="insight-ico">💡</div><div><div class="insight-title">Sector con más gasto: ${secDesvio[0]}</div><div class="insight-desc">${fe(secDesvio[1])}€ acumulados en total de cartera.</div></div></div>` : ''}
+        ${top ? `<div class="insight-card al-sage"><div class="insight-ico">🚀</div><div><div class="insight-title">Mejor ROI: ${top.nombre||top.direccion||'—'}</div><div class="insight-desc">ROI ${top.roi.toFixed(1)}% · Beneficio neto ${_fe(top.ben)}€. Modelo a replicar.</div></div></div>` : '<div class="insight-card al-gold"><div class="insight-ico">💡</div><div><div class="insight-title">Sin proyectos finalizados aún</div><div class="insight-desc">Añade precios de venta para ver métricas de ROI.</div></div></div>'}
+        ${conDesvio.length ? `<div class="insight-card al-red"><div class="insight-ico">⚠️</div><div><div class="insight-title">${conDesvio.length} proyecto${conDesvio.length>1?'s':''} con desvío &gt;10%</div><div class="insight-desc">${conDesvio.map(p=>p.nombre||p.direccion||'—').join(', ')} superan el presupuesto de reforma.</div></div></div>` : '<div class="insight-card al-sage"><div class="insight-ico">✅</div><div><div class="insight-title">Sin desvíos de obra detectados</div><div class="insight-desc">Todos los proyectos dentro del presupuesto.</div></div></div>'}
+        ${secTop ? `<div class="insight-card al-gold"><div class="insight-ico">💡</div><div><div class="insight-title">Sector con más gasto: ${SEC_LBL_AN[secTop[0]]||secTop[0]}</div><div class="insight-desc">${_fe(secTop[1])}€ acumulados en cartera.</div></div></div>` : ''}
       </div>
     </div>
 
     <div class="chart-card">
-      <div class="chart-head"><div><div class="chart-title">Ranking de Proyectos por Rentabilidad</div><div class="chart-sub">Ordenado por ROI descendente · datos reales</div></div></div>
+      <div class="chart-head"><div><div class="chart-title">Ranking de Proyectos por Rentabilidad</div><div class="chart-sub">Ordenado por ROI · datos reales de Supabase</div></div></div>
       <div style="overflow-x:auto">
         <table class="data-table">
-          <thead><tr><th>#</th><th>Proyecto</th><th>Estado</th><th>Inversión ppto.</th><th>Gasto real</th><th>Precio venta</th><th>Beneficio</th><th>ROI</th></tr></thead>
+          <thead><tr><th>#</th><th>Proyecto</th><th>Estado</th><th>Inversión total</th><th>Gasto real</th><th>Precio venta</th><th>Beneficio</th><th>ROI</th></tr></thead>
           <tbody>
-          ${ranking.map((p,i) => {
-            const desvio = p.gProy > Number(p.reforma_estimada||0)*1.1
-            const roiColor = p.roi>20?C.sage:p.roi>10?'#a07820':p.roi>0?C.muted:C.red
+          ${projs.map((p,i)=>{
+            const desvBad = p.desvio>p.reformaEst*0.1&&p.reformaEst>0
+            const roiCol  = p.roi>20?C.sage:p.roi>10?'#a07820':p.roi!=null?C.red:C.muted
             return `<tr>
-              <td style="font-weight:800;color:${i===0?C.gold:C.muted}">${i+1}</td>
-              <td><strong>${p.nombre||p.direccion||'Proyecto '+p.id}</strong><br><span style="font-size:10px;color:var(--muted)">${p.direccion||''}</span></td>
-              <td><span class="badge bs-${(p.estado||'').toLowerCase().includes('reform')?'ref':(p.estado||'').toLowerCase().includes('venta')?'act':(p.precio_venta?'fin':'neg')}">${p.estado||'—'}</span></td>
-              <td class="mono">${fe(p.inv)}€</td>
-              <td class="mono" style="color:${desvio?C.red:'inherit'}">${fe(p.gProy)}€${desvio?' ⚠️':''}</td>
-              <td class="mono" style="color:${p.precio_venta?C.green:C.muted}">${p.precio_venta?fe(p.precio_venta)+'€':'—'}</td>
-              <td class="mono" style="color:${p.ben>0?C.sage:p.ben<0?C.red:C.muted};font-weight:700">${p.ben!=null?(p.ben>0?'+':'')+fe(p.ben)+'€':'—'}</td>
-              <td style="font-weight:800;color:${roiColor}">${p.roi!=null?p.roi.toFixed(1)+'%':'—'}</td>
+              <td style="font-weight:800;color:${i===0&&p.roi!=null?C.gold:C.muted}">${i+1}</td>
+              <td><strong>${p.nombre||p.direccion||'Proyecto '+p.id}</strong>${p.direccion&&p.nombre?`<br><span style="font-size:10px;color:var(--muted)">${p.direccion}</span>`:''}</td>
+              <td><span class="badge bs-${p.estKey}">${p.estado||'—'}</span></td>
+              <td class="mono">${_fe(p.inv)}€</td>
+              <td class="mono" style="color:${desvBad?C.red:'inherit'}">${_fe(p.gReal)}€${desvBad?' ⚠️':''}</td>
+              <td class="mono" style="color:${p.pv?C.green:C.muted}">${p.pv?_fe(p.pv)+'€':'—'}</td>
+              <td class="mono" style="color:${p.ben>0?C.sage:p.ben<0?C.red:C.muted};font-weight:700">${p.ben!=null?(p.ben>0?'+':'')+_fe(p.ben)+'€':'—'}</td>
+              <td style="font-weight:800;color:${roiCol}">${p.roi!=null?p.roi.toFixed(1)+'%':'—'}</td>
             </tr>`
           }).join('')}
           </tbody>
@@ -3706,177 +3869,117 @@ async function renderAnOverview() {
       </div>
     </div>`
 
-    // ── Dibujar gráficos ──
-    setTimeout(() => {
-      // Inversión vs Gasto por proyecto
-      mkChart('cAnInvGasto', {
-        type:'bar',
-        data:{
-          labels: ranking.map(p=>(p.nombre||p.direccion||'Proy.'+p.id).substring(0,18)),
-          datasets:[
-            {label:'Inversión ppto.',data:ranking.map(p=>p.inv),backgroundColor:C.sky+'88',borderRadius:5},
-            {label:'Gasto real',data:ranking.map(p=>p.gProy),backgroundColor:C.gold+'AA',borderRadius:5}
-          ]
-        },
-        options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false},ticks:{maxRotation:30,font:{size:10}}},y:{grid:gridLine,ticks:{callback:v=>fk(v)+'€'}}},plugins:{legend:{display:true,position:'top',align:'end',labels:{boxWidth:10,boxHeight:10,font:{size:10.5},padding:10}}}}
-      })
-      // Donut estados
-      mkChart('cAnEstados', {
-        type:'doughnut',
-        data:{labels:['Negociación','En Reforma','En Venta','Finalizados','Otros'],datasets:[{data:[estados.negociacion,estados.reforma,estados.venta,estados.finalizado,estados.otro],backgroundColor:[C.muted,C.gold,C.sage,C.ink+'99',C.lav],borderWidth:3,borderColor:'#FDFCF8'}]},
-        options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}
-      })
-      // Donut sectores
-      const secKeys=Object.keys(secMap), secVals=Object.values(secMap)
-      mkChart('cAnSectores', {
-        type:'doughnut',
-        data:{labels:secKeys.map(s=>(SEC_LBL_AN[s]||s)),datasets:[{data:secVals,backgroundColor:secKeys.map(s=>SECOL[s]||C.muted),borderWidth:3,borderColor:'#FDFCF8'}]},
-        options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{display:true,position:'right',labels:{boxWidth:10,boxHeight:10,font:{size:10.5},padding:8}}}}
-      })
-      // Barras ROI
-      const conROI=ranking.filter(p=>p.roi!=null)
-      mkChart('cAnROI', {
-        type:'bar',
-        data:{
-          labels:conROI.map(p=>(p.nombre||p.direccion||'Proy.'+p.id).substring(0,14)),
-          datasets:[{
-            label:'ROI %',data:conROI.map(p=>p.roi.toFixed(1)),
-            backgroundColor:conROI.map(p=>p.roi>20?C.sage+'BB':p.roi>10?C.gold+'BB':C.rust+'BB'),
-            borderRadius:6
-          }]
-        },
-        options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{grid:gridLine,ticks:{callback:v=>v+'%'}}},plugins:{legend:{display:false}}}
-      })
-    }, 80)
+    setTimeout(()=>{
+      const lbls = projs.map(p=>(p.nombre||p.direccion||'P'+p.id).substring(0,16))
+      mkChart('cAnInvGasto',{type:'bar',data:{labels:lbls,datasets:[{label:'Inversión ppto.',data:projs.map(p=>p.inv),backgroundColor:C.sky+'88',borderRadius:5},{label:'Gasto real',data:projs.map(p=>p.gReal),backgroundColor:C.gold+'AA',borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false},ticks:{maxRotation:30,font:{size:10}}},y:{grid:gridLine,ticks:{callback:v=>_fk(v)+'€'}}},plugins:{legend:{display:true,position:'top',align:'end',labels:{boxWidth:10,boxHeight:10,font:{size:10.5},padding:10}}}}})
+      mkChart('cAnEstados',{type:'doughnut',data:{labels:['Negociación','En Reforma','En Venta','Finalizado'],datasets:[{data:[estados.neg||0,estados.ref||0,estados.act||0,estados.fin||0],backgroundColor:[C.muted,C.gold,C.sage,C.ink+'99'],borderWidth:3,borderColor:'#FDFCF8'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}})
+      const sK=Object.keys(secMap)
+      mkChart('cAnSectores',{type:'doughnut',data:{labels:sK.map(s=>SEC_LBL_AN[s]||s),datasets:[{data:sK.map(s=>secMap[s]),backgroundColor:sK.map(s=>SECOL_AN[s]||C.muted),borderWidth:3,borderColor:'#FDFCF8'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{display:true,position:'right',labels:{boxWidth:10,boxHeight:10,font:{size:10.5},padding:8}}}}})
+      const conROI=projs.filter(p=>p.roi!=null)
+      if(conROI.length) mkChart('cAnROI',{type:'bar',data:{labels:conROI.map(p=>(p.nombre||p.direccion||'P').substring(0,14)),datasets:[{label:'ROI %',data:conROI.map(p=>p.roi.toFixed(1)),backgroundColor:conROI.map(p=>p.roi>20?C.sage+'BB':p.roi>10?C.gold+'BB':C.rust+'BB'),borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{grid:gridLine,ticks:{callback:v=>v+'%'}}},plugins:{legend:{display:false}}}})
+      else { const el=document.getElementById('cAnROI'); if(el)el.closest('.chart-card').querySelector('.chart-wrap').innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:12px">Añade precios de venta para ver ROI</div>' }
+    },80)
 
-    // Actualizar contexto del agente IA con datos reales
-    updateAIContext(ps, gs, ranking, roiMedio, totalInv, totalBen)
-
-    // Rellenar selector de obra
-    const sel = document.getElementById('obra-proj-sel')
-    if (sel) {
-      sel.innerHTML = '<option value="">— Selecciona proyecto —</option>'
-      ps.forEach(p => {
-        const opt=document.createElement('option'); opt.value=p.id; opt.textContent=p.nombre||p.direccion||'Proyecto '+p.id; sel.appendChild(opt)
-      })
+    // Rellenar selector de obra y comparador con proyectos reales
+    const sel=document.getElementById('obra-proj-sel')
+    if(sel){
+      sel.innerHTML='<option value="">— Selecciona proyecto —</option>'
+      projs.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.nombre||p.direccion||'Proyecto '+p.id;sel.appendChild(o)})
     }
-    // Guardar proyectos+gastos globalmente para otras vistas
-    window._anProyectos = ps
-    window._anGastos = gs
-    window._anRanking = ranking
+    window._anProjs = projs
+
+    // Actualizar contexto del Agente IA
+    _updateAIContext(projs, secMap, roiMedio, totalInv, totalBen)
 
   } catch(e) {
-    body.innerHTML = `<div class="empty-state">❌ Error cargando datos: ${e.message}</div>`
+    console.error('renderAnOverview error:', e)
+    body.innerHTML=`<div class="empty-state" style="padding:40px;text-align:center;color:var(--muted)">❌ Error cargando datos: ${e.message}<br><br><button class="btn btn-gold btn-sm" onclick="renderAnOverview()">↻ Reintentar</button></div>`
   }
 }
 
 /* ═══════════════════════════════════════════════════
-   CONTROL DE OBRA — datos reales de Supabase
+   CONTROL DE OBRA — datos reales del proyecto
 ═══════════════════════════════════════════════════ */
 async function renderAnObra(proyId) {
-  const body = document.getElementById('an-obra-body')
-  if (!body || !proyId) return
-  body.innerHTML = '<div class="loader"></div>'
+  const body=document.getElementById('an-obra-body')
+  if(!body||!proyId)return
+  body.innerHTML='<div class="loader"></div>'
   try {
-    // Cargar proyecto y sus gastos
-    let ps = window._anProyectos, gs = window._anGastos
-    if (!ps) {
-      const [r1,r2] = await Promise.all([
-        supabase.from('PROYECTOS').select('*').eq('id', proyId).single(),
-        supabase.from('GASTOS').select('*').eq('proyecto_id', proyId)
-      ])
-      ps = r1.data ? [r1.data] : []; gs = r2.data||[]
+    // Buscar en cache global primero
+    let p = (window._anProjs||PROYECTOS||[]).find(x=>String(x.id)===String(proyId))
+    if(!p){
+      const {data,error}=await sb.from('proyectos').select('*,gastos(*)').eq('id',proyId).single()
+      if(error)throw error
+      p=data
     }
-    const p = ps.find(x=>x.id==proyId)||ps[0]
-    if (!p) { body.innerHTML='<div class="empty-state">Proyecto no encontrado</div>'; return }
-    const gProy = (window._anGastos||gs).filter(g=>g.proyecto_id==proyId)
-
-    // Calcular métricas
-    const inv    = Number(p.precio_compra||0)+Number(p.gastos_compra||0)+Number(p.reforma_estimada||0)
-    const gReal  = gProy.reduce((a,g)=>a+Number(g.importe||0),0)
-    const desvio = gReal - Number(p.reforma_estimada||0)
-    const desvPct= p.reforma_estimada>0 ? desvio/Number(p.reforma_estimada)*100 : 0
+    const pc = _projCalc(p)
 
     // Gastos por sector
     const secMap={}
-    gProy.forEach(g=>{ const s=(g.sector||'otros').toLowerCase(); secMap[s]=(secMap[s]||0)+Number(g.importe||0) })
+    pc.gs.forEach(g=>{const s=(g.sector||'otros').toLowerCase();secMap[s]=(secMap[s]||0)+Number(g.coste||0)})
 
-    // FASES desde p.fases (JSON) o inferir desde gastos
-    let fases = []
-    if (p.fases && Array.isArray(p.fases)) {
-      fases = p.fases
-    } else {
-      // Inferir fases desde sectores con gasto
-      const secOrden = ['legal','arq','obra','elect','font','dis']
-      secOrden.forEach(s => {
-        if (secMap[s]) {
-          const ppto = Number(p[`ppto_${s}`]||0) || secMap[s]*0.9
-          fases.push({n: SEC_LBL_AN[s]||s, sec:s, coste:secMap[s], ppto, st:'done'})
-        }
-      })
-      if (fases.length===0) {
-        fases = Object.entries(secMap).map(([s,v])=>({n:SEC_LBL_AN[s]||s,sec:s,coste:v,ppto:v*0.9,st:'done'}))
-      }
-    }
+    // Fases: usa FASES globales + proyecto_fases para saber cuáles están hechas
+    const fasesDone = Array.isArray(p.proyecto_fases) ? p.proyecto_fases.filter(f=>f.done).map(f=>f.fase_id) : (p.phases_done||[])
+    const fasesTotal = FASES||[]
+    const doneCnt = fasesDone.length
+    const totalCnt = fasesTotal.length
+    const progPct = totalCnt>0?Math.round(doneCnt/totalCnt*100):0
 
-    const doneFases   = fases.filter(f=>f.st==='done').length
-    const progresoPct = fases.length>0 ? Math.round(doneFases/fases.length*100) : 0
-
-    // Alertas
-    const alertas = []
+    // Alertas automáticas por sector
+    const alertas=[]
     Object.entries(secMap).forEach(([s,v])=>{
-      const ppto = Number(p[`ppto_${s}`]||0)
-      if (ppto>0 && v>ppto*1.1) alertas.push({tipo:'red',ico:'🔴',titulo:`${SEC_LBL_AN[s]||s}: desvío +${fe(v-ppto)}€ (+${((v-ppto)/ppto*100).toFixed(0)}%)`,desc:'Gasto real supera el presupuesto del sector.'})
+      // No tenemos presupuesto por sector guardado, comparamos con reforma total proporcional
+      // Si un sector supera el 40% del presupuesto total de reforma, es llamativo
+      if(pc.reformaEst>0 && v>pc.reformaEst*0.40)
+        alertas.push({tipo:'yellow',ico:'🟡',titulo:`${SEC_LBL_AN[s]||s} concentra ${(v/pc.reformaEst*100).toFixed(0)}% del presupuesto`,desc:`${_fe(v)}€ en este sector. Verifica que está dentro del plan.`})
     })
-    if (desvio>0) alertas.push({tipo:'yellow',ico:'🟡',titulo:`Desvío total de obra: +${fe(desvio)}€ (+${desvPct.toFixed(1)}%)`,desc:'El gasto real supera el presupuesto de reforma estimado.'})
-    if (alertas.length===0) alertas.push({tipo:'green',ico:'🟢',titulo:'Sin desvíos detectados',desc:'El proyecto está dentro del presupuesto estimado.'})
+    if(pc.desvio>pc.reformaEst*0.10&&pc.reformaEst>0)
+      alertas.unshift({tipo:'red',ico:'🔴',titulo:`Desvío total: +${_fe(pc.desvio)}€ (+${pc.desvPct.toFixed(1)}%)`,desc:'El gasto real supera en más del 10% el presupuesto de reforma estimado.'})
+    if(!alertas.length)
+      alertas.push({tipo:'green',ico:'🟢',titulo:'Sin desvíos detectados',desc:'El gasto está dentro del presupuesto estimado.'})
 
-    body.innerHTML = `
+    body.innerHTML=`
     <div class="kpi-row cols5">
-      <div class="kpi-card ag"><div class="kpi-ico">⏱️</div><div class="kpi-val">${progresoPct}%</div><div class="kpi-lbl">Progreso (fases)</div><div class="kpi-delta neu">${doneFases} de ${fases.length} fases</div></div>
-      <div class="kpi-card aru"><div class="kpi-ico">💸</div><div class="kpi-val">${fk(gReal)}€</div><div class="kpi-lbl">Gasto Real</div><div class="kpi-delta ${desvio>0?'dn':'up'}">${desvio>0?'↑ +'+fk(desvio)+'€ sobre ppto.':'✓ Dentro del ppto.'}</div></div>
-      <div class="kpi-card as"><div class="kpi-ico">📋</div><div class="kpi-val">${fk(p.reforma_estimada||0)}€</div><div class="kpi-lbl">Presupuesto Reforma</div><div class="kpi-delta neu">estimado inicial</div></div>
-      <div class="kpi-card asky"><div class="kpi-ico">🎯</div><div class="kpi-val">${desvio>=0?'+':''}${fk(desvio)}€</div><div class="kpi-lbl">Desvío Acumulado</div><div class="kpi-delta ${desvio>0?'dn':desvio<0?'up':'neu'}">${desvPct>=0?'+':''}${desvPct.toFixed(1)}% del ppto.</div></div>
-      <div class="kpi-card alav"><div class="kpi-ico">💰</div><div class="kpi-val">${fk(inv)}€</div><div class="kpi-lbl">Inversión Total</div><div class="kpi-delta neu">compra + reform.</div></div>
+      <div class="kpi-card ag"><div class="kpi-ico">⏱️</div><div class="kpi-val">${progPct}%</div><div class="kpi-lbl">Progreso de fases</div><div class="kpi-delta neu">${doneCnt} de ${totalCnt} hechas</div></div>
+      <div class="kpi-card aru"><div class="kpi-ico">💸</div><div class="kpi-val">${_fk(pc.gReal)}€</div><div class="kpi-lbl">Gasto real</div><div class="kpi-delta ${pc.desvio>0?'dn':'up'}">${pc.desvio>0?'↑ +'+_fk(pc.desvio)+'€ sobre ppto.':'✓ Dentro del ppto.'}</div></div>
+      <div class="kpi-card as"><div class="kpi-ico">📋</div><div class="kpi-val">${_fk(pc.reformaEst)}€</div><div class="kpi-lbl">Ppto. reforma</div><div class="kpi-delta neu">estimado inicial</div></div>
+      <div class="kpi-card asky"><div class="kpi-ico">🎯</div><div class="kpi-val">${pc.desvio>=0?'+':''}${_fk(pc.desvio)}€</div><div class="kpi-lbl">Desvío acumulado</div><div class="kpi-delta ${pc.desvio>0?'dn':pc.desvio<0?'up':'neu'}">${pc.desvPct>=0?'+':''}${pc.desvPct.toFixed(1)}%</div></div>
+      <div class="kpi-card alav"><div class="kpi-ico">💰</div><div class="kpi-val">${_fk(pc.inv)}€</div><div class="kpi-lbl">Inversión total</div><div class="kpi-delta neu">compra + reforma + extras</div></div>
     </div>
 
     <div class="chart-grid g21">
       <div class="chart-card">
         <div class="chart-head">
-          <div><div class="chart-title">Fases del Proyecto — ${p.nombre||p.direccion||'Proyecto'}</div><div class="chart-sub">Sectores con gasto registrado</div></div>
+          <div><div class="chart-title">Fases — ${p.nombre||p.direccion||'Proyecto'}</div><div class="chart-sub">${doneCnt} completadas · ${totalCnt-doneCnt} pendientes</div></div>
           <div style="display:flex;gap:10px;font-size:10.5px;color:var(--muted);align-items:center;flex-shrink:0">
-            <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:var(--sage);display:inline-block"></span>OK</span>
-            <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:var(--rust);display:inline-block"></span>Desvío</span>
+            <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:var(--sage);display:inline-block"></span>Hecha</span>
+            <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#ccc8bf;display:inline-block"></span>Pendiente</span>
           </div>
         </div>
-        <div style="overflow-y:auto;max-height:380px">
+        <div style="overflow-y:auto;max-height:400px">
           <div class="tl-wrap">
-            ${fases.map((f,i) => {
-              const isDone=f.st!=='pen', desvF=f.coste>f.ppto&&f.ppto>0
-              const dotColor=isDone?(desvF?C.rust:C.sage):'#ccc8bf'
-              const pct=isDone?100:0
+            ${fasesTotal.length ? fasesTotal.map((f,i)=>{
+              const done = fasesDone.includes(f.id)||fasesDone.includes(String(f.id))
+              const dotColor = done?C.sage:'#ccc8bf'
+              const secKey = (f.sector||f.categoria||'otros').toLowerCase()
               return `<div class="tl-item">
                 <div class="tl-dot done" style="background:${dotColor}"></div>
                 <div style="padding-left:8px">
-                  <div class="tl-name">${i+1}. ${f.n}
-                    <span class="tag tag-${f.sec||'otros'}">${SEC_LBL_AN[f.sec||'otros']||f.sec}</span>
-                    <span style="font-size:10px;font-weight:700;color:${isDone?C.sage:C.muted}">${isDone?'✓ Registrado':'Pendiente'}</span>
+                  <div class="tl-name">${i+1}. ${f.nombre||f.name||'Fase '+(i+1)}
+                    ${secKey&&SMAP[secKey]?`<span class="stag s-${secKey}">${SMAP[secKey].i} ${SMAP[secKey].l}</span>`:''}
+                    <span style="font-size:10px;font-weight:700;color:${done?C.sage:C.muted}">${done?'✓ Completada':'Pendiente'}</span>
                   </div>
-                  <div class="tl-meta">
-                    <span>Ppto: ${f.ppto>0?fe(f.ppto)+'€':'—'}</span>
-                    <span style="color:${desvF?C.red:C.sage};font-weight:600">Real: ${fe(f.coste)}€${desvF?' (+'+((f.coste-f.ppto)/f.ppto*100).toFixed(0)+'% ⚠️)':''}</span>
-                  </div>
-                  <div class="tl-bar-track"><div class="tl-bar-fill ${!desvF?'sage':''}" style="width:${pct}%;background:${desvF?C.rust:C.sage}"></div></div>
+                  <div class="tl-bar-track" style="margin-top:5px"><div class="tl-bar-fill sage" style="width:${done?100:0}%;background:${done?C.sage:'#E4DDD0'}"></div></div>
                 </div>
               </div>`
-            }).join('')}
+            }).join('') : `<div style="color:var(--muted);font-size:12px;padding:20px 0">No hay fases de plantilla configuradas. Ve a Configuración → Fases.</div>`}
           </div>
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:16px">
         <div class="chart-card" style="flex:1">
-          <div class="chart-head"><div><div class="chart-title">Real vs Presupuesto por Sector</div><div class="chart-sub">€ acumulados</div></div></div>
-          <div style="height:160px"><canvas id="cAnDesviacion"></canvas></div>
+          <div class="chart-head"><div><div class="chart-title">Gasto Real por Sector</div><div class="chart-sub">€ registrados en este proyecto</div></div></div>
+          <div style="height:165px"><canvas id="cAnDesviacion"></canvas></div>
         </div>
         <div class="chart-card" style="flex:1">
           <div class="chart-head"><div><div class="chart-title">Distribución del Gasto</div><div class="chart-sub">% por sector</div></div></div>
@@ -3887,74 +3990,74 @@ async function renderAnObra(proyId) {
 
     <div class="chart-card">
       <div class="chart-head"><div class="chart-title">🚨 Alertas de Control</div></div>
-      ${alertas.map(a=>`
-      <div class="alert-row ${a.tipo}">
-        <span class="alert-ico">${a.ico}</span>
-        <div class="alert-body"><div class="alert-title">${a.titulo}</div><div class="alert-desc">${a.desc}</div></div>
-      </div>`).join('')}
+      ${alertas.map(a=>`<div class="alert-row ${a.tipo}"><span class="alert-ico">${a.ico}</span><div class="alert-body"><div class="alert-title">${a.titulo}</div><div class="alert-desc">${a.desc}</div></div></div>`).join('')}
     </div>`
 
-    setTimeout(() => {
-      const secKeys=Object.keys(secMap), secVals=secKeys.map(s=>secMap[s])
-      const pptoVals=secKeys.map(s=>Number(p[`ppto_${s}`]||0)||secMap[s]*0.9)
-      mkChart('cAnDesviacion',{type:'bar',data:{labels:secKeys.map(s=>SEC_LBL_AN[s]||s),datasets:[{label:'Presupuestado',data:pptoVals,backgroundColor:'#E4DDD0',borderRadius:4},{label:'Real',data:secVals,backgroundColor:secKeys.map(s=>secMap[s]>(pptoVals[secKeys.indexOf(s)]*1.1)?C.rust+'BB':C.gold+'BB'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false}},y:{grid:gridLine,ticks:{callback:v=>fk(v)+'€'}}},plugins:{legend:{display:true,position:'top',align:'end',labels:{boxWidth:8,boxHeight:8,font:{size:10},padding:8}}}}})
-      mkChart('cAnPieObra',{type:'doughnut',data:{labels:secKeys.map(s=>SEC_LBL_AN[s]||s),datasets:[{data:secVals,backgroundColor:secKeys.map(s=>SECOL[s]||C.muted),borderWidth:3,borderColor:'#FDFCF8'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{display:true,position:'right',labels:{boxWidth:8,boxHeight:8,font:{size:10},padding:6}}}}})
+    setTimeout(()=>{
+      const sK=Object.keys(secMap), sV=sK.map(s=>secMap[s])
+      mkChart('cAnDesviacion',{type:'bar',data:{labels:sK.map(s=>SEC_LBL_AN[s]||s),datasets:[{label:'Gasto real (€)',data:sV,backgroundColor:sK.map(s=>SECOL_AN[s]||C.muted+'BB'),borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false}},y:{grid:gridLine,ticks:{callback:v=>_fk(v)+'€'}}},plugins:{legend:{display:false}}}})
+      mkChart('cAnPieObra',{type:'doughnut',data:{labels:sK.map(s=>SEC_LBL_AN[s]||s),datasets:[{data:sV,backgroundColor:sK.map(s=>SECOL_AN[s]||C.muted),borderWidth:3,borderColor:'#FDFCF8'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{display:true,position:'right',labels:{boxWidth:8,boxHeight:8,font:{size:10},padding:6}}}}})
     },80)
   } catch(e) {
-    body.innerHTML=`<div class="empty-state">❌ Error: ${e.message}</div>`
+    console.error('renderAnObra error:',e)
+    body.innerHTML=`<div class="empty-state" style="padding:40px;text-align:center;color:var(--muted)">❌ Error: ${e.message}<br><br><button class="btn btn-gold btn-sm" onclick="renderAnObra('${proyId}')">↻ Reintentar</button></div>`
   }
 }
 
 /* ═══════════════════════════════════════════════════
-   COMPARADOR — datos reales de Supabase
+   COMPARADOR — datos reales de todos los proyectos
 ═══════════════════════════════════════════════════ */
 async function renderAnComparador() {
-  const body = document.getElementById('an-comp-body')
-  if (!body) return
-  body.innerHTML = '<div class="loader"></div>'
+  const body=document.getElementById('an-comp-body')
+  if(!body)return
+  body.innerHTML='<div class="loader"></div>'
   try {
-    let ranking = window._anRanking
-    if (!ranking) {
-      const [r1,r2] = await Promise.all([
-        supabase.from('PROYECTOS').select('*').eq('usuario_id',usuarioActual.id),
-        supabase.from('GASTOS').select('*').eq('usuario_id',usuarioActual.id)
-      ])
-      const ps=r1.data||[], gs=r2.data||[]
-      ranking = ps.map(p=>{
-        const inv=Number(p.precio_compra||0)+Number(p.gastos_compra||0)+Number(p.reforma_estimada||0)
-        const gProy=gs.filter(g=>g.proyecto_id===p.id).reduce((a,g)=>a+Number(g.importe||0),0)
-        const pv=Number(p.precio_venta||0)
-        const ben=pv>0?pv-inv-Number(p.gastos_venta||0):null
-        const roi=ben!=null&&inv>0?ben/inv*100:null
-        const m2=Number(p.superficie||0)
-        return {...p,inv,gProy,ben,roi,m2}
-      }).sort((a,b)=>(b.roi||0)-(a.roi||0))
-      window._anRanking=ranking; window._anProyectos=ps; window._anGastos=gs
+    let projs = window._anProjs
+    if(!projs){
+      const {data,error}=await sb.from('proyectos').select('*,gastos(*)').order('created_at',{ascending:false})
+      if(error)throw error
+      projs=(data||[]).map(_projCalc).sort((a,b)=>(b.roi||0)-(a.roi||0))
+      window._anProjs=projs
+    }
+
+    if(!projs.length){
+      body.innerHTML='<div class="empty-state" style="padding:40px;text-align:center;color:var(--muted)">No hay proyectos. Crea tu primer proyecto para ver el comparador.</div>'
+      return
     }
 
     const cols=[C.sage,C.gold,C.sky,C.rust,C.lav,C.dis]
-    const best=(arr,fn,hi=true)=>{ const v=arr.map(fn); const ex=hi?Math.max(...v):Math.min(...v.filter(x=>x>0)); return v.map(x=>x===ex?'best':x<0?'worst':'') }
-    const roi_b=best(ranking,p=>p.roi||0)
-    const dur_b=best(ranking,p=>p.meses_estimados||0,false)
-    const inv_b=best(ranking,p=>p.inv,false)
+    const winnerIdx=projs.findIndex(p=>p.roi===Math.max(...projs.map(q=>q.roi||0)))
+    const top4=projs.slice(0,4)
 
-    const winnerIdx = ranking.findIndex(p=>p.roi===Math.max(...ranking.map(p=>p.roi||0)))
+    // Helper para marcar mejor/peor valor
+    function bestWorst(arr,fn,higherIsBetter=true){
+      const vals=arr.map(fn)
+      const valid=vals.filter(v=>v!=null&&v!==0)
+      if(!valid.length)return arr.map(()=>'')
+      const best=higherIsBetter?Math.max(...valid):Math.min(...valid)
+      const worst=higherIsBetter?Math.min(...valid):Math.max(...valid)
+      return vals.map(v=>v===best?'best':v===worst?'worst':'')
+    }
+    const roiB=bestWorst(top4,p=>p.roi)
+    const invB=bestWorst(top4,p=>p.inv,false)
+    const pvB =bestWorst(top4,p=>p.pv)
+    const benB=bestWorst(top4,p=>p.ben)
 
-    body.innerHTML = `
-    <div class="comp-grid-an" style="grid-template-columns:repeat(${Math.min(ranking.length,4)},1fr)">
-      ${ranking.slice(0,4).map((p,i)=>`
-      <div class="comp-card ${i===winnerIdx?'winner':''}">
-        ${i===winnerIdx?'<div class="comp-check">✓</div>':''}
+    body.innerHTML=`
+    <div class="comp-grid-an" style="grid-template-columns:repeat(${top4.length},1fr)">
+      ${top4.map((p,i)=>`
+      <div class="comp-card ${i===winnerIdx&&p.roi!=null?'winner':''}">
+        ${i===winnerIdx&&p.roi!=null?'<div class="comp-check">✓</div>':''}
         <div class="comp-name">${p.nombre||p.direccion||'Proyecto '+p.id}</div>
-        <div class="comp-type">${p.tipo_operacion||'—'} · ${p.estado||'—'}</div>
+        <div class="comp-type">${p.tipo||'—'} · ${p.estado||'—'}</div>
         <div class="comp-kpis">
-          <div class="comp-row"><span class="comp-lbl">Inversión</span><span class="comp-val ${inv_b[i]}">${fe(p.inv)}€</span></div>
-          <div class="comp-row"><span class="comp-lbl">Gasto real</span><span class="comp-val ${p.gProy>p.reforma_estimada*1.1?'worst':''}">${fe(p.gProy)}€</span></div>
-          <div class="comp-row"><span class="comp-lbl">Precio venta</span><span class="comp-val ${p.precio_venta?'best':''}">${p.precio_venta?fe(p.precio_venta)+'€':'—'}</span></div>
-          <div class="comp-row"><span class="comp-lbl">Beneficio neto</span><span class="comp-val ${p.ben>0?'best':p.ben<0?'worst':''}">${p.ben!=null?(p.ben>0?'+':'')+fe(p.ben)+'€':'—'}</span></div>
-          <div class="comp-row"><span class="comp-lbl">ROI</span><span class="comp-val ${roi_b[i]}" style="color:${p.roi>20?C.sage:p.roi>10?'#a07820':p.roi!=null?C.red:C.muted}">${p.roi!=null?p.roi.toFixed(1)+'%':'—'}${i===winnerIdx?' 🏆':''}</span></div>
-          <div class="comp-row"><span class="comp-lbl">Coste/m²</span><span class="comp-val">${p.m2>0?Math.round(p.inv/p.m2)+'€':'—'}</span></div>
-          <div class="comp-row"><span class="comp-lbl">PV/m²</span><span class="comp-val ${best(ranking,q=>q.precio_venta&&q.m2?q.precio_venta/q.m2:0)[i]}">${p.precio_venta&&p.m2?Math.round(p.precio_venta/p.m2)+'€':'—'}</span></div>
+          <div class="comp-row"><span class="comp-lbl">Inversión total</span><span class="comp-val ${invB[i]}">${_fe(p.inv)}€</span></div>
+          <div class="comp-row"><span class="comp-lbl">Gasto real</span><span class="comp-val ${p.desvio>p.reformaEst*0.1&&p.reformaEst>0?'worst':''}">${_fe(p.gReal)}€${p.desvio>p.reformaEst*0.1&&p.reformaEst>0?' ⚠️':''}</span></div>
+          <div class="comp-row"><span class="comp-lbl">Precio compra</span><span class="comp-val">${_fe(p.precioCompra)}€</span></div>
+          <div class="comp-row"><span class="comp-lbl">Precio venta</span><span class="comp-val ${pvB[i]}">${p.pv?_fe(p.pv)+'€':'—'}</span></div>
+          <div class="comp-row"><span class="comp-lbl">Beneficio neto</span><span class="comp-val ${benB[i]}" style="color:${p.ben>0?C.sage:p.ben<0?C.red:C.muted}">${p.ben!=null?(p.ben>0?'+':'')+_fe(p.ben)+'€':'—'}</span></div>
+          <div class="comp-row"><span class="comp-lbl">ROI</span><span class="comp-val ${roiB[i]}" style="color:${p.roi>20?C.sage:p.roi>10?'#a07820':p.roi!=null?C.red:C.muted}">${p.roi!=null?p.roi.toFixed(1)+'%':'—'}${i===winnerIdx&&p.roi!=null?' 🏆':''}</span></div>
+          <div class="comp-row"><span class="comp-lbl">Coste/m²</span><span class="comp-val">${p.m2>0?Math.round(p.inv/p.m2)+'€/m²':'—'}</span></div>
           <div class="comp-row"><span class="comp-lbl">Superficie</span><span class="comp-val">${p.m2>0?p.m2+'m²':'—'}</span></div>
         </div>
       </div>`).join('')}
@@ -3962,185 +4065,482 @@ async function renderAnComparador() {
 
     <div class="chart-grid g12">
       <div class="chart-card">
-        <div class="chart-head"><div><div class="chart-title">Radar Riesgo / Rentabilidad</div><div class="chart-sub">Comparativa multidimensional</div></div></div>
-        <div style="height:270px"><canvas id="cAnRadar"></canvas></div>
+        <div class="chart-head"><div><div class="chart-title">Radar Multidimensional</div><div class="chart-sub">ROI · Eficiencia · Riesgo · Beneficio</div></div></div>
+        <div style="height:260px"><canvas id="cAnRadar"></canvas></div>
       </div>
       <div class="chart-card">
         <div class="chart-head"><div><div class="chart-title">Inversión vs Beneficio</div><div class="chart-sub">€ por proyecto</div></div></div>
-        <div style="height:270px"><canvas id="cAnBubble"></canvas></div>
+        <div style="height:260px"><canvas id="cAnBubble"></canvas></div>
       </div>
     </div>
 
     <div class="chart-card">
       <div class="chart-head"><div class="chart-title" style="display:flex;align-items:center;gap:8px"><span style="color:var(--gold)">✦</span> Conclusión Automática</div></div>
       <div style="background:var(--ink2);border-radius:10px;padding:18px;color:rgba(255,255,255,.82);font-size:12.5px;line-height:1.8">
-        ${ranking.length===0 ? 'No hay proyectos suficientes para comparar.' :
-          ranking[0].roi!=null ?
-          `El proyecto con mejor rentabilidad es <strong style="color:var(--gold2)">${ranking[0].nombre||ranking[0].direccion||'Proyecto 1'}</strong> con un <strong style="color:var(--sage2)">ROI de ${ranking[0].roi.toFixed(1)}%</strong> y un beneficio neto de <strong style="color:var(--sage2)">${fe(ranking[0].ben)}€</strong>.
-          ${ranking.filter(p=>p.gProy>p.reforma_estimada*1.1).length>0?`<br><br>⚠️ <strong style="color:${C.gold2}">${ranking.filter(p=>p.gProy>p.reforma_estimada*1.1).map(p=>p.nombre||p.direccion).join(', ')}</strong> presentan desvíos de obra superiores al 10%. Cada mes extra de reforma reduce el ROI anualizado entre 5-8 puntos porcentuales.`:''}
-          <br><br><strong style="color:#fff">Recomendación:</strong> Replica el modelo del proyecto líder y controla estrictamente los plazos de obra para maximizar el ROI anualizado.` :
-          'Añade precios de venta a tus proyectos para ver el análisis comparativo de ROI.'
+        ${projs[0].roi!=null
+          ? `El proyecto con mejor rentabilidad es <strong style="color:var(--gold2)">${projs[0].nombre||projs[0].direccion||'—'}</strong> con un <strong style="color:var(--sage2)">ROI del ${projs[0].roi.toFixed(1)}%</strong> y un beneficio neto de <strong style="color:var(--sage2)">${_fe(projs[0].ben)}€</strong>.
+             ${projs.filter(p=>p.desvio>p.reformaEst*0.1&&p.reformaEst>0).length
+               ? `<br><br>⚠️ <strong style="color:var(--gold2)">${projs.filter(p=>p.desvio>p.reformaEst*0.1&&p.reformaEst>0).map(p=>p.nombre||p.direccion||'—').join(', ')}</strong> presentan desvíos de obra &gt;10%.`
+               : '<br><br>✅ Todos los proyectos están dentro del presupuesto de reforma.'}
+             <br><br><strong style="color:#fff">Recomendación:</strong> Replica el modelo del proyecto líder y controla plazos de obra para maximizar el ROI anualizado.`
+          : 'Añade precios de venta a tus proyectos para ver el análisis comparativo de ROI.'
         }
       </div>
     </div>`
 
-    setTimeout(() => {
+    setTimeout(()=>{
       // Radar
-      const projs = ranking.slice(0,4)
-      const radarData = projs.map(p => {
-        const roiS = p.roi!=null?Math.min(p.roi*3,100):0
-        const effS = p.m2>0&&p.precio_venta?Math.min((p.precio_venta/p.m2)/25,100):0
-        const riskS = p.gProy<p.reforma_estimada*1.05?80:p.gProy<p.reforma_estimada*1.15?50:20
-        const benS  = p.ben>0?Math.min(p.ben/500,100):0
-        return [roiS,effS,riskS,benS,p.inv>0?Math.min(100-p.inv/10000,100):50,50]
+      const radarData=top4.map(p=>{
+        const roiS=p.roi!=null?Math.min(p.roi*3.5,100):0
+        const effS=p.m2>0&&p.pv?Math.min((p.pv/p.m2)/25,100):0
+        const riskS=p.desvio<=0?90:p.desvPct<10?65:p.desvPct<20?40:20
+        const benS=p.ben>0?Math.min(p.ben/1000,100):0
+        const invS=p.inv>0?Math.max(100-p.inv/5000,10):50
+        return [roiS,effS,riskS,benS,invS,50]
       })
-      mkChart('cAnRadar',{type:'radar',data:{labels:['ROI','Efic.m²','Bajo Riesgo','Beneficio','Capital Efic.','Timing'],datasets:projs.map((p,i)=>({label:(p.nombre||p.direccion||'P'+(i+1)).substring(0,14),data:radarData[i],borderColor:cols[i],backgroundColor:cols[i]+'22',borderWidth:2,pointRadius:3}))},options:{responsive:true,maintainAspectRatio:false,scales:{r:{grid:{color:'rgba(228,221,208,.5)'},pointLabels:{font:{size:10.5}},min:0,max:100,ticks:{display:false}}},plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,boxHeight:10,font:{size:10.5},padding:10}}}}})
-      // Barras inversión vs beneficio
-      mkChart('cAnBubble',{type:'bar',data:{labels:projs.map(p=>(p.nombre||p.direccion||'P').substring(0,14)),datasets:[{label:'Inversión',data:projs.map(p=>p.inv),backgroundColor:cols.map(c=>c+'88'),borderRadius:5},{label:'Beneficio',data:projs.map(p=>p.ben||0),backgroundColor:projs.map(p=>p.ben>0?C.sage+'BB':C.rust+'BB'),borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false}},y:{grid:gridLine,ticks:{callback:v=>fk(v)+'€'}}},plugins:{legend:{display:true,position:'top',align:'end',labels:{boxWidth:10,boxHeight:10,font:{size:10.5},padding:10}}}}})
+      mkChart('cAnRadar',{type:'radar',data:{labels:['ROI','Efic.m²','Bajo Riesgo','Beneficio','Capital Efic.','Diversif.'],datasets:top4.map((p,i)=>({label:(p.nombre||p.direccion||'P'+(i+1)).substring(0,14),data:radarData[i],borderColor:cols[i],backgroundColor:cols[i]+'22',borderWidth:2,pointRadius:3}))},options:{responsive:true,maintainAspectRatio:false,scales:{r:{grid:{color:'rgba(228,221,208,.5)'},pointLabels:{font:{size:10.5}},min:0,max:100,ticks:{display:false}}},plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,boxHeight:10,font:{size:10.5},padding:10}}}}})
+      mkChart('cAnBubble',{type:'bar',data:{labels:top4.map(p=>(p.nombre||p.direccion||'P').substring(0,14)),datasets:[{label:'Inversión',data:top4.map(p=>p.inv),backgroundColor:cols.map(c=>c+'88'),borderRadius:5},{label:'Beneficio',data:top4.map(p=>p.ben||0),backgroundColor:top4.map(p=>p.ben>0?C.sage+'BB':C.rust+'BB'),borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false}},y:{grid:gridLine,ticks:{callback:v=>_fk(v)+'€'}}},plugins:{legend:{display:true,position:'top',align:'end',labels:{boxWidth:10,boxHeight:10,font:{size:10.5},padding:10}}}}})
     },80)
-  } catch(e) {
-    body.innerHTML=`<div class="empty-state">❌ Error: ${e.message}</div>`
+  } catch(e){
+    console.error('renderAnComparador error:',e)
+    body.innerHTML=`<div class="empty-state" style="padding:40px;text-align:center;color:var(--muted)">❌ Error: ${e.message}<br><br><button class="btn btn-gold btn-sm" onclick="renderAnComparador()">↻ Reintentar</button></div>`
   }
 }
 
 /* ═══════════════════════════════════════════════════
-   PREDICTOR DE ROI — calculadora pre-compra
+   PREDICTOR DE ROI — calculadora financiera correcta
+   ─────────────────────────────────────────────────
+   Correcciones aplicadas:
+   1. Impuesto compra: ITP 2ª mano / IVA+AJD obra nueva
+   2. Gastos adquisición: notaría + registro + gestoría
+   3. Costes financiación: intereses hipoteca durante obra
+   4. Colchón imprevistos sobre reforma (no duplicado)
+   5. Gastos venta completos: agencia%, notaría, plusvalía, IRPF
+   6. Alquiler: yield bruto / neto / after-tax con IBI, comunidad,
+      seguro, mantenimiento, vacancia, IRPF sobre rendimientos
+   7. Escenarios: modifican precio mercado, solo reforma en bear
+      (sin duplicar la base de inversión)
+   8. Score con metodología: ROI relativo al mercado, margen BEP,
+      ratio coste-reforma/compra, liquidez (meses)
 ═══════════════════════════════════════════════════ */
-let chartWF=null, chartTM=null
+let chartWF=null,chartTM=null
 
-function updatePredictor() {
-  const tipo=document.getElementById('pTipo')?.value||'flip', isAlq=tipo==='alquiler'
-  const ff=document.getElementById('flipFields'); if(ff)ff.style.display=isAlq?'none':''
-  const af=document.getElementById('alqFields');  if(af)af.style.display=isAlq?'':'none'
-  const ps=document.getElementById('pSeccionVenta'); if(ps)ps.textContent=isAlq?'🏡 Alquiler':'💸 Venta'
-  const precio=+document.getElementById('pPrecio')?.value||0
-  const m2=+document.getElementById('pM2')?.value||1
-  const reforma=+document.getElementById('pReforma')?.value||0
-  const mob=+document.getElementById('pMob')?.value||0
-  const gCompra=+document.getElementById('pGCompra')?.value||0
-  const pventa=+document.getElementById('pPVenta')?.value||0
-  const gVenta=+document.getElementById('pGVenta')?.value||0
-  const meses=+document.getElementById('pMeses')?.value||6
-  const alq=+document.getElementById('pAlq')?.value||0
-  const gastoAlq=+document.getElementById('pGAlq')?.value||0
-  const ccaa=document.getElementById('pCCAA')?.value||'Comunidad de Madrid'
-  const itpRate=ITP_RATES[ccaa]||0.08
-  const itp=precio*itpRate
-  const inv=precio+itp+reforma+mob+gCompra
-  let roi,beneficio,bep,roiAnual
-  if(isAlq){const cf=alq*12-gastoAlq;roi=inv>0?cf/inv:0;beneficio=cf;bep=inv;roiAnual=roi}
-  else{beneficio=pventa-inv-gVenta;roi=inv>0?beneficio/inv:0;bep=inv+gVenta;roiAnual=meses>0?roi/(meses/12):0}
-  const roiPct=roi*100,roiAPct=roiAnual*100
-  const margenSeg=pventa>0?(pventa-bep)/pventa*100:0
-  let score=50
-  if(roiPct>25)score+=25;else if(roiPct>15)score+=15;else if(roiPct>8)score+=5;else score-=20
-  if(margenSeg>15)score+=15;else if(margenSeg>8)score+=8;else score-=10
-  if(meses<=5)score+=10;else if(meses>10)score-=10
-  score=Math.max(5,Math.min(98,score))
-  const f=n=>Number(n||0).toLocaleString('es-ES',{maximumFractionDigits:0})+'€'
-  const sd=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v}
-  const elROI=document.getElementById('resROI');if(elROI){elROI.textContent=roiPct.toFixed(1)+'%';elROI.style.color=roiPct>20?C.sage:roiPct>10?C.gold:C.red}
-  const elRt=document.getElementById('resROIrating');if(elRt){if(roiPct>25){elRt.textContent='🚀 Excelente';elRt.className='res-note good'}else if(roiPct>15){elRt.textContent='✓ Muy bueno';elRt.className='res-note good'}else if(roiPct>8){elRt.textContent='⚡ Aceptable';elRt.className='res-note warn'}else{elRt.textContent='⚠️ Revisar';elRt.className='res-note bad'}}
-  const elBen=document.getElementById('resBen');if(elBen){elBen.textContent=(beneficio>=0?'+':'')+f(Math.abs(beneficio));elBen.style.color=beneficio>0?C.sage:C.red}
-  const elAn=document.getElementById('resAnual');if(elAn)elAn.textContent=fp(roiAPct)+' anualizado'
-  const elInv=document.getElementById('resInv');if(elInv)elInv.textContent=f(inv)
-  const rB=isAlq?roiPct*1.15:(pventa*1.08-inv-gVenta*0.9)/inv*100
-  const rBr=isAlq?roiPct*0.7:(pventa*0.90-(inv+reforma*0.30)-gVenta)/(inv+reforma*0.30)*100
-  const elBull=document.getElementById('sceBull');if(elBull)elBull.textContent=fp(rB)
-  const elBase=document.getElementById('sceBase');if(elBase)elBase.textContent=fp(roiPct)
-  const elBear=document.getElementById('sceBear');if(elBear)elBear.textContent=fp(rBr)
-  const arc=document.getElementById('scoreArc');if(arc){const cL=201.1;arc.setAttribute('stroke-dashoffset',(cL-score/100*cL).toFixed(1));arc.setAttribute('stroke',score>=70?C.sage:score>=50?C.gold:C.red)}
-  const elSN=document.getElementById('scoreNum');if(elSN)elSN.textContent=score
-  const elSL=document.getElementById('scoreLbl');if(elSL)elSL.textContent=score>=80?'🚀 Excelente':score>=65?'✅ Viable':score>=45?'⚡ Atención':'⚠️ Alto Riesgo'
-  sd('sdITP',f(itp)+' ('+Math.round(itpRate*100)+'%)');sd('sdInv',f(inv))
-  const elMs=document.getElementById('sdMseg');if(elMs){elMs.textContent=margenSeg.toFixed(1)+'%';elMs.style.color=margenSeg>10?C.green:margenSeg>5?C.gold:C.red}
-  sd('sdCm2',m2>0?Math.round(inv/m2)+'€/m²':'—');sd('sdPvm2',(m2>0&&pventa>0)?Math.round(pventa/m2)+'€/m²':'—')
-  const elBepV=document.getElementById('bepVal');if(elBepV)elBepV.textContent=f(bep)
-  const elBepM=document.getElementById('bepMargen');if(elBepM){elBepM.textContent=(pventa-bep>=0?'+':'')+f(Math.abs(pventa-bep));elBepM.style.color=pventa>bep?C.green:C.red}
-  const elBepP=document.getElementById('bepPct');if(elBepP)elBepP.textContent=bep>0?(fp((pventa-bep)/bep*100)+' sobre BEP'):'—'
-  drawWaterfall(precio,itp,reforma,mob,gCompra,gVenta,pventa);drawTiming(meses,roi)
+// Tasas impositivas reales por CCAA (2024)
+const ITP_CCAA={
+  madrid:{itp:.06,ivaTipo:.10,ajd:.015,label:'ITP 6%'},
+  valenciana:{itp:.10,ivaTipo:.10,ajd:.015,label:'ITP 10%'},
+  cataluna:{itp:.10,ivaTipo:.10,ajd:.015,label:'ITP 10%'},
+  andalucia:{itp:.07,ivaTipo:.10,ajd:.012,label:'ITP 7%'},
+  euskadi:{itp:.04,ivaTipo:.10,ajd:.010,label:'ITP 4%'},
+  galicia:{itp:.10,ivaTipo:.10,ajd:.015,label:'ITP 10%'},
+  castilla:{itp:.08,ivaTipo:.10,ajd:.015,label:'ITP 8%'},
+  aragon:{itp:.08,ivaTipo:.10,ajd:.015,label:'ITP 8%'},
+  canarias:{itp:.065,ivaTipo:.065,ajd:.010,label:'IGIC 6.5%'},
+  murcia:{itp:.08,ivaTipo:.10,ajd:.015,label:'ITP 8%'}
 }
 
-function drawWaterfall(precio,itp,reforma,mob,gCompra,gVenta,pventa){
+function _calcImpuesto(precio, ccaaKey, tipoInm) {
+  const ccaa = ITP_CCAA[ccaaKey] || ITP_CCAA.madrid
+  if(tipoInm === 'nueva') {
+    // Obra nueva: IVA (10% viviendas) + AJD
+    const iva = precio * ccaa.ivaTipo
+    const ajd = precio * ccaa.ajd
+    return { importe: iva + ajd, desc: `IVA ${(ccaa.ivaTipo*100).toFixed(0)}% + AJD ${(ccaa.ajd*100).toFixed(1)}%` }
+  } else {
+    // Segunda mano: ITP
+    const itp = precio * ccaa.itp
+    return { importe: itp, desc: `ITP 2ª mano ${(ccaa.itp*100).toFixed(0)}%` }
+  }
+}
+
+function _calcInteresesHipoteca(capital, tinAnual, mesesObra) {
+  // Intereses simples durante el período de reforma/venta
+  // (no amortizamos durante la reforma, es solo el coste financiero)
+  if(!capital || !tinAnual || !mesesObra) return 0
+  return capital * (tinAnual / 100) * (mesesObra / 12)
+}
+
+function _calcIRPFVenta(ganancia, tasa) {
+  if(!tasa || ganancia <= 0) return 0
+  return ganancia * (tasa / 100)
+}
+
+function updatePredictor(){
+  const f = n => Number(n||0).toLocaleString('es-ES',{maximumFractionDigits:0})+'€'
+  const sd = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v }
+  const g = id => +document.getElementById(id)?.value||0
+
+  const tipo = document.getElementById('pTipo')?.value||'flip'
+  const isAlq = tipo==='alquiler'
+  const ccaaKey = document.getElementById('pCCAA')?.value||'madrid'
+  const tipoInm = document.getElementById('pTipoInm')?.value||'segunda'
+  const conHipoteca = document.getElementById('pHipoteca')?.value==='si'
+
+  // Mostrar/ocultar secciones
+  const ff=document.getElementById('flipFields'); if(ff) ff.style.display=isAlq?'none':'block'
+  const af=document.getElementById('alqFields'); if(af) af.style.display=isAlq?'block':'none'
+  const hf=document.getElementById('hipotecaFields'); if(hf) hf.style.display=conHipoteca?'block':'none'
+  const adq=document.getElementById('alqDesglose'); if(adq) adq.style.display=isAlq?'flex':'none'
+
+  // ── INPUTS ──────────────────────────────────────────────
+  const precio   = g('pPrecio')
+  const m2v      = g('pM2') || 1
+  const reforma  = g('pReforma')
+  const mob      = g('pMob')
+  const notaria  = g('pNotaria')
+  const gestoria = g('pGestoria')
+  const meses    = g('pMeses') || 6
+  const colchon  = g('pColchon') / 100  // fracción
+
+  // ── IMPUESTO DE TRANSMISIÓN (auto) ───────────────────────
+  const { importe: impuesto, desc: impDesc } = _calcImpuesto(precio, ccaaKey, tipoInm)
+  const elImpD = document.getElementById('pImpuestoDesc')
+  const elImpV = document.getElementById('pImpuestoVal')
+  if(elImpD) elImpD.textContent = impDesc
+  if(elImpV) elImpV.textContent = f(impuesto)
+
+  // ── COSTES FINANCIACIÓN ──────────────────────────────────
+  const capital  = conHipoteca ? g('pCapital') : 0
+  const tin      = conHipoteca ? g('pTIN') : 0
+  const intereses = _calcInteresesHipoteca(capital, tin, meses)
+
+  // ── COSTE TOTAL REFORMA (con colchón) ────────────────────
+  const reformaTotal = reforma * (1 + colchon)
+
+  // ── INVERSIÓN TOTAL ──────────────────────────────────────
+  // Inv = Precio + Impuesto + Reforma(+colchón) + Mob + Notaría + Gestoría + Intereses hipoteca
+  const inv = precio + impuesto + reformaTotal + mob + notaria + gestoria + intereses
+
+  // ── MODO FLIP ────────────────────────────────────────────
+  let roi=0, beneficio=0, bep=0, roiAnual=0, irpfPagado=0, gVentaTotal=0
+
+  if(!isAlq){
+    const pventa       = g('pPVenta')
+    const pctAgencia   = g('pAgencia') / 100
+    const notVenta     = g('pNotVenta')
+    const plusvalia    = g('pPlusValia')
+    const irpfTasa     = g('pIRPF')
+
+    // Gastos de venta ANTES de calcular IRPF
+    const agencia      = pventa * pctAgencia
+    gVentaTotal        = agencia + notVenta + plusvalia
+    const gananciaPreIRPF = pventa - inv - gVentaTotal
+    // IRPF solo sobre ganancia positiva
+    irpfPagado         = _calcIRPFVenta(gananciaPreIRPF, irpfTasa)
+    beneficio          = gananciaPreIRPF - irpfPagado
+    bep                = inv + gVentaTotal  // precio mínimo para cubrir todo (sin IRPF sobre 0)
+    roi                = inv > 0 ? beneficio / inv : 0
+    roiAnual           = meses > 0 ? roi / (meses / 12) : 0
+
+    // Referencia m²
+    const pvM2 = m2v>0 ? Math.round(pventa/m2v) : 0
+    const invM2= m2v>0 ? Math.round(inv/m2v) : 0
+    sd('sdCm2', invM2 ? invM2+'€/m²' : '—')
+    sd('sdPvm2', pvM2 ? pvM2+'€/m²' : '—')
+
+    // BEP
+    const elBepV=document.getElementById('bepVal')
+    if(elBepV) elBepV.textContent=f(bep)
+    const margenBEP = pventa - bep
+    const elBepM=document.getElementById('bepMargen')
+    if(elBepM){elBepM.textContent=(margenBEP>=0?'+':'')+f(Math.abs(margenBEP));elBepM.style.color=margenBEP>=0?C.green:C.red}
+    const elBepP=document.getElementById('bepPct')
+    if(elBepP) elBepP.textContent=bep>0?(_fp((pventa-bep)/bep*100)+' sobre BEP'):'—'
+
+    // ── ESCENARIOS FLIP ──────────────────────────────────────
+    // Bear: −10% precio venta + +25% reforma (solo del coste reforma, no toda la inversión)
+    // Bull: +8% precio venta + reforma en plazo (sin colchón)
+    const _calcFlipROI = (pv, reformaEsc) => {
+      const invEsc = precio + impuesto + reformaEsc + mob + notaria + gestoria + intereses
+      const gVEsc  = pv * pctAgencia + notVenta + plusvalia
+      const ganEsc = pv - invEsc - gVEsc
+      const irpfEsc= _calcIRPFVenta(ganEsc, irpfTasa)
+      const benEsc = ganEsc - irpfEsc
+      return invEsc>0 ? benEsc/invEsc*100 : 0
+    }
+    const rBull = _calcFlipROI(pventa * 1.08, reforma)            // sin colchón, precio +8%
+    const rBase = roi * 100
+    const rBear = _calcFlipROI(pventa * 0.90, reforma * 1.25)     // precio −10%, reforma +25%
+    const elBull=document.getElementById('sceBull');if(elBull)elBull.textContent=_fp(rBull)
+    const elBase=document.getElementById('sceBase');if(elBase)elBase.textContent=_fp(rBase)
+    const elBear=document.getElementById('sceBear');if(elBear)elBear.textContent=_fp(rBear)
+    sd('sceBullDesc','Precio +8% · reforma en plazo')
+    sd('sceBearDesc','Precio −10% · reforma +25%')
+
+    // Waterfall
+    _drawWaterfallFlip(precio, impuesto, reformaTotal, mob, notaria+gestoria+intereses, gVentaTotal+irpfPagado, pventa)
+    _drawTiming(meses, roi)
+  }
+
+  // ── MODO ALQUILER ────────────────────────────────────────
+  if(isAlq){
+    const alqBrutoMes  = g('pAlq')
+    const vacanciaPct  = g('pVacancia') / 100
+    const ibi          = g('pIBI')
+    const comunidad    = g('pComunidad')
+    const seguro       = g('pSeguro')
+    const manten       = g('pManten')
+    const irpfAlqTasa  = g('pIRPFAlq')
+
+    const ingresosBrutos = alqBrutoMes * 12 * (1 - vacanciaPct)
+    const gastosOperativos = ibi + comunidad + seguro + manten
+    const rendimientoNeto  = ingresosBrutos - gastosOperativos
+
+    // IRPF alquiler: reducción 60% para vivienda habitual (art.23 LIRPF), se aplica sobre rendimiento neto
+    const baseIRPF  = rendimientoNeto * 0.40   // 40% tributable tras reducción 60%
+    const irpfAlq   = irpfAlqTasa>0 ? Math.max(0, baseIRPF * irpfAlqTasa/100) : 0
+    const cfAfterTax = rendimientoNeto - irpfAlq
+
+    const yieldBruto    = inv>0 ? ingresosBrutos/inv*100 : 0
+    const yieldNeto     = inv>0 ? rendimientoNeto/inv*100 : 0
+    const yieldAfterTax = inv>0 ? cfAfterTax/inv*100 : 0
+
+    roi      = yieldAfterTax / 100
+    beneficio= cfAfterTax
+    bep      = inv
+    roiAnual = roi  // alquiler = rentabilidad anual directa
+
+    // Mostrar desglose alquiler
+    const elBruta=document.getElementById('alqBruta');if(elBruta)elBruta.textContent=_fp(yieldBruto).replace('+','')
+    const elNeta=document.getElementById('alqNeta');if(elNeta)elNeta.textContent=_fp(yieldNeto).replace('+','')
+    const elAfter=document.getElementById('alqAfterTax');if(elAfter)elAfter.textContent=_fp(yieldAfterTax).replace('+','')
+    const elCd=document.getElementById('alqCostesDetalle')
+    if(elCd) elCd.innerHTML=`
+      <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Ingresos brutos (c/vacancia ${(vacanciaPct*100).toFixed(0)}%)</span><span class="mono" style="color:var(--sage)">${f(ingresosBrutos)}/año</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">IBI + Comunidad + Seguro + Manten.</span><span class="mono" style="color:var(--rust)">−${f(gastosOperativos)}/año</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">IRPF rendimientos (reducción 60%)</span><span class="mono" style="color:var(--lav)">−${f(irpfAlq)}/año</span></div>
+      <div style="display:flex;justify-content:space-between;font-weight:700;border-top:1px solid var(--line);padding-top:5px;margin-top:2px"><span>Cash Flow neto after-tax</span><span class="mono" style="color:${cfAfterTax>=0?C.sage:C.red}">${cfAfterTax>=0?'+':''}${f(cfAfterTax)}/año</span></div>`
+
+    // Escenarios alquiler
+    const _calcAlqROI = (alqMod, vacanciaMod) => {
+      const ing = alqMod*12*(1-vacanciaMod)
+      const rNeto = ing - gastosOperativos
+      const irpf = irpfAlqTasa>0 ? Math.max(0,rNeto*0.40*irpfAlqTasa/100) : 0
+      return inv>0?(rNeto-irpf)/inv*100:0
+    }
+    const rBull = _calcAlqROI(alqBrutoMes*1.10, Math.max(0,vacanciaPct-0.03))
+    const rBase = yieldAfterTax
+    const rBear = _calcAlqROI(alqBrutoMes*0.90, vacanciaPct+0.05)
+    const elBull=document.getElementById('sceBull');if(elBull)elBull.textContent=_fp(rBull)
+    const elBase=document.getElementById('sceBase');if(elBase)elBase.textContent=_fp(rBase)
+    const elBear=document.getElementById('sceBear');if(elBear)elBear.textContent=_fp(rBear)
+    sd('sceBullDesc','Alquiler +10% · menor vacancia')
+    sd('sceBearDesc','Alquiler −10% · vacancia +5%')
+
+    // BEP alquiler = inversión total (cuándo recuperas)
+    const anosBEP = cfAfterTax>0 ? inv/cfAfterTax : 0
+    const elBepV=document.getElementById('bepVal')
+    if(elBepV) elBepV.textContent = anosBEP>0 ? anosBEP.toFixed(1)+' años' : '—'
+    const elBepM=document.getElementById('bepMargen')
+    if(elBepM){elBepM.textContent=f(cfAfterTax)+'/año';elBepM.style.color=cfAfterTax>=0?C.green:C.red}
+    const elBepP=document.getElementById('bepPct')
+    if(elBepP) elBepP.textContent='Pay-back de la inversión'
+    sd('sdCm2', m2v>0?Math.round(inv/m2v)+'€/m²':'—')
+    sd('sdPvm2', alqBrutoMes&&m2v>0?Math.round(alqBrutoMes/m2v*12)+'€/m²/año':'—')
+
+    _drawWaterfallAlq(precio, impuesto, reformaTotal, mob, notaria+gestoria+intereses, gastosOperativos+irpfAlq, ingresosBrutos)
+    _drawTiming(meses, roi)
+  }
+
+  // ── RESULTADOS PRINCIPALES ───────────────────────────────
+  const roiPct  = roi * 100
+  const roiAPct = roiAnual * 100
+  const elROI=document.getElementById('resROI')
+  if(elROI){elROI.textContent=roiPct.toFixed(1)+'%';elROI.style.color=roiPct>20?C.sage:roiPct>10?C.gold:C.red}
+  const elROIlbl=document.getElementById('resROIlbl')
+  if(elROIlbl) elROIlbl.textContent=isAlq?'Yield After-Tax':'ROI Neto'
+  const elRt=document.getElementById('resROIrating')
+  if(elRt){
+    if(roiPct>20){elRt.textContent='🚀 Excelente';elRt.className='res-note good'}
+    else if(roiPct>12){elRt.textContent='✓ Muy bueno';elRt.className='res-note good'}
+    else if(roiPct>6){elRt.textContent='⚡ Aceptable';elRt.className='res-note warn'}
+    else{elRt.textContent='⚠️ Revisar';elRt.className='res-note bad'}
+  }
+  const elBen=document.getElementById('resBen')
+  if(elBen){elBen.textContent=(beneficio>=0?'+':'')+f(Math.abs(beneficio));elBen.style.color=beneficio>0?C.sage:C.red}
+  const elAn=document.getElementById('resAnual')
+  if(elAn) elAn.textContent=isAlq?'rentabilidad anual':_fp(roiAPct)+' anualizado'
+  const elInv=document.getElementById('resInv');if(elInv)elInv.textContent=f(inv)
+
+  // ── SCORE DE VIABILIDAD (metodológico) ───────────────────
+  // Basado en: ROI neto vs. alternativa libre de riesgo (~3.5%), margen BEP, diversificación costes
+  let score=50
+  const rf = 3.5  // tasa libre de riesgo (bono español 10y ~3.5%)
+  const prima = roiPct - rf
+  if(prima>15)     score+=28
+  else if(prima>8) score+=18
+  else if(prima>3) score+=8
+  else if(prima>0) score-=5
+  else             score-=25
+
+  if(!isAlq){
+    const pventa2 = g('pPVenta')
+    const margenBEP2 = pventa2>0&&bep>0?(pventa2-bep)/pventa2*100:0
+    if(margenBEP2>20)     score+=18
+    else if(margenBEP2>12) score+=10
+    else if(margenBEP2>6)  score+=4
+    else if(margenBEP2>0)  score-=5
+    else                   score-=20
+  }
+
+  // Ratio reforma / precio compra (apalancamiento de mejora)
+  const ratioR = precio>0 ? reformaTotal/precio : 0
+  if(ratioR>0.6) score-=10   // reforma muy cara vs compra = riesgo
+  else if(ratioR>0.3) score+=0
+  else score+=8               // reforma ligera = riesgo bajo
+
+  // Liquidez: cuanto más corto el ciclo, mejor para flip
+  if(!isAlq){
+    if(meses<=4)       score+=12
+    else if(meses<=7)  score+=6
+    else if(meses<=12) score+=0
+    else               score-=10
+  }
+
+  // Hipoteca = riesgo adicional
+  if(conHipoteca) score-=8
+
+  score=Math.max(5,Math.min(98,score))
+  const arc=document.getElementById('scoreArc')
+  if(arc){const cL=201.1;arc.setAttribute('stroke-dashoffset',(cL-score/100*cL).toFixed(1));arc.setAttribute('stroke',score>=70?C.sage:score>=50?C.gold:C.red)}
+  sd('scoreNum',score)
+  const elSL=document.getElementById('scoreLbl')
+  if(elSL)elSL.textContent=score>=80?'🚀 Excelente':score>=65?'✅ Viable':score>=45?'⚡ Atención':'⚠️ Alto Riesgo'
+  const elSD=document.getElementById('scoreDesc')
+  if(elSD)elSD.textContent=`Prima vs. RF: ${_fp(prima)} · ${score>=65?'Operación recomendable':'Revisar supuestos'}`
+
+  // Desglose score panel
+  const elDes=document.getElementById('scoreDesglose')
+  if(elDes) elDes.innerHTML=`
+    <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">${impDesc}</span><span class="mono" style="font-weight:700">${f(impuesto)}</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">Notaría + registro</span><span class="mono" style="font-weight:700">${f(notaria)}</span></div>
+    ${conHipoteca?`<div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">Intereses hipoteca (${meses}m)</span><span class="mono" style="font-weight:700;color:var(--sky)">${f(intereses)}</span></div>`:''}
+    <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">Colchón imprevistos (${(colchon*100).toFixed(0)}%)</span><span class="mono" style="font-weight:700;color:var(--gold)">${f(reforma*colchon)}</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:11.5px;border-top:1px solid var(--line);padding-top:5px;margin-top:2px"><span style="font-weight:700">Inversión total</span><span class="mono" style="font-weight:800">${f(inv)}</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">Coste/m²</span><span class="mono" style="font-weight:700">${m2v>0?Math.round(inv/m2v)+'€/m²':'—'}</span></div>`
+}
+
+function _drawWaterfallFlip(precio, impuesto, reforma, mob, gCompra, gVenta, pventa){
   const el=document.getElementById('cWaterfall');if(!el)return
   if(chartWF){chartWF.destroy();chartWF=null}
-  chartWF=new Chart(el,{type:'bar',data:{labels:['Compra','ITP','Reforma','Mob.','G.Compra','G.Venta','P.Venta'],datasets:[{data:[precio,itp,reforma,mob,gCompra,gVenta,pventa],backgroundColor:[C.sky+'BB',C.lav+'BB',C.rust+'BB',C.dis+'BB',C.gold+'BB',C.muted+'BB',C.sage+'BB'],borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false}},y:{grid:gridLine,ticks:{callback:v=>(v/1000).toFixed(0)+'K'}}},plugins:{legend:{display:false}}}})
+  chartWF=new Chart(el,{
+    type:'bar',
+    data:{
+      labels:['Precio','Impuesto','Reforma','Mobil.','G.Compra','G.Venta+IRPF','Precio venta'],
+      datasets:[{
+        data:[precio,impuesto,reforma,mob,gCompra,gVenta,pventa],
+        backgroundColor:[C.sky+'BB',C.lav+'BB',C.rust+'BB',C.dis+'BB',C.gold+'BB',C.muted+'BB',C.sage+'BB'],
+        borderRadius:5
+      }]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      scales:{x:{grid:{display:false}},y:{grid:gridLine,ticks:{callback:v=>(v/1000).toFixed(0)+'K'}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.raw.toLocaleString('es-ES')+'€'}}}}
+  })
 }
-function drawTiming(mesesAct,roi){
+
+function _drawWaterfallAlq(precio, impuesto, reforma, mob, gCompra, gastosAnuales, ingresosAnuales){
+  const el=document.getElementById('cWaterfall');if(!el)return
+  if(chartWF){chartWF.destroy();chartWF=null}
+  chartWF=new Chart(el,{
+    type:'bar',
+    data:{
+      labels:['Precio','Impuesto','Reforma','Mobil.','G.Compra','Gastos/año','Ingresos/año'],
+      datasets:[{
+        data:[precio,impuesto,reforma,mob,gCompra,gastosAnuales,ingresosAnuales],
+        backgroundColor:[C.sky+'BB',C.lav+'BB',C.rust+'BB',C.dis+'BB',C.gold+'BB',C.muted+'BB',C.sage+'BB'],
+        borderRadius:5
+      }]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      scales:{x:{grid:{display:false}},y:{grid:gridLine,ticks:{callback:v=>(v/1000).toFixed(0)+'K'}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.raw.toLocaleString('es-ES')+'€'}}}}
+  })
+}
+
+function _drawTiming(mesesAct,roi){
   const el=document.getElementById('cTiming');if(!el)return
   if(chartTM){chartTM.destroy();chartTM=null}
   const pts=[2,3,4,5,6,8,10,12,18,24]
-  chartTM=new Chart(el,{type:'line',data:{labels:pts.map(m=>m+'m'),datasets:[{label:'ROI Anualizado %',data:pts.map(m=>(roi/(m/12)*100).toFixed(1)),borderColor:C.gold,backgroundColor:C.gold+'18',fill:true,tension:.4,borderWidth:2.5,pointRadius:3,pointBackgroundColor:C.gold}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false}},y:{grid:gridLine,ticks:{callback:v=>v+'%'}}},plugins:{legend:{display:false}}}})
+  chartTM=new Chart(el,{
+    type:'line',
+    data:{labels:pts.map(m=>m+'m'),datasets:[{
+      label:'ROI Anualizado %',
+      data:pts.map(m=>(roi/(m/12)*100).toFixed(1)),
+      borderColor:C.gold,backgroundColor:C.gold+'18',
+      fill:true,tension:.4,borderWidth:2.5,pointRadius:3,pointBackgroundColor:C.gold
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,
+      scales:{x:{grid:{display:false}},y:{grid:gridLine,ticks:{callback:v=>v+'%'}}},
+      plugins:{legend:{display:false},annotation:{annotations:{line1:{type:'line',yMin:0,yMax:0,borderColor:'rgba(220,79,79,0.4)',borderWidth:1,borderDash:[4,4]}}}}}
+  })
 }
 
 /* ═══════════════════════════════════════════════════
-   AGENTE IA — contexto dinámico de Supabase
+   AGENTE IA — contexto dinámico desde datos reales
 ═══════════════════════════════════════════════════ */
-let AI_SYSTEM = `Eres el Agente Financiero de RehabitaCo, especialista en inversión inmobiliaria en España.
-Motor: Inversión = Precio + ITP + Reforma + Mobiliario + Gastos compra. Beneficio = PV - Inv - GastosVenta. ROI = Beneficio/Inversión.
-ITP: Madrid 6%, Cataluña/Valencia 10%, Andalucía 8%, País Vasco 4%, Galicia 9%.
-Responde en español, sé conciso y accionable. Usa emojis. Resalta cifras con **negrita**.`
+let AI_SYSTEM = 'Eres el Agente Financiero de RehabitaCo. Responde en español, sé conciso y accionable. Usa emojis. Resalta cifras con **negrita**.'
 
-function updateAIContext(ps, gs, ranking, roiMedio, totalInv, totalBen) {
-  const top3=ranking.slice(0,3).map(p=>`- ${p.nombre||p.direccion||'P'+p.id}: inv ${fe(p.inv)}€, ${p.precio_venta?'venta '+fe(p.precio_venta)+'€, ROI '+p.roi?.toFixed(1)+'%':'en '+p.estado}`).join('\n')
-  const secMap={}; gs.forEach(g=>{const s=(g.sector||'otros').toLowerCase();secMap[s]=(secMap[s]||0)+Number(g.importe||0)})
-  const secStr=Object.entries(secMap).map(([s,v])=>`${s}: ${fk(v)}€`).join(', ')
-  AI_SYSTEM = `Eres el Agente Financiero de RehabitaCo.
-Cartera REAL del usuario (${ps.length} proyectos):
-- Capital comprometido: ${fk(totalInv)}€ | ROI medio finaliz.: ${roiMedio>0?roiMedio.toFixed(1)+'%':'—'} | Beneficio acum.: ${fk(totalBen)}€
-- Estados: ${ps.filter(p=>(p.estado||'').toLowerCase().includes('reform')).length} reforma, ${ps.filter(p=>(p.estado||'').toLowerCase().includes('venta')).length} venta, ${ps.filter(p=>p.precio_venta).length} finalizados
+function _updateAIContext(projs, secMap, roiMedio, totalInv, totalBen) {
+  const top3=projs.slice(0,3).map(p=>`- ${p.nombre||p.direccion||'—'}: inv ${_fe(p.inv)}€${p.pv?', venta '+_fe(p.pv)+'€, ROI '+p.roi?.toFixed(1)+'%':', en '+p.estado}`).join('\n')
+  const secStr=Object.entries(secMap).slice(0,6).map(([s,v])=>`${SEC_LBL_AN[s]||s}: ${_fk(v)}€`).join(', ')
+  AI_SYSTEM=`Eres el Agente Financiero de RehabitaCo. Tienes acceso a la cartera REAL del usuario.
+
+Resumen de cartera (${projs.length} proyectos):
+- Capital comprometido: ${_fk(totalInv)}€ | ROI medio finaliz.: ${roiMedio>0?roiMedio.toFixed(1)+'%':'sin datos'} | Beneficio acum.: ${_fk(totalBen)}€
+- Estados: ${projs.filter(p=>p.estKey==='ref').length} reforma, ${projs.filter(p=>p.estKey==='act').length} venta, ${projs.filter(p=>p.estKey==='fin').length} finaliz., ${projs.filter(p=>p.estKey==='neg').length} negociación
+- Proyectos con desvío >10%: ${projs.filter(p=>p.desvio>p.reformaEst*0.1&&p.reformaEst>0).length}
 Top proyectos:
 ${top3}
-Gasto real por sector: ${secStr}
-Motor: Inversión=Precio+ITP+Reforma+Mob+GCompra. Beneficio=PV-Inv-GVenta. ROI=Beneficio/Inversión.
-ITP: Madrid 6%, Cataluña/Valencia 10%, Andalucía 8%, País Vasco 4%.
-Responde en español, conciso, accionable. Usa emojis. **negrita** para cifras clave.`
-  // Actualizar panel de contexto del agente
+Gasto por sector: ${secStr}
+
+Motor de cálculo: Inv = Precio + ITP + Reforma + Mob + GCompra. Ben = PV - Inv - GVenta. ROI = Ben/Inv.
+ITP: Madrid 6%, Cataluña/Valencia 10%, Andalucía 8%, País Vasco 4%, Galicia 9%.
+Responde en español. Conciso y accionable. Emojis. **negrita** para cifras clave.`
+
   const ctx=document.getElementById('ai-ctx-body')
   if(ctx) ctx.innerHTML=`
-    <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">Proyectos</span><span class="mono" style="font-weight:700">${ps.length}</span></div>
-    <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">Capital comprometido</span><span class="mono" style="font-weight:700">${fk(totalInv)}€</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">Proyectos</span><span class="mono" style="font-weight:700">${projs.length}</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">Capital comprometido</span><span class="mono" style="font-weight:700">${_fk(totalInv)}€</span></div>
     <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">ROI medio</span><span class="mono" style="font-weight:700;color:var(--sage)">${roiMedio>0?roiMedio.toFixed(1)+'%':'—'}</span></div>
-    <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">Beneficio acum.</span><span class="mono" style="font-weight:700;color:var(--sage)">${fk(totalBen)}€</span></div>
-    <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">En riesgo (desvío)</span><span class="mono" style="font-weight:700;color:var(--rust)">${ps.filter(p=>{const g=gs.filter(x=>x.proyecto_id===p.id).reduce((a,x)=>a+Number(x.importe||0),0);return g>Number(p.reforma_estimada||0)*1.1}).length}</span></div>`
+    <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">Beneficio acum.</span><span class="mono" style="font-weight:700;color:var(--sage)">${_fk(totalBen)}€</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--muted)">En riesgo (desvío)</span><span class="mono" style="font-weight:700;color:var(--rust)">${projs.filter(p=>p.desvio>p.reformaEst*0.1&&p.reformaEst>0).length}</span></div>`
 }
 
 let aiChatHistory=[]
-
 async function sendAIMsg(){
   const inp=document.getElementById('aiInput')
   const msg=inp?.value?.trim();if(!msg)return
-  pushUserMsgAI(msg);inp.value='';inp.style.height='auto'
+  _pushUserMsg(msg);inp.value='';inp.style.height='auto'
   const btn=document.getElementById('aiSendBtn');if(btn)btn.disabled=true
-  await getAIReply(msg);if(btn)btn.disabled=false
+  await _getAIReply(msg);if(btn)btn.disabled=false
 }
 function sendQuickAI(msg){const inp=document.getElementById('aiInput');if(inp)inp.value=msg;sendAIMsg()}
-function pushUserMsgAI(text){
+function _pushUserMsg(text){
   aiChatHistory.push({role:'user',content:text})
   const cont=document.getElementById('aiMessages');if(!cont)return
   const d=document.createElement('div');d.className='ai-msg user'
   d.innerHTML=`<div class="ai-bubble">${text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`
   cont.appendChild(d);cont.scrollTop=cont.scrollHeight
 }
-function pushAssistantMsgAI(text){
+function _pushAssistMsg(text){
   const cont=document.getElementById('aiMessages');if(!cont)return
   const d=document.createElement('div');d.className='ai-msg ai'
   const html=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')
   d.innerHTML=`<div class="ai-avatar-an" style="width:28px;height:28px;font-size:12px;flex-shrink:0">✦</div><div class="ai-bubble">${html}</div>`
   cont.appendChild(d);cont.scrollTop=cont.scrollHeight
 }
-function showTypingAI(){const cont=document.getElementById('aiMessages');if(!cont)return;const d=document.createElement('div');d.className='ai-msg ai';d.id='ai-typing';d.innerHTML=`<div class="ai-avatar-an" style="width:28px;height:28px;font-size:12px;flex-shrink:0">✦</div><div class="ai-bubble"><div class="ai-typing-wrap"><span></span><span></span><span></span></div></div>`;cont.appendChild(d);cont.scrollTop=cont.scrollHeight}
-function hideTypingAI(){document.getElementById('ai-typing')?.remove()}
-async function getAIReply(msg){
-  showTypingAI()
+function _showTyping(){const cont=document.getElementById('aiMessages');if(!cont)return;const d=document.createElement('div');d.className='ai-msg ai';d.id='ai-typing';d.innerHTML=`<div class="ai-avatar-an" style="width:28px;height:28px;font-size:12px;flex-shrink:0">✦</div><div class="ai-bubble"><div class="ai-typing-wrap"><span></span><span></span><span></span></div></div>`;cont.appendChild(d);cont.scrollTop=cont.scrollHeight}
+function _hideTyping(){document.getElementById('ai-typing')?.remove()}
+async function _getAIReply(msg){
+  _showTyping()
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:AI_SYSTEM,messages:aiChatHistory.slice(-10)})})
-    const data=await res.json();hideTypingAI()
-    const reply=data?.content?.[0]?.text||'No pude generar respuesta.'
-    aiChatHistory.push({role:'assistant',content:reply});pushAssistantMsgAI(reply)
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,system:AI_SYSTEM,messages:aiChatHistory.slice(-10)})})
+    const data=await res.json();_hideTyping()
+    const reply=data?.content?.[0]?.text||'Sin respuesta.'
+    aiChatHistory.push({role:'assistant',content:reply});_pushAssistMsg(reply)
   }catch(e){
-    hideTypingAI()
-    pushAssistantMsgAI('⚠️ Error de conexión con la IA. Comprueba tu conexión e inténtalo de nuevo.')
+    _hideTyping();_pushAssistMsg('⚠️ Error de conexión. Comprueba tu red e inténtalo de nuevo.')
   }
 }
 function clearAIChat(){
@@ -4150,15 +4550,15 @@ function clearAIChat(){
 }
 
 /* ═══════════════════════════════════════════════════
-   HOOK — cargar analytics al entrar en las vistas
+   HOOKS — cargar vistas al hacer clic en el sidebar
 ═══════════════════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('[data-v^="an-"]').forEach(el => {
-    el.addEventListener('click', () => {
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('[data-v^="an-"]').forEach(el=>{
+    el.addEventListener('click',()=>{
       const v=el.dataset.v
-      if(v==='an-overview') setTimeout(renderAnOverview,80)
+      if(v==='an-overview')   setTimeout(renderAnOverview,80)
       if(v==='an-comparador') setTimeout(renderAnComparador,80)
-      if(v==='an-predictor') setTimeout(updatePredictor,80)
+      if(v==='an-predictor')  setTimeout(updatePredictor,80)
     })
   })
 })
