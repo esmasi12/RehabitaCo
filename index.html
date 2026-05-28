@@ -1429,27 +1429,41 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
             </div>
 
             <!-- FLIP -->
-            <div id="flipFields" class="pred-form">
-              <div class="pf-title">💸 Venta</div>
-              <div class="pf-group"><label class="pf-label">Precio venta objetivo (€)</label><input type="number" class="pf-input" id="pPVenta" value="185000" oninput="updatePredictor()"></div>
-              <div style="background:var(--warm);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:11px;color:var(--muted)">
-                💡 <strong style="color:var(--ink)">Referencia m²:</strong> el precio se valida automáticamente vs. precio/m² introducido.
+            <div id="flipFields">
+              <!-- Precio de venta: campo protagonista -->
+              <div style="background:var(--ink);border-radius:var(--radius);padding:18px 18px 14px;margin-bottom:12px">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);margin-bottom:10px">💰 Precio de Venta Objetivo</div>
+                <div style="font-size:11px;color:rgba(255,255,255,.45);margin-bottom:8px">Este es el dato central del análisis. Todos los resultados dependen de él.</div>
+                <input type="number" style="width:100%;background:rgba(255,255,255,.08);border:1.5px solid var(--gold);border-radius:9px;padding:12px 14px;font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#fff;outline:none;text-align:right;letter-spacing:-.5px" id="pPVenta" value="185000" oninput="updatePredictor()" placeholder="0">
+                <!-- Referencia m² en tiempo real -->
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.1)">
+                  <div style="font-size:11px;color:rgba(255,255,255,.4)">Precio/m² resultante</div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--gold2)" id="pvM2Live">—</div>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+                  <div style="font-size:11px;color:rgba(255,255,255,.4)">Plusvalía sobre inversión</div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700" id="pvPlusLive">—</div>
+                </div>
               </div>
-              <div class="pf-row">
-                <div class="pf-group"><label class="pf-label">Agencia inmobiliaria (%) <span style="color:var(--muted);font-weight:400">3–5%</span></label><input type="number" class="pf-input" id="pAgencia" value="3" step="0.5" oninput="updatePredictor()"></div>
-                <div class="pf-group"><label class="pf-label">Notaría venta (€)</label><input type="number" class="pf-input" id="pNotVenta" value="1200" oninput="updatePredictor()"></div>
-              </div>
-              <div class="pf-row">
-                <div class="pf-group"><label class="pf-label">Plusvalía municipal (€)</label><input type="number" class="pf-input" id="pPlusValia" value="0" oninput="updatePredictor()"></div>
-                <div class="pf-group">
-                  <label class="pf-label">IRPF sobre ganancia (%)</label>
-                  <select class="pf-select" id="pIRPF" onchange="updatePredictor()">
-                    <option value="0">No aplica / No residente</option>
-                    <option value="19">19% (hasta 6.000€ gan.)</option>
-                    <option value="21" selected>21% (6k–50k gan.)</option>
-                    <option value="23">23% (50k–200k gan.)</option>
-                    <option value="27">27% (&gt;200k gan.)</option>
-                  </select>
+
+              <div class="pred-form">
+                <div class="pf-title">💸 Gastos de Venta</div>
+                <div class="pf-row">
+                  <div class="pf-group"><label class="pf-label">Agencia inmobiliaria (%) <span style="color:var(--muted);font-weight:400">3–5%</span></label><input type="number" class="pf-input" id="pAgencia" value="3" step="0.5" oninput="updatePredictor()"></div>
+                  <div class="pf-group"><label class="pf-label">Notaría venta (€)</label><input type="number" class="pf-input" id="pNotVenta" value="1200" oninput="updatePredictor()"></div>
+                </div>
+                <div class="pf-row">
+                  <div class="pf-group"><label class="pf-label">Plusvalía municipal (€)</label><input type="number" class="pf-input" id="pPlusValia" value="0" oninput="updatePredictor()"></div>
+                  <div class="pf-group">
+                    <label class="pf-label">IRPF sobre ganancia (%)</label>
+                    <select class="pf-select" id="pIRPF" onchange="updatePredictor()">
+                      <option value="0">No aplica / No residente</option>
+                      <option value="19">19% (hasta 6.000€ gan.)</option>
+                      <option value="21" selected>21% (6k–50k gan.)</option>
+                      <option value="23">23% (50k–200k gan.)</option>
+                      <option value="27">27% (&gt;200k gan.)</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
@@ -4216,6 +4230,16 @@ function updatePredictor(){
 
   if(!isAlq){
     const pventa       = g('pPVenta')
+
+    // Indicadores en tiempo real del precio de venta
+    const elPvM2=document.getElementById('pvM2Live')
+    const elPvPlus=document.getElementById('pvPlusLive')
+    if(elPvM2) elPvM2.textContent = pventa&&m2v>1 ? Math.round(pventa/m2v).toLocaleString('es-ES')+'€/m²' : '—'
+    if(elPvPlus){
+      const plusPct = inv>0&&pventa>0 ? (pventa-inv)/inv*100 : null
+      elPvPlus.textContent = plusPct!==null ? (plusPct>=0?'+':'')+plusPct.toFixed(1)+'% sobre inversión' : '—'
+      elPvPlus.style.color = plusPct>=15?'#6B9E78':plusPct>=0?'#D4A847':'#DC4F4F'
+    }
     const pctAgencia   = g('pAgencia') / 100
     const notVenta     = g('pNotVenta')
     const plusvalia    = g('pPlusValia')
