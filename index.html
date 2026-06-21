@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0F0F0D">
+<meta name="theme-color" content="#2E3A36">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -17,23 +17,27 @@
    VARIABLES Y RESET
 ═══════════════════════════════════════════════════════════ */
 :root{
-  --ink:#0F0F0D;--ink2:#1A1A17;--ink3:#2E2E28;
-  --warm:#F7F4EE;--paper:#FDFCF8;--line:#E4DDD0;--muted:#9A8F80;
-  --gold:#D4A847;--gold2:#E8C46A;--gold-bg:rgba(212,168,71,.08);
-  --rust:#C25C3A;--sage:#4E7C5A;--sage2:#6B9E78;
-  --sky:#3A6EA8;--lav:#7A6EA8;--dis:#C25C8A;
-  --red:#DC4F4F;--green:#3D9E5A;
-  --legal-c:#3A6EA8;--obra-c:#C25C3A;--elect-c:#D4A847;
-  --font-c:#4E7C5A;--arq-c:#7A6EA8;--dis-c:#C25C8A;
-  --shadow:rgba(15,15,13,.06);--shadow2:rgba(15,15,13,.13);--shadow3:rgba(15,15,13,.22);
+  /* Pastel & calm palette */
+  --ink:#2C2C3A;--ink2:#3A3A4A;--ink3:#4A4A5A;
+  --warm:#F5F7F4;--paper:#FAFCF9;--line:#DDE8DA;--muted:#8A9E8C;
+  --gold:#5BA08A;--gold2:#7BBDA5;--gold-bg:rgba(91,160,138,.08);
+  --rust:#E07070;--sage:#4A9068;--sage2:#6BAD86;
+  --sky:#5B8DB8;--lav:#8B7EC8;--dis:#C87EA8;
+  --teal:#4A9A98;--rose:#D4829A;--mint:#5BAA8A;
+  --red:#DC6060;--green:#4A9068;
+  --legal-c:#5B8DB8;--obra-c:#E07070;--elect-c:#C8A040;
+  --font-c:#4A9068;--arq-c:#8B7EC8;--dis-c:#C87EA8;
+  --shadow:rgba(44,44,58,.05);--shadow2:rgba(44,44,58,.10);--shadow3:rgba(44,44,58,.18);
   --sidebar-w:256px;
   --topbar-h:60px;
   --radius:14px;--radius-sm:9px;--radius-xs:6px;
   --trans:.18s ease;
+  /* Sidebar specific */
+  --sidebar-bg:#2E3A36;--sidebar-accent:#5BA08A;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{font-size:14px;-webkit-tap-highlight-color:transparent;scroll-behavior:smooth}
-body{font-family:'Instrument Sans',sans-serif;background:var(--warm);color:var(--ink);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body{font-family:'Instrument Sans',sans-serif;background:linear-gradient(160deg,#EEF5EC 0%,#F0F6F8 50%,#F5EEF4 100%);color:var(--ink);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%}
 button,input,select,textarea{font-family:inherit}
@@ -50,11 +54,12 @@ button,input,select,textarea{font-family:inherit}
 ═══════════════════════════════════════════════════════════ */
 #app{display:flex;min-height:100vh}
 .sidebar{
-  width:var(--sidebar-w);background:var(--ink);
+  width:var(--sidebar-w);background:var(--sidebar-bg);
   display:flex;flex-direction:column;
   position:fixed;top:0;left:0;height:100vh;
   z-index:300;transition:transform .26s cubic-bezier(.4,0,.2,1);
   overflow:hidden;
+  box-shadow:4px 0 24px rgba(0,0,0,.12);
 }
 .sidebar-overlay{
   display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
@@ -67,29 +72,30 @@ button,input,select,textarea{font-family:inherit}
 ═══════════════════════════════════════════════════════════ */
 .brand{
   padding:22px 20px 16px;
-  border-bottom:1px solid rgba(255,255,255,.06);
+  border-bottom:1px solid rgba(255,255,255,.08);
   flex-shrink:0;
+  background:rgba(0,0,0,.12);
 }
 .brand-name{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#fff;letter-spacing:-.5px;line-height:1}
-.brand-name span{color:var(--gold)}
-.brand-tag{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.brand-name span{color:var(--gold2)}
+.brand-tag{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-top:4px}
 
 .nav{flex:1;padding:12px 8px;overflow-y:auto;overflow-x:hidden}
 .nav-sect{
   font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
-  color:rgba(255,255,255,.2);padding:10px 10px 5px;
+  color:rgba(255,255,255,.3);padding:10px 10px 5px;
 }
 .nav-item{
   display:flex;align-items:center;gap:10px;
   padding:9px 10px;border-radius:8px;cursor:pointer;
-  color:rgba(255,255,255,.4);font-size:12.5px;
+  color:rgba(255,255,255,.55);font-size:12.5px;
   transition:var(--trans);margin-bottom:1px;
   user-select:none;position:relative;
   white-space:nowrap;overflow:hidden;
 }
-.nav-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.8)}
-.nav-item.on{background:rgba(212,168,71,.1);color:var(--gold2);font-weight:500}
-.nav-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0;opacity:.8}
+.nav-item:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.9)}
+.nav-item.on{background:rgba(91,160,138,.25);color:#fff;font-weight:600}
+.nav-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0;opacity:.85}
 .nav-label{flex:1;overflow:hidden;text-overflow:ellipsis}
 .nav-badge{
   background:var(--red);color:#fff;font-size:9px;font-weight:800;
@@ -97,17 +103,18 @@ button,input,select,textarea{font-family:inherit}
 }
 
 .sidebar-foot{
-  padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);flex-shrink:0;
+  padding:12px 14px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0;
+  background:rgba(0,0,0,.1);
 }
 .user-block{display:flex;align-items:center;gap:9px;margin-bottom:10px}
 .user-avatar{
-  width:30px;height:30px;border-radius:50%;background:var(--gold);
+  width:30px;height:30px;border-radius:50%;background:var(--gold2);
   display:flex;align-items:center;justify-content:center;
-  font-size:12px;font-weight:800;color:var(--ink);flex-shrink:0;
+  font-size:12px;font-weight:800;color:#fff;flex-shrink:0;
 }
-.user-name{font-size:12px;font-weight:600;color:rgba(255,255,255,.8);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.user-rol{font-size:10px;color:var(--muted)}
-.status-row{display:flex;align-items:center;gap:6px;font-size:10px;color:rgba(255,255,255,.2)}
+.user-name{font-size:12px;font-weight:600;color:rgba(255,255,255,.85);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-rol{font-size:10px;color:rgba(255,255,255,.4)}
+.status-row{display:flex;align-items:center;gap:6px;font-size:10px;color:rgba(255,255,255,.3)}
 .status-dot{width:6px;height:6px;border-radius:50%;background:var(--sage2);flex-shrink:0;transition:.3s}
 .status-dot.loading{background:var(--gold);animation:blink .8s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
@@ -116,11 +123,12 @@ button,input,select,textarea{font-family:inherit}
    TOPBAR
 ═══════════════════════════════════════════════════════════ */
 .topbar{
-  background:var(--paper);border-bottom:1px solid var(--line);
+  background:rgba(250,252,249,.95);border-bottom:1px solid var(--line);
   padding:0 28px;height:var(--topbar-h);
   display:flex;align-items:center;justify-content:space-between;
   position:sticky;top:0;z-index:100;flex-shrink:0;
-  gap:12px;
+  gap:12px;backdrop-filter:blur(8px);
+  box-shadow:0 2px 12px rgba(44,44,58,.04);
 }
 .topbar-left{display:flex;align-items:center;gap:10px;min-width:0}
 .menu-toggle{
@@ -157,14 +165,14 @@ button,input,select,textarea{font-family:inherit}
   transition:var(--trans);letter-spacing:.2px;white-space:nowrap;
   line-height:1.2;
 }
-.btn-gold{background:var(--gold);color:var(--ink)}
-.btn-gold:hover{background:var(--gold2);transform:translateY(-1px);box-shadow:0 4px 12px rgba(212,168,71,.3)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#fff}
+.btn-gold:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 4px 14px rgba(91,160,138,.35)}
 .btn-outline{background:transparent;border:1.5px solid var(--line);color:var(--ink3)}
-.btn-outline:hover{border-color:var(--muted);background:var(--warm)}
+.btn-outline:hover{border-color:var(--gold);background:rgba(91,160,138,.05)}
 .btn-ghost{background:transparent;color:var(--muted)}
 .btn-ghost:hover{color:var(--ink);background:var(--warm)}
 .btn-red{background:var(--red);color:#fff}
-.btn-red:hover{background:#c03a3a}
+.btn-red:hover{background:#c84848}
 .btn-sage{background:var(--sage);color:#fff}
 .btn-sage:hover{background:var(--sage2)}
 .btn-sm{padding:6px 12px;font-size:11px}
@@ -195,8 +203,9 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
   background:var(--paper);border:1px solid var(--line);
   border-radius:var(--radius);padding:18px;
   transition:var(--trans);cursor:default;
+  box-shadow:0 2px 8px var(--shadow);
 }
-.stat-card:hover{box-shadow:0 4px 16px var(--shadow2);transform:translateY(-1px)}
+.stat-card:hover{box-shadow:0 6px 20px var(--shadow2);transform:translateY(-2px)}
 .stat-ico{
   font-size:18px;margin-bottom:10px;
   width:36px;height:36px;
@@ -217,7 +226,7 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
   transition:var(--trans);
   display:flex;flex-direction:column;
 }
-.proj-card:hover{transform:translateY(-3px);box-shadow:0 12px 30px var(--shadow2);border-color:rgba(212,168,71,.3)}
+.proj-card:hover{transform:translateY(-3px);box-shadow:0 12px 30px var(--shadow2);border-color:rgba(91,160,138,.35)}
 .proj-card:active{transform:translateY(-1px)}
 
 /* Photo thumb */
@@ -229,11 +238,11 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
 .proj-thumb img{width:100%;height:100%;object-fit:cover;transition:.3s}
 .proj-card:hover .proj-thumb img{transform:scale(1.04)}
 .proj-thumb-emoji{font-size:36px}
-.thumb-gold{background:linear-gradient(135deg,#251A06,#4A3412)}
-.thumb-sage{background:linear-gradient(135deg,#0E2014,#1A3822)}
-.thumb-rust{background:linear-gradient(135deg,#2A100A,#4A1E14)}
-.thumb-sky{background:linear-gradient(135deg,#080F1E,#102038)}
-.thumb-lav{background:linear-gradient(135deg,#140E2A,#261840)}
+.thumb-gold{background:linear-gradient(135deg,#1A3028,#2A5040)}
+.thumb-sage{background:linear-gradient(135deg,#0E2018,#1A4028)}
+.thumb-rust{background:linear-gradient(135deg,#2A1010,#4A2018)}
+.thumb-sky{background:linear-gradient(135deg,#081018,#102030)}
+.thumb-lav{background:linear-gradient(135deg,#140E28,#22183C)}
 .proj-thumb-overlay{
   position:absolute;inset:0;
   background:linear-gradient(to top,rgba(0,0,0,.5) 0%,transparent 60%);
@@ -288,7 +297,7 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
   cursor:pointer;border:1.5px solid var(--line);color:var(--muted);
   background:var(--paper);transition:var(--trans);user-select:none;
 }
-.filter-chip.on{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.filter-chip.on{background:var(--gold);color:#fff;border-color:var(--gold)}
 .sort-sel{
   padding:5px 10px;border:1.5px solid var(--line);border-radius:8px;
   font-size:11px;font-weight:500;color:var(--ink3);background:var(--paper);
@@ -300,7 +309,7 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
 ═══════════════════════════════════════════════════════════ */
 .overlay{
   position:fixed;inset:0;
-  background:rgba(15,15,13,.6);backdrop-filter:blur(6px);
+  background:rgba(44,44,58,.5);backdrop-filter:blur(8px);
   z-index:400;display:none;align-items:center;justify-content:center;
   padding:16px;overscroll-behavior:contain;
 }
@@ -671,11 +680,11 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
 }
 #toast{
   position:fixed;bottom:20px;right:20px;
-  background:var(--ink);color:#fff;padding:10px 16px;
+  background:var(--ink2);color:#fff;padding:10px 16px;
   border-radius:10px;font-size:12px;font-weight:500;
   z-index:9999;opacity:0;transform:translateY(8px);transition:.24s;
-  pointer-events:none;box-shadow:0 6px 22px rgba(0,0,0,.28);
-  max-width:280px;line-height:1.4;
+  pointer-events:none;box-shadow:0 6px 22px rgba(44,44,58,.3);
+  max-width:280px;line-height:1.4;border-left:3px solid var(--gold);
 }
 #toast.show{opacity:1;transform:translateY(0)}
 
@@ -705,15 +714,61 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
 /* ═══════════════════════════════════════════════════════════
    CONTACTOS
 ═══════════════════════════════════════════════════════════ */
-.ct-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.ct-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
 .ct-card{
   background:var(--paper);border:1px solid var(--line);
-  border-radius:12px;padding:14px;
+  border-radius:14px;padding:16px;
   transition:var(--trans);position:relative;
+  box-shadow:0 2px 8px var(--shadow);
 }
-.ct-card:hover{box-shadow:0 4px 14px var(--shadow);border-color:rgba(212,168,71,.2)}
+.ct-card:hover{box-shadow:0 6px 20px var(--shadow2);border-color:rgba(91,160,138,.3);transform:translateY(-2px)}
 .ct-actions{position:absolute;top:10px;right:10px;opacity:0;display:flex;gap:4px;transition:.15s}
 .ct-card:hover .ct-actions{opacity:1}
+
+/* Calidad de trabajo badges */
+.ct-quality{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;margin-top:6px}
+.ct-quality.q1{background:rgba(74,144,104,.12);color:var(--sage)}
+.ct-quality.q2{background:rgba(91,141,184,.12);color:var(--sky)}
+.ct-quality.q3{background:rgba(200,126,64,.12);color:#C87E40}
+
+/* ═══════════════════════════════════════════════════════════
+   SUBFASES
+═══════════════════════════════════════════════════════════ */
+.subfase-list{padding-left:28px;margin-top:4px;border-left:2px solid var(--line);margin-left:12px}
+.subfase-item{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 8px;border-radius:7px;
+  background:transparent;margin-bottom:3px;
+  transition:var(--trans);
+}
+.subfase-item:hover{background:rgba(91,160,138,.05)}
+.subfase-item.done .subfase-name{text-decoration:line-through;color:var(--muted)}
+.subfase-check{
+  width:16px;height:16px;border-radius:4px;
+  border:1.5px solid var(--line);cursor:pointer;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;transition:var(--trans);
+}
+.subfase-item.done .subfase-check{background:var(--sage);border-color:var(--sage);color:#fff}
+.subfase-name{font-size:12px;color:var(--ink3);flex:1}
+.subfase-del{background:none;border:none;cursor:pointer;font-size:11px;color:var(--muted);padding:2px 4px;border-radius:4px;opacity:0;transition:.15s}
+.subfase-item:hover .subfase-del{opacity:1}
+.add-subfase-btn{
+  margin-left:28px;margin-top:4px;
+  background:none;border:1px dashed var(--line);color:var(--muted);
+  font-size:11px;padding:4px 10px;border-radius:6px;cursor:pointer;
+  transition:var(--trans);font-family:inherit;
+}
+.add-subfase-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(91,160,138,.05)}
+.fase-parent{background:rgba(91,160,138,.03);border-radius:10px}
+.fase-parent .phase-item{border-bottom:none;margin-bottom:0}
+
+/* Gasto fecha automática display */
+.gasto-fecha-auto{
+  font-size:10px;color:var(--muted);background:rgba(91,160,138,.07);
+  border:1px solid rgba(91,160,138,.18);border-radius:5px;
+  padding:3px 8px;display:inline-flex;align-items:center;gap:4px;
+}
 
 /* ═══════════════════════════════════════════════════════════
    RESPONSIVE — Tablet
@@ -779,27 +834,27 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
 ═══════════════════════════════════════════════════════════ */
 #login-screen{
   position:fixed;inset:0;
-  background:var(--ink);
+  background:linear-gradient(160deg,#2A3830 0%,#1E2E2A 50%,#283040 100%);
   display:flex;align-items:center;justify-content:center;
   z-index:9999;padding:20px;
 }
 .login-wrap{width:100%;max-width:380px}
 .login-logo{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#fff;letter-spacing:-.5px;margin-bottom:4px}
-.login-logo span{color:var(--gold)}
-.login-tag{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:36px}
-.login-card{background:var(--ink2);border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:32px 28px}
+.login-logo span{color:var(--gold2)}
+.login-tag{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:36px}
+.login-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:32px 28px;backdrop-filter:blur(12px)}
 .login-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:6px}
-.login-sub{font-size:12px;color:var(--muted);margin-bottom:26px}
+.login-sub{font-size:12px;color:rgba(255,255,255,.45);margin-bottom:26px}
 .login-field{margin-bottom:14px}
-.login-field label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.35);margin-bottom:6px}
-.login-field input{width:100%;padding:12px 14px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.09);border-radius:10px;font-size:14px;color:#fff;outline:none;transition:var(--trans)}
-.login-field input:focus{border-color:var(--gold);background:rgba(255,255,255,.08)}
-.login-field input::placeholder{color:rgba(255,255,255,.18)}
-.login-btn{width:100%;padding:13px;margin-top:8px;background:var(--gold);color:var(--ink);font-size:14px;font-weight:700;font-family:'Syne',sans-serif;border:none;border-radius:10px;cursor:pointer;transition:var(--trans)}
-.login-btn:hover{background:var(--gold2);transform:translateY(-1px)}
+.login-field label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.4);margin-bottom:6px}
+.login-field input{width:100%;padding:12px 14px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;font-size:14px;color:#fff;outline:none;transition:var(--trans)}
+.login-field input:focus{border-color:var(--gold2);background:rgba(255,255,255,.1)}
+.login-field input::placeholder{color:rgba(255,255,255,.2)}
+.login-btn{width:100%;padding:13px;margin-top:8px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#fff;font-size:14px;font-weight:700;font-family:'Syne',sans-serif;border:none;border-radius:10px;cursor:pointer;transition:var(--trans)}
+.login-btn:hover{filter:brightness(1.1);transform:translateY(-1px);box-shadow:0 6px 20px rgba(91,160,138,.4)}
 .login-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.login-err{font-size:12px;color:#ff7070;margin-top:12px;min-height:18px;text-align:center;line-height:1.4}
-.login-hint{font-size:10px;color:rgba(255,255,255,.12);text-align:center;margin-top:18px;line-height:1.6}
+.login-err{font-size:12px;color:#ff9090;margin-top:12px;min-height:18px;text-align:center;line-height:1.4}
+.login-hint{font-size:10px;color:rgba(255,255,255,.15);text-align:center;margin-top:18px;line-height:1.6}
 
 /* ═══════════════════════════════════════════════════════════
    ANALYTICS — ESTILOS NUEVOS
@@ -816,7 +871,7 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
 .kpi-card.ag{--kpi-accent:linear-gradient(90deg,var(--gold),var(--gold2))}
 .kpi-card.as{--kpi-accent:linear-gradient(90deg,var(--sage),var(--sage2))}
 .kpi-card.asky{--kpi-accent:var(--sky)}
-.kpi-card.aru{--kpi-accent:var(--rust)}
+.kpi-card.aru{--kpi-accent:var(--rose)}
 .kpi-card.alav{--kpi-accent:var(--lav)}
 .kpi-ico{font-size:16px;margin-bottom:10px;width:32px;height:32px;border-radius:7px;background:var(--warm);display:flex;align-items:center;justify-content:center}
 .kpi-val{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;line-height:1;margin-bottom:4px}
@@ -1140,7 +1195,6 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
           </div>
           <div class="sec-actions">
             <button class="btn btn-outline btn-sm" onclick="exportarProyectosCSV()">↓ CSV</button>
-            <button class="btn btn-gold" onclick="openM('m-proj')">+ Nuevo</button>
           </div>
         </div>
         <div class="filter-bar">
@@ -1801,7 +1855,7 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
 <!-- ════════════ MODAL CONTACTO ════════════ -->
 <div class="overlay" id="m-contacto">
   <div class="modal">
-    <div class="modal-head"><div class="modal-title">Nuevo Contacto</div><button class="modal-close" onclick="closeM('m-contacto')">✕</button></div>
+    <div class="modal-head"><div class="modal-title" id="m-contacto-title">Nuevo Contacto</div><button class="modal-close" onclick="closeM('m-contacto')">✕</button></div>
     <div class="modal-body">
       <div class="g2">
         <div class="form-row"><label class="form-lbl">Nombre *</label><input class="fi" id="fc-n" placeholder="Nombre completo"></div>
@@ -1818,12 +1872,26 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
         </div>
         <div class="form-row"><label class="form-lbl">Teléfono</label><input class="fi" id="fc-t" placeholder="+34 600 000 000" type="tel"></div>
       </div>
-      <div class="form-row"><label class="form-lbl">Email</label><input class="fi" id="fc-m" type="email"></div>
+      <div class="g2">
+        <div class="form-row"><label class="form-lbl">Email</label><input class="fi" id="fc-m" type="email"></div>
+        <div class="form-row"><label class="form-lbl">📍 Localización</label><input class="fi" id="fc-loc" placeholder="Ciudad, barrio…"></div>
+      </div>
+      <div class="g2">
+        <div class="form-row"><label class="form-lbl">👤 Persona referida por</label><input class="fi" id="fc-ref" placeholder="¿Quién lo recomendó?"></div>
+        <div class="form-row"><label class="form-lbl">⭐ Calidad de trabajo</label>
+          <select class="fs" id="fc-cal">
+            <option value="">— Sin valorar —</option>
+            <option value="bueno_barato">✅ Bueno y barato</option>
+            <option value="bueno_caro">💎 Bueno y caro</option>
+            <option value="medio_barato">📦 Medio y barato</option>
+          </select>
+        </div>
+      </div>
       <div class="form-row"><label class="form-lbl">Notas</label><textarea class="ft" id="fc-no" style="min-height:50px"></textarea></div>
     </div>
     <div class="modal-foot">
       <button class="btn btn-outline btn-sm" onclick="closeM('m-contacto')">Cancelar</button>
-      <button class="btn btn-gold btn-sm" onclick="guardarContacto()">Guardar</button>
+      <button class="btn btn-gold btn-sm" id="btn-guardar-contacto" onclick="guardarContacto()">Guardar</button>
     </div>
   </div>
 </div>
@@ -1865,10 +1933,6 @@ button:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
 </div>
 
 <div id="toast"></div>
-
-<!-- ══════════════════════════════════════════════════════════
-   JAVASCRIPT PRINCIPAL
-══════════════════════════════════════════════════════════ -->
 
 <!-- ══════════════════════════════════════════════════════════
    JAVASCRIPT PRINCIPAL
@@ -2609,7 +2673,61 @@ async function cambiarEstado(id,val){
 }
 
 /* ═══ FASES MODAL ═══ */
+// Global subfases state: { faseId: [{id, nombre, done}] }
+let SUBFASES_CACHE = {}
+
+async function loadSubfases(projId){
+  // Load from supabase notas_rapidas using special category or a dedicated approach
+  // We store subfases in localStorage keyed by projId+faseId for simplicity (no schema change)
+  const key = 'subfases_'+projId
+  try { SUBFASES_CACHE = JSON.parse(localStorage.getItem(key)||'{}') } catch(e){ SUBFASES_CACHE = {} }
+}
+
+function saveSubfasesLocal(projId){
+  localStorage.setItem('subfases_'+projId, JSON.stringify(SUBFASES_CACHE))
+}
+
+function addSubfaseInput(projId, faseId){
+  const container = document.getElementById('subfase-add-'+faseId)
+  if(!container) return
+  container.innerHTML = `<div style="display:flex;gap:6px;align-items:center;margin-top:4px;padding-left:28px">
+    <input class="fi" id="sf-inp-${faseId}" placeholder="Nombre de la subfase…" style="flex:1;font-size:12px;padding:5px 8px" onkeydown="if(event.key==='Enter'){event.preventDefault();saveSubfase('${projId}','${faseId}')}">
+    <button class="btn btn-gold btn-xs" onclick="saveSubfase('${projId}','${faseId}')">Añadir</button>
+    <button class="btn btn-ghost btn-xs" onclick="cancelSubfaseAdd('${faseId}')">✕</button>
+  </div>`
+  document.getElementById('sf-inp-'+faseId)?.focus()
+}
+
+function cancelSubfaseAdd(faseId){
+  const c = document.getElementById('subfase-add-'+faseId); if(c) c.innerHTML=''
+}
+
+function saveSubfase(projId, faseId){
+  const inp = document.getElementById('sf-inp-'+faseId); if(!inp) return
+  const nombre = inp.value.trim(); if(!nombre) return
+  if(!SUBFASES_CACHE[faseId]) SUBFASES_CACHE[faseId] = []
+  SUBFASES_CACHE[faseId].push({id: Date.now().toString(36)+Math.random().toString(36).slice(2), nombre, done:false})
+  saveSubfasesLocal(projId)
+  const p = PROYECTOS.find(x=>x.id===projId); if(p) mdFases(p)
+  toast('✅ Subfase añadida')
+}
+
+function toggleSubfase(projId, faseId, sfId){
+  const sfs = SUBFASES_CACHE[faseId]||[]; const sf = sfs.find(x=>x.id===sfId); if(!sf) return
+  sf.done = !sf.done
+  saveSubfasesLocal(projId)
+  const p = PROYECTOS.find(x=>x.id===projId); if(p) mdFases(p)
+}
+
+function elimSubfase(projId, faseId, sfId){
+  if(!SUBFASES_CACHE[faseId]) return
+  SUBFASES_CACHE[faseId] = SUBFASES_CACHE[faseId].filter(x=>x.id!==sfId)
+  saveSubfasesLocal(projId)
+  const p = PROYECTOS.find(x=>x.id===projId); if(p) mdFases(p)
+}
+
 function mdFases(p){
+  loadSubfases(p.id)
   const done = p.phases_done||[]
   const pct = pProg(p)
   const sects = [['all','Todos'],['legal','Legal'],['arq','Arq.'],['obra','Obra'],['elect','Elec.'],['font','Font.'],['dis','Dis.']]
@@ -2619,7 +2737,7 @@ function mdFases(p){
       ${sects.map(([s,l])=>`<div class="sf ${projSec===s?'on':''}" data-s="${s}" onclick="projSec='${s}';mdFases(PROYECTOS.find(x=>x.id==='${p.id}'))">${l}</div>`).join('')}
     </div>
     <div style="padding:8px 18px 18px">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:10px;background:var(--warm);border-radius:9px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:10px;background:rgba(91,160,138,.07);border-radius:9px;border:1px solid rgba(91,160,138,.15)">
         <div class="prog-bar" style="flex:1;height:6px"><div class="prog-fill" style="width:${pct}%"></div></div>
         <span style="font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--gold)">${pct}%</span>
         <span style="font-size:11px;color:var(--muted)">${done.length}/${FASES.length}</span>
@@ -2627,14 +2745,30 @@ function mdFases(p){
       ${filtered.map(f=>{
         const isDone = done.includes(f.id)
         const ri = FASES.indexOf(f)
-        return`<div class="phase-item ${isDone?'done':''}">
-          <div class="phase-check" onclick="toggleFase('${p.id}','${f.id}')"></div>
-          <div style="flex:1">
-            <div style="display:flex;align-items:center;gap:7px;margin-bottom:2px;flex-wrap:wrap">
-              <span style="font-size:9px;color:var(--muted);font-weight:700;min-width:18px">${ri+1}.</span>
-              <span class="phase-name">${esc(f.nombre)}</span>${stag(f.sector)}
+        const subfases = SUBFASES_CACHE[f.id]||[]
+        const sfDone = subfases.filter(x=>x.done).length
+        return`<div class="fase-parent" style="margin-bottom:6px;border:1px solid ${isDone?'rgba(74,144,104,.2)':'var(--line)'};border-radius:10px;overflow:hidden">
+          <div class="phase-item ${isDone?'done':''}" style="border-radius:0;border-bottom:${subfases.length?'1px solid var(--line)':'none'}">
+            <div class="phase-check" onclick="toggleFase('${p.id}','${f.id}')"></div>
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;gap:7px;margin-bottom:2px;flex-wrap:wrap">
+                <span style="font-size:9px;color:var(--muted);font-weight:700;min-width:18px">${ri+1}.</span>
+                <span class="phase-name">${esc(f.nombre)}</span>${stag(f.sector)}
+                ${subfases.length ? `<span style="font-size:9px;background:rgba(91,160,138,.1);color:var(--sage);padding:1px 6px;border-radius:8px;font-weight:700">${sfDone}/${subfases.length}</span>` : ''}
+              </div>
+              <div class="phase-desc">${esc(f.descripcion||'')}</div>
             </div>
-            <div class="phase-desc">${esc(f.descripcion||'')}</div>
+          </div>
+          ${subfases.length ? `<div class="subfase-list" style="padding:6px 10px 4px 36px;background:rgba(91,160,138,.02)">
+            ${subfases.map(sf=>`<div class="subfase-item ${sf.done?'done':''}">
+              <div class="subfase-check" onclick="toggleSubfase('${p.id}','${f.id}','${sf.id}')">${sf.done?'✓':''}</div>
+              <span class="subfase-name">${esc(sf.nombre)}</span>
+              <button class="subfase-del" onclick="elimSubfase('${p.id}','${f.id}','${sf.id}')">✕</button>
+            </div>`).join('')}
+          </div>` : ''}
+          <div id="subfase-add-${f.id}"></div>
+          <div style="padding:4px 10px 6px 36px">
+            <button class="add-subfase-btn" onclick="addSubfaseInput('${p.id}','${f.id}')">+ Añadir subfase</button>
           </div>
         </div>`
       }).join('')}
@@ -2662,6 +2796,8 @@ function mdGastos(p){
   let gs = p.gastos || []
   if(filtroTipoGasto !== 'all') gs = gs.filter(g=>g.sector===filtroTipoGasto)
   const tot = gs.reduce((a,g)=>a+(g.coste||0),0)
+  const totGas = gs.reduce((a,g)=>a+(g.gasolina||0),0)
+  const totHoras = gs.reduce((a,g)=>a+(g.horas||0),0)
   const sects = ['all','obra','elect','font','legal','arq','dis']
   document.getElementById('mdbody').innerHTML=`
     <div class="tab-body on" style="padding:18px">
@@ -2669,13 +2805,26 @@ function mdGastos(p){
         <div style="display:flex;gap:5px;flex-wrap:wrap">
           ${sects.map(s=>`<button class="sf ${filtroTipoGasto===s?'on':''}" data-s="${s}" onclick="setFiltroGasto('${s}','${p.id}')">${s==='all'?'Todos':SMAP[s]?.i+' '+SMAP[s]?.l||s}</button>`).join('')}
         </div>
-        <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:var(--rust)">${fE(tot)}</div>
+        <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+          <div style="text-align:right">
+            <div style="font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)">Gasto total</div>
+            <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:var(--rust)">${fE(tot)}</div>
+          </div>
+          ${totGas>0?`<div style="text-align:right">
+            <div style="font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)">⛽ Gasolina</div>
+            <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#C87E40">${fE(totGas)}</div>
+          </div>`:''}
+          ${totHoras>0?`<div style="text-align:right">
+            <div style="font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)">⏱ Tiempo</div>
+            <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--lav)">${totHoras.toFixed(1)}h</div>
+          </div>`:''}
+        </div>
       </div>
 
       <div class="gasto-add-form">
         <div class="g3">
-          <div class="form-row" style="margin-bottom:0"><label class="form-lbl">Concepto</label><input id="g-concepto" class="fi" placeholder="Ej: Mano de obra fontanería"></div>
-          <div class="form-row" style="margin-bottom:0"><label class="form-lbl">Coste (€)</label><input id="g-coste" type="number" class="fi" placeholder="0"></div>
+          <div class="form-row" style="margin-bottom:0"><label class="form-lbl">Concepto *</label><input id="g-concepto" class="fi" placeholder="Ej: Mano de obra fontanería"></div>
+          <div class="form-row" style="margin-bottom:0"><label class="form-lbl">Coste (€) *</label><input id="g-coste" type="number" class="fi" placeholder="0" min="0" step="0.01"></div>
           <div class="form-row" style="margin-bottom:0"><label class="form-lbl">Sector</label>
             <select id="g-sector" class="fs">
               <option value="obra">🔨 Obra</option><option value="elect">⚡ Elect.</option>
@@ -2684,33 +2833,65 @@ function mdGastos(p){
             </select>
           </div>
         </div>
-        <div style="display:flex;justify-content:flex-end;gap:7px;margin-top:10px">
-          <button class="btn btn-ghost btn-sm" onclick="resetGastoForm()">Cancelar</button>
-          <button class="btn btn-gold btn-sm" onclick="guardarGasto('${p.id}')" id="btn-gasto-save">Guardar Gasto</button>
+        <div class="g2" style="margin-top:8px">
+          <div class="form-row" style="margin-bottom:0">
+            <label class="form-lbl" style="display:flex;align-items:center;gap:5px">
+              <span>⛽</span> Gasolina (€)
+              <span style="font-size:9px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">desplazamiento</span>
+            </label>
+            <input id="g-gasolina" type="number" class="fi" placeholder="0.00" min="0" step="0.01" style="border-color:rgba(200,126,64,.3)">
+          </div>
+          <div class="form-row" style="margin-bottom:0">
+            <label class="form-lbl" style="display:flex;align-items:center;gap:5px">
+              <span>⏱</span> Tiempo invertido (h)
+              <span style="font-size:9px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">no remunerado</span>
+            </label>
+            <input id="g-horas" type="number" class="fi" placeholder="0.0" min="0" step="0.5" style="border-color:rgba(139,126,200,.3)">
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+          <span class="gasto-fecha-auto">📅 Fecha: ${new Date().toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'})} <span style="color:var(--sage);font-weight:700">(automática)</span></span>
+          <div style="display:flex;gap:7px">
+            <button class="btn btn-ghost btn-sm" onclick="resetGastoForm()">Cancelar</button>
+            <button class="btn btn-gold btn-sm" onclick="guardarGasto('${p.id}')" id="btn-gasto-save">Guardar Gasto</button>
+          </div>
         </div>
       </div>
 
       <div style="overflow-x:auto">
         <table class="gtable">
           <thead>
-            <tr><th>Concepto</th><th>Sector</th><th>Coste</th><th style="width:70px"></th></tr>
+            <tr><th>Concepto</th><th>Sector</th><th>Coste</th><th>⛽ Gasolina</th><th>⏱ Horas</th><th>Fecha</th><th style="width:70px"></th></tr>
           </thead>
           <tbody>
             ${gs.map(g=>`<tr>
               <td>${esc(g.concepto)}</td>
               <td>${stag(g.sector||'obra')}</td>
               <td style="font-weight:700;color:var(--rust)">${fE(g.coste)}</td>
+              <td style="font-size:12px;color:#C87E40;font-weight:600">${g.gasolina>0?fE(g.gasolina):'—'}</td>
+              <td style="font-size:12px;color:var(--lav);font-weight:600">${g.horas>0?g.horas+'h':'—'}</td>
+              <td style="font-size:11px;color:var(--muted);white-space:nowrap">${g.fecha?fD(g.fecha):'—'}</td>
               <td>
                 <div style="display:flex;gap:5px">
                   <button class="ico-btn" onclick="editarGasto('${p.id}','${g.id}')" title="Editar">✏️</button>
                   <button class="ico-btn" onclick="elimGasto('${p.id}','${g.id}')" title="Eliminar" style="color:var(--red)">🗑</button>
                 </div>
               </td>
-            </tr>`).join('')||'<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--muted)">Sin partidas</td></tr>'}
-            ${gs.length ? `<tr class="tot"><td colspan="2">TOTAL</td><td colspan="2">${fE(tot)}</td></tr>` : ''}
+            </tr>`).join('')||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted)">Sin partidas</td></tr>'}
+            ${gs.length ? `<tr class="tot">
+              <td colspan="2">TOTAL</td>
+              <td>${fE(tot)}</td>
+              <td style="color:#C87E40">${totGas>0?fE(totGas):'—'}</td>
+              <td style="color:var(--lav)">${totHoras>0?totHoras.toFixed(1)+'h':'—'}</td>
+              <td colspan="2"></td>
+            </tr>` : ''}
           </tbody>
         </table>
       </div>
+      ${totHoras>0?`<div style="margin-top:10px;background:rgba(139,126,200,.07);border:1px solid rgba(139,126,200,.2);border-radius:9px;padding:10px 14px;font-size:11px;color:var(--lav);display:flex;align-items:center;gap:8px">
+        <span style="font-size:16px">⏱</span>
+        <div><strong>${totHoras.toFixed(1)} horas</strong> de tiempo propio invertido sin remunerar en este proyecto. A 25€/h sería <strong>${fE(totHoras*25)}</strong> de coste oculto.</div>
+      </div>`:''}
     </div>`
   if(gastoEditando) _fillGastoForm()
 }
@@ -2719,6 +2900,8 @@ function _fillGastoForm(){
   document.getElementById('g-concepto').value = gastoEditando.concepto||''
   document.getElementById('g-coste').value = gastoEditando.coste||''
   document.getElementById('g-sector').value = gastoEditando.sector||'obra'
+  document.getElementById('g-gasolina').value = gastoEditando.gasolina||''
+  document.getElementById('g-horas').value = gastoEditando.horas||''
   const btn = document.getElementById('btn-gasto-save')
   if(btn) btn.textContent = 'Actualizar Gasto'
 }
@@ -2739,19 +2922,23 @@ async function guardarGasto(projId){
   const concepto = document.getElementById('g-concepto').value.trim()
   const coste = Number(document.getElementById('g-coste').value||0)
   const sector = document.getElementById('g-sector').value
-  if(!concepto||!coste){ toast('⚠️ Completa los campos'); return }
+  const gasolina = parseFloat(document.getElementById('g-gasolina').value||0)||0
+  const horas = parseFloat(document.getElementById('g-horas').value||0)||0
+  if(!concepto||!coste){ toast('⚠️ Completa los campos obligatorios'); return }
   const p = PROYECTOS.find(x=>x.id===projId)
+  const today = new Date().toISOString().split('T')[0]
   if(gastoEditando){
-    await sb.from('gastos').update({concepto,coste,sector}).eq('id',gastoEditando.id)
+    await sb.from('gastos').update({concepto,coste,sector,gasolina:gasolina||null,horas:horas||null}).eq('id',gastoEditando.id)
     const idx = p.gastos.findIndex(x=>x.id===gastoEditando.id)
-    if(idx>=0) Object.assign(p.gastos[idx],{concepto,coste,sector})
+    if(idx>=0) Object.assign(p.gastos[idx],{concepto,coste,sector,gasolina,horas})
     toast('✅ Gasto actualizado')
   } else {
-    const {data,error} = await sb.from('gastos').insert({proyecto_id:projId,concepto,coste,sector}).select().single()
+    const {data,error} = await sb.from('gastos').insert({proyecto_id:projId,concepto,coste,sector,gasolina:gasolina||null,horas:horas||null,fecha:today}).select().single()
     if(error){ toast('⚠️ '+error.message); return }
     if(!p.gastos) p.gastos = []
     p.gastos.unshift(data)
-    toast('✅ Gasto añadido')
+    const extras = [gasolina>0?`⛽ ${fE(gasolina)}`:'', horas>0?`⏱ ${horas}h`:''].filter(Boolean).join(' · ')
+    toast('✅ Gasto añadido'+(extras?' — '+extras:''))
   }
   resetGastoForm(); mdGastos(p)
 }
@@ -2762,6 +2949,8 @@ function resetGastoForm(){
   document.getElementById('g-concepto').value = ''
   document.getElementById('g-coste').value = ''
   document.getElementById('g-sector').value = 'obra'
+  const gas = document.getElementById('g-gasolina'); if(gas) gas.value = ''
+  const hrs = document.getElementById('g-horas'); if(hrs) hrs.value = ''
   const btn = document.getElementById('btn-gasto-save')
   if(btn) btn.textContent = 'Guardar Gasto'
 }
@@ -2856,25 +3045,69 @@ function renderFases(){
     `<div class="sf ${tplSec===s?'on':''}" data-s="${s}" onclick="tplSec='${s}';renderFases()">${l}</div>`
   ).join('')
   const filtered = tplSec==='all' ? FASES : FASES.filter(f=>f.sector===tplSec)
-  document.getElementById('tpll').innerHTML = filtered.map((f,i)=>`
-    <div class="phase-item" draggable="true"
+  // Load template subfases from localStorage
+  let tplSfs = {}
+  try { tplSfs = JSON.parse(localStorage.getItem('subfases_tpl')||'{}') } catch(e){}
+  document.getElementById('tpll').innerHTML = filtered.map((f,i)=>{
+    const subfases = tplSfs[f.id]||[]
+    return`<div style="margin-bottom:6px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--paper)" draggable="true"
       ondragstart="dragIdx=${FASES.indexOf(f)}"
       ondragover="event.preventDefault()"
       ondrop="dropFase(event,${FASES.indexOf(f)})">
-      <div class="drag-handle" title="Arrastrar">⠿</div>
-      <div class="phase-check ${FASES.indexOf(f) < 10 ? '' : ''}"></div>
-      <div style="flex:1">
-        <div style="display:flex;align-items:center;gap:7px;margin-bottom:2px;flex-wrap:wrap">
-          <span style="font-size:9px;font-weight:700;color:var(--muted);min-width:20px">${FASES.indexOf(f)+1}.</span>
-          <span class="phase-name">${esc(f.nombre)}</span>${stag(f.sector)}
+      <div class="phase-item" style="border-radius:0;border-bottom:${subfases.length?'1px solid var(--line)':'none'}">
+        <div class="drag-handle" title="Arrastrar">⠿</div>
+        <div class="phase-check"></div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:2px;flex-wrap:wrap">
+            <span style="font-size:9px;font-weight:700;color:var(--muted);min-width:20px">${FASES.indexOf(f)+1}.</span>
+            <span class="phase-name">${esc(f.nombre)}</span>${stag(f.sector)}
+            ${subfases.length ? `<span style="font-size:9px;background:rgba(91,160,138,.1);color:var(--sage);padding:1px 6px;border-radius:8px;font-weight:700">${subfases.length} subfases</span>` : ''}
+          </div>
+          <div class="phase-desc">${esc(f.descripcion||'')}</div>
         </div>
-        <div class="phase-desc">${esc(f.descripcion||'')}</div>
+        <div class="phase-actions">
+          <button class="ico-btn" onclick="elimFase('${f.id}')">🗑</button>
+        </div>
       </div>
-      <div class="phase-actions">
-        <button class="ico-btn" onclick="elimFase('${f.id}')">🗑</button>
+      ${subfases.length ? `<div style="padding:6px 10px 4px 44px;background:rgba(91,160,138,.02)">
+        ${subfases.map(sf=>`<div style="display:flex;align-items:center;gap:7px;padding:3px 0;font-size:12px;color:var(--ink3)">
+          <span style="color:var(--muted)">↳</span><span style="flex:1">${esc(sf.nombre)}</span>
+          <button style="background:none;border:none;cursor:pointer;font-size:10px;color:var(--muted)" onclick="elimTplSubfase('${f.id}','${sf.id}')">✕</button>
+        </div>`).join('')}
+      </div>` : ''}
+      <div id="tpl-sf-add-${f.id}"></div>
+      <div style="padding:4px 10px 6px 44px">
+        <button class="add-subfase-btn" onclick="addTplSubfaseInput('${f.id}')">+ Añadir subfase a plantilla</button>
       </div>
     </div>`
-  ).join('')
+  }).join('')
+}
+
+function addTplSubfaseInput(faseId){
+  const c = document.getElementById('tpl-sf-add-'+faseId); if(!c) return
+  c.innerHTML = `<div style="display:flex;gap:6px;padding:4px 10px 4px 44px">
+    <input class="fi" id="tsf-inp-${faseId}" placeholder="Subfase…" style="flex:1;font-size:12px;padding:5px 8px" onkeydown="if(event.key==='Enter'){event.preventDefault();saveTplSubfase('${faseId}')}">
+    <button class="btn btn-gold btn-xs" onclick="saveTplSubfase('${faseId}')">Añadir</button>
+    <button class="btn btn-ghost btn-xs" onclick="document.getElementById('tpl-sf-add-${faseId}').innerHTML=''">✕</button>
+  </div>`
+  document.getElementById('tsf-inp-'+faseId)?.focus()
+}
+
+function saveTplSubfase(faseId){
+  const inp = document.getElementById('tsf-inp-'+faseId); if(!inp) return
+  const nombre = inp.value.trim(); if(!nombre) return
+  let tplSfs = {}; try { tplSfs = JSON.parse(localStorage.getItem('subfases_tpl')||'{}') } catch(e){}
+  if(!tplSfs[faseId]) tplSfs[faseId] = []
+  tplSfs[faseId].push({id: Date.now().toString(36)+Math.random().toString(36).slice(2), nombre})
+  localStorage.setItem('subfases_tpl', JSON.stringify(tplSfs))
+  renderFases(); toast('✅ Subfase de plantilla añadida')
+}
+
+function elimTplSubfase(faseId, sfId){
+  let tplSfs = {}; try { tplSfs = JSON.parse(localStorage.getItem('subfases_tpl')||'{}') } catch(e){}
+  if(tplSfs[faseId]) tplSfs[faseId] = tplSfs[faseId].filter(x=>x.id!==sfId)
+  localStorage.setItem('subfases_tpl', JSON.stringify(tplSfs))
+  renderFases()
 }
 
 function openAddFase(){ document.getElementById('addFaseBox').style.display='block' }
@@ -2964,7 +3197,9 @@ function renderSeguimiento(){
 /* ═══ GASTOS GLOBAL ═══ */
 async function renderGastos(){
   const {data:gs} = await sb.from('gastos').select('*,proyectos(nombre)').order('created_at',{ascending:false})
-  const totG = (gs||[]).reduce((a,g)=>a+(g.coste||0),0)
+  const totG    = (gs||[]).reduce((a,g)=>a+(g.coste||0),0)
+  const totGas  = (gs||[]).reduce((a,g)=>a+(g.gasolina||0),0)
+  const totHrs  = (gs||[]).reduce((a,g)=>a+(g.horas||0),0)
 
   // Por sector
   const bySector = {}
@@ -2974,12 +3209,21 @@ async function renderGastos(){
   })
 
   document.getElementById('gastosG').innerHTML=`
-    <div class="stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:18px">
+    <div class="stats-row" style="grid-template-columns:repeat(5,1fr);margin-bottom:18px">
       ${sc('🧾',fE(totG),'Gasto Total','','var(--rust)')}
       ${sc('📝',(gs||[]).length,'Partidas','','var(--gold)')}
       ${sc('🏗️',PROYECTOS.filter(p=>p.estado==='ref').length,'Obras activas','','var(--sage)')}
+      ${sc('⛽',fE(totGas),'Gasolina acum.','','#C87E40')}
+      ${sc('⏱',totHrs.toFixed(1)+'h','Tiempo invertido','','var(--lav)')}
     </div>
-    <div style="display:grid;grid-template-columns:1fr auto;gap:18px;margin-bottom:18px;align-items:start;flex-wrap:wrap">
+    ${totHrs>0?`<div style="background:rgba(139,126,200,.07);border:1px solid rgba(139,126,200,.2);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
+      <span style="font-size:20px">⏱</span>
+      <div style="font-size:12px;color:var(--lav);line-height:1.5">
+        <strong>${totHrs.toFixed(1)} horas</strong> de tiempo propio invertido sin remunerar en todos los proyectos.
+        A 25€/h representa un coste oculto de <strong>${fE(totHrs*25)}</strong>.
+      </div>
+    </div>`:''}
+    <div style="display:grid;grid-template-columns:1fr auto;gap:18px;margin-bottom:18px;align-items:start">
       <div style="background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:16px">
         <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:12px">Distribución por Sector</div>
         ${Object.entries(bySector).sort((a,b)=>b[1]-a[1]).map(([s,v])=>{
@@ -2997,16 +3241,24 @@ async function renderGastos(){
       <div style="padding:12px 16px;border-bottom:1px solid var(--line);font-family:'Syne',sans-serif;font-weight:700;font-size:13px">Todas las Partidas</div>
       <div style="overflow-x:auto">
         <table class="gtable">
-          <thead><tr><th>Proyecto</th><th>Concepto</th><th>Sector</th><th>Coste</th><th>Fecha</th></tr></thead>
+          <thead><tr><th>Proyecto</th><th>Concepto</th><th>Sector</th><th>Coste</th><th>⛽ Gasolina</th><th>⏱ Horas</th><th>Fecha</th></tr></thead>
           <tbody>
             ${(gs||[]).map(g=>`<tr>
               <td style="font-weight:600;color:var(--sky);cursor:pointer;white-space:nowrap" onclick="openDetalle('${g.proyecto_id}')">${esc(g.proyectos?.nombre||'—')}</td>
               <td>${esc(g.concepto)}</td>
               <td>${stag(g.sector||'obra')}</td>
               <td style="font-weight:700;color:var(--rust);white-space:nowrap">${fE(g.coste)}</td>
+              <td style="font-size:12px;color:#C87E40;font-weight:600;white-space:nowrap">${g.gasolina>0?fE(g.gasolina):'—'}</td>
+              <td style="font-size:12px;color:var(--lav);font-weight:600;white-space:nowrap">${g.horas>0?g.horas+'h':'—'}</td>
               <td style="font-size:11px;color:var(--muted);white-space:nowrap">${g.fecha?fD(g.fecha):'—'}</td>
-            </tr>`).join('')||'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">Sin partidas</td></tr>'}
-            ${(gs||[]).length?`<tr class="tot"><td colspan="3">TOTAL</td><td colspan="2">${fE(totG)}</td></tr>`:''}
+            </tr>`).join('')||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted)">Sin partidas</td></tr>'}
+            ${(gs||[]).length?`<tr class="tot">
+              <td colspan="3">TOTAL</td>
+              <td>${fE(totG)}</td>
+              <td style="color:#C87E40">${totGas>0?fE(totGas):'—'}</td>
+              <td style="color:var(--lav)">${totHrs>0?totHrs.toFixed(1)+'h':'—'}</td>
+              <td></td>
+            </tr>`:''}
           </tbody>
         </table>
       </div>
@@ -3022,59 +3274,97 @@ function setCtFiltro(s, el){
   renderContactos()
 }
 
+const CALIDAD_MAP = {
+  bueno_barato: {l:'Bueno y barato', cl:'q1', i:'✅'},
+  bueno_caro:   {l:'Bueno y caro',   cl:'q2', i:'💎'},
+  medio_barato: {l:'Medio y barato', cl:'q3', i:'📦'}
+}
+
 function renderContactos(){
   const c = document.getElementById('ctlist')
   const search = (document.getElementById('ctSearch')?.value||'').toLowerCase()
   let cts = CONTACTOS
   if(ctFiltro !== 'all') cts = cts.filter(ct=>ct.sector===ctFiltro)
-  if(search) cts = cts.filter(ct=>ct.nombre.toLowerCase().includes(search)||(ct.empresa||'').toLowerCase().includes(search))
+  if(search) cts = cts.filter(ct=>ct.nombre.toLowerCase().includes(search)||(ct.empresa||'').toLowerCase().includes(search)||(ct.localizacion||'').toLowerCase().includes(search))
   if(!cts.length){ c.innerHTML='<div class="empty"><div class="empty-ico">👥</div><h3>Sin contactos</h3><p>Añade proveedores y profesionales</p></div>'; return }
   c.innerHTML = `<div class="ct-grid">` +
-    cts.map(ct=>`<div class="ct-card">
+    cts.map(ct=>{
+      const cal = ct.calidad ? CALIDAD_MAP[ct.calidad] : null
+      return `<div class="ct-card">
       <div class="ct-actions">
         <button class="ico-btn" onclick="editarContacto('${ct.id}')" title="Editar">✏️</button>
         <button class="ico-btn" onclick="elimContacto('${ct.id}')" title="Eliminar" style="color:var(--red)">🗑</button>
       </div>
       <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px;padding-right:48px">
-        <div style="width:36px;height:36px;border-radius:50%;background:var(--warm);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${SMAP[ct.sector||'otro']?.i||'👤'}</div>
+        <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,rgba(91,160,138,.15),rgba(91,160,138,.25));display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">${SMAP[ct.sector||'otro']?.i||'👤'}</div>
         <div>
           <div style="font-weight:600;font-size:13px">${esc(ct.nombre)}</div>
           <div style="font-size:10px;color:var(--muted)">${esc(ct.empresa||'Autónomo')}</div>
         </div>
       </div>
-      ${stag(ct.sector||'otro')}
-      <div style="margin-top:8px;display:flex;flex-direction:column;gap:3px">
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+        ${stag(ct.sector||'otro')}
+        ${cal ? `<span class="ct-quality ${cal.cl}">${cal.i} ${cal.l}</span>` : ''}
+      </div>
+      ${ct.localizacion ? `<div style="font-size:11px;color:var(--muted);margin-bottom:4px">📍 ${esc(ct.localizacion)}</div>` : ''}
+      ${ct.referido ? `<div style="font-size:11px;color:var(--muted);margin-bottom:4px">👤 Ref: ${esc(ct.referido)}</div>` : ''}
+      <div style="margin-top:6px;display:flex;flex-direction:column;gap:3px">
         ${ct.telefono?`<a href="tel:${esc(ct.telefono)}" style="font-size:12px;color:var(--sky);display:flex;align-items:center;gap:4px"><span>📞</span><span>${esc(ct.telefono)}</span></a>`:''}
         ${ct.email?`<a href="mailto:${esc(ct.email)}" style="font-size:12px;color:var(--sky);display:flex;align-items:center;gap:4px"><span>✉️</span><span>${esc(ct.email)}</span></a>`:''}
       </div>
       ${ct.notas?`<div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.4;border-top:1px solid var(--line);padding-top:8px">${esc(ct.notas)}</div>`:''}
-    </div>`).join('') + '</div>'
+    </div>`
+    }).join('') + '</div>'
 }
 
+let contactoEditId = null
 function editarContacto(id){
   const ct = CONTACTOS.find(x=>x.id===id); if(!ct) return
+  contactoEditId = id
+  document.getElementById('m-contacto-title').textContent = 'Editar Contacto'
+  document.getElementById('btn-guardar-contacto').textContent = 'Actualizar'
   document.getElementById('fc-n').value = ct.nombre||''
   document.getElementById('fc-e').value = ct.empresa||''
   document.getElementById('fc-s').value = ct.sector||'otro'
   document.getElementById('fc-t').value = ct.telefono||''
   document.getElementById('fc-m').value = ct.email||''
   document.getElementById('fc-no').value = ct.notas||''
+  document.getElementById('fc-loc').value = ct.localizacion||''
+  document.getElementById('fc-ref').value = ct.referido||''
+  document.getElementById('fc-cal').value = ct.calidad||''
   openM('m-contacto')
 }
 
 async function guardarContacto(){
   const n = document.getElementById('fc-n').value.trim(); if(!n){ toast('⚠️ Nombre obligatorio'); return }
-  const {data,error} = await sb.from('contactos').insert({
+  const payload = {
     nombre:n, empresa:document.getElementById('fc-e').value.trim(),
     sector:document.getElementById('fc-s').value,
     telefono:document.getElementById('fc-t').value.trim(),
     email:document.getElementById('fc-m').value.trim(),
-    notas:document.getElementById('fc-no').value.trim()
-  }).select().single()
-  if(error){ toast('⚠️ '+error.message); return }
-  CONTACTOS.push(data); CONTACTOS.sort((a,b)=>a.nombre.localeCompare(b.nombre))
-  ;['fc-n','fc-e','fc-t','fc-m','fc-no'].forEach(id => document.getElementById(id).value = '')
-  closeM('m-contacto'); renderContactos(); toast('✅ Contacto guardado')
+    notas:document.getElementById('fc-no').value.trim(),
+    localizacion:document.getElementById('fc-loc').value.trim()||null,
+    referido:document.getElementById('fc-ref').value.trim()||null,
+    calidad:document.getElementById('fc-cal').value||null
+  }
+  if(contactoEditId){
+    const {error} = await sb.from('contactos').update(payload).eq('id',contactoEditId)
+    if(error){ toast('⚠️ '+error.message); return }
+    const idx = CONTACTOS.findIndex(x=>x.id===contactoEditId)
+    if(idx>=0) Object.assign(CONTACTOS[idx], payload)
+    toast('✅ Contacto actualizado')
+  } else {
+    const {data,error} = await sb.from('contactos').insert(payload).select().single()
+    if(error){ toast('⚠️ '+error.message); return }
+    CONTACTOS.push(data); CONTACTOS.sort((a,b)=>a.nombre.localeCompare(b.nombre))
+    toast('✅ Contacto guardado')
+  }
+  contactoEditId = null
+  document.getElementById('m-contacto-title').textContent = 'Nuevo Contacto'
+  document.getElementById('btn-guardar-contacto').textContent = 'Guardar'
+  ;['fc-n','fc-e','fc-t','fc-m','fc-no','fc-loc','fc-ref'].forEach(id => document.getElementById(id).value = '')
+  document.getElementById('fc-cal').value = ''
+  closeM('m-contacto'); renderContactos()
 }
 
 async function elimContacto(id){
