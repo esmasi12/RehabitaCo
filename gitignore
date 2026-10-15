@@ -3,3 +3,8 @@ dist/
 .DS_Store
 Thumbs.db
 .vscode/settings.json
+.env
+.env.*
+!.env.example
+_env
+.vercel

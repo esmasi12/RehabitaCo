@@ -1,0 +1,22 @@
+# ─── Supabase (frontend) ────────────────────────────────────────────────────
+VITE_SUPABASE_URL=https://TU-PROYECTO.supabase.co
+VITE_SUPABASE_ANON_KEY=tu-anon-key
+VITE_APP_NAME=RehabitaCo
+VITE_APP_VERSION=3.0.0
+
+# ─── IA (SOLO servidor: Vercel → Settings → Environment Variables) ───────────
+# NUNCA con prefijo VITE_ ni en index.html: quedarían públicas.
+ANTHROPIC_API_KEY=
+OPENAI_API_KEY=
+IA_PROVIDER=anthropic            # anthropic | openai (el usuario puede elegir en la app)
+ANTHROPIC_MODEL=claude-sonnet-5-5
+OPENAI_MODEL=gpt-4o              # actualiza al modelo vigente de tu cuenta
+
+# La función /api/ia valida la sesión contra Supabase (mismos valores que arriba):
+SUPABASE_URL=https://TU-PROYECTO.supabase.co
+SUPABASE_ANON_KEY=tu-anon-key
+
+# ─── API especializada (opcional, futuro) ───────────────────────────────────
+# Cuando elijas proveedor, adapta api/_datos.js y rellena:
+DATOS_API_URL=
+DATOS_API_KEY=
